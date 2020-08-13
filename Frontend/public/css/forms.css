@@ -1,0 +1,151 @@
+/*Registro Notas/Estudiantes*/
+
+
+.form_student{
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: repeat(5,80px);
+  text-align: center;
+}
+
+  .form_student select{
+    width: 400px;
+    height: 40px;
+  }
+
+    .form_student label{
+      font-size:19px;
+      margin-top:11px;
+   }
+
+      .reg-student{
+       width: 67%;
+       padding-right: 12%;
+       height: 45%;
+       font-size: 20px;
+     }
+
+
+
+
+
+
+
+/*Registro de Usuarios*/
+.form-reg {
+    margin-top: -25px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 400px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+
+}
+
+    .form-reg input[type="text"]:required,select{
+    background-color: rgba(255,255,255,0.0);
+    margin-top: 50px;
+    height: 25px;
+    font-size: 16px;
+    border: none;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: #231f1f;
+    outline: none;
+    box-shadow: none;
+    transition: all 0.5s;
+}
+
+      .form-reg input[type="text"]:focus {
+       border-bottom-color:#f94242;
+       transition: all 0.5s;
+   }
+
+        .form-reg label{
+          text-align: left;
+          margin-top:40px;
+          margin-bottom: 15px;
+        }
+
+         .form-reg select{
+          margin-top:0px;
+          height: auto;
+         }
+
+          .form-reg select:focus{
+            border-bottom-color:#f94242;
+            transition:all 0.5s;
+          }
+
+
+input[type="text"]::placeholder{
+  color: black;
+}
+
+
+
+
+
+
+
+
+/*botones*/
+.buttons{
+position: relative;
+margin-left: auto;
+margin-right:auto;
+display: table;
+}
+
+
+  #boton-confirmar,#boton-regresar,.buttons label{
+    color:#F4F4F4FF;
+    border-style: none;
+    padding: 10px 44px;
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: #03b566;
+    margin:20px 20px;
+    font-size: 16px;
+  }
+
+
+    #boton-confirmar:hover{
+      background-color:#009855;
+      transition: 1s;
+    }
+
+
+      #boton-confirmar:active{
+       text-shadow: none;
+       transition: 0.1s;
+    }
+
+
+#boton-regresar{
+   background-color: #FE4C4CFF;
+    padding: 10px 37px;
+
+}
+
+
+  #boton-regresar:hover{
+    background-color:#f93232;
+    transition: 1s;
+
+  }
+
+
+    #boton-regresar:active{
+     text-shadow: none;
+     transition: 0.1s;
+    }
+
+
+.buttons label{
+background-color:#1b1b1b;
+padding: 7.95px 34px;
+}
