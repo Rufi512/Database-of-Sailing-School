@@ -1,12 +1,12 @@
 # Database-School
 
-##En desarrollo
+## En desarrollo
 
 Aplicación Stack MERN para registrar, consultar, modificar las calificaciones de los estudiantes
 
 <img src="https://github.com/Rufi512/Database-School/blob/master/Capture.png" />
 
-###Objetivos
+### Objetivos
 
 * Registrar a los estudiantes y ver sus calificaciones
  
@@ -16,7 +16,7 @@ Aplicación Stack MERN para registrar, consultar, modificar las calificaciones d
 
 * Exportar las calificaciones de cada alumno en PDF
 
-###Como ejecutar
+### Como ejecutar
 
 1.Instala las dependencias:
 ```
