@@ -10,7 +10,7 @@ state={
 	school_year:''
 }
 
-		
+		//Carga la informacion del estudiante con el id
 		async componentWillMount(){
 			const studentid = this.props.match.params
 			const res = await axios.get('http://localhost:8080/studentInfo/'+studentid.id)

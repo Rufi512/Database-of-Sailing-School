@@ -5,7 +5,7 @@ const studentSchema=new Schema({
 	firstName: {type:String},
 	lastName: {type:String},
 	school_year:{type:String},
-	subjects: {},
+	subjects: {type:Object},
 	created_at: {type:String}, 
 	changeTime:{type:String,default:undefined}
 

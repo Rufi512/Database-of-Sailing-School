@@ -1,96 +1,119 @@
 import React from 'react'
 import axios from 'axios'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import MateriaTable from 'material-table'
 export default class Students extends React.Component {
-	handleSubmit(e){
-			console.log(e)
-		}
 
 
-		
-		state={
-			students: []
-		}
-		
-		async componentWillMount(){
-			const res = await axios.get('http://localhost:8080/students')
-			this.setState({students:res.data})
-		}
+    state = {
+        students: []
+
+    }
+
+    handleInfo(id) {
+        console.log(id)
+        this.props.history.push('/StudentInfo/' + id);
+
+    }
 
 
-				
+    async componentWillMount() {
 
-			/*
-				<div className="bar-search">
-    <input type="search" name="search_box" id="search_box"  
-    placeholder="Buscar Estudiante"
-    onChange={e=>this.handleSubmit(e.target.value)}
-    />
+        const res = await axios.get('http://localhost:8080/students')
+        this.setState({ students: res.data })
 
-</div>
+    }
+
+
+
+
+    render() {
+
+        const columns = [
+            { title: 'Cedula', field: 'ci' },
+            { title: 'Nombre', field: 'firstName' },
+            { title: 'Apellido', field: 'lastName' },
+            { title: 'Curso', field: 'school_year' }
+
+        ]
+
+
+
+
+
+
+
+        return (
+            <div>
+			<h1 style={{textAlign:'center'}}>Lista de estudiantes</h1>
+			<section className="tableMaterial">
+				<MateriaTable 
+				data={this.state.students}
+				columns={columns}
+				  onRowClick={((e, selectedRow) =>this.handleInfo(selectedRow._id))}
+
+//Opciones Tabla
+  options={{
+		pageSize:10,
+		showTitle:false,
+		headerStyle: {
+          backgroundColor: '#01579b',
+          color: '#FFF'
+        },
+
+       searchFieldStyle:{
+       	alignContent:'center',
+       	alignItems:'center',
+       },
+
+			
+        
+        filterCellStyle:{
+        	color:'#FFF'
+        }
+
+
  
-*/
- 
- /*Funcion que dirige hacia la informacion del estudiante*/
-handleInfo(id){
-	console.log(id)
-	this.props.history.push('/StudentInfo/' + id);
-}
-/*
-	<Link className="a" to={"/StudentInfo/" + students._id}>	 
- </Link>*/
-	render() {
+         
+        
 
-		return (
-			<div>
-				<h1 style={{textAlign:'center'}}>Lista de estudiantes</h1>
-	
+     
+        
 
-			<div className="row" style={{marginTop: '40px'}}>
+  }}
 
-			<table className="tabla_datos">
-			<thead>
-				<tr>
-					<td> Cedula </td>
-					<td> Nombre </td>
-					<td> Apellido </td>
-					<td>Curso Actual</td>
-					</tr>
-			</thead>
-			
-					
-{this.state.students.map(students=>
-			
+   // Idioma Tabla
+    localization={{
+        pagination: {
+            labelDisplayedRows: '{from}-{to} de {count}',
+            firstAriaLabel: 'Primera Pagina',
+                    firstTooltip: 'Primera Pagina',
+           	 previousAriaLabel: 'Pagina anterior',
+                    previousTooltip: 'Pagina Anterior',
+                    nextAriaLabel: 'Pagina Siguiente',
+                    nextTooltip: 'Pagina Siguiente',
+                    lastAriaLabel: 'Ultima Pagina',
+                    lastTooltip: 'Ultima Pagina',
+                    labelRowsSelect: 'Filas'
+        },
+        toolbar: {
+            nRowsSelected: '{0} fila(s) seleccionadas',
+            searchTooltip:'Buscar',
+            searchPlaceholder:'Buscar Estudiante'
+        },
+        
+        body: {
+            emptyDataSourceMessage: 'No se encontraron estudiante',
+            filterRow: {
+                filterTooltip: 'Filter'
+            }
+        }
 
-		
- <tbody key={students._id} onClick={(id)=> id = this.handleInfo(students._id)} >	
- 
-			<tr>
-					<td>{students.ci}</td>
-					<td>{students.firstName}</td>
-					<td>{students.lastName}</td>
-					<td>{students.school_year}</td>
-					
-					</tr>
-					 
 
-		
-			
-			</tbody>
-			
-			
-					)}
-				
-	</table>
-					
-							
-					
-
+    }}
+				/>
+				</section>
 			</div>
-
-
-
-			</div>
-		)
-	}
+        )
+    }
 }

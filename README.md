@@ -26,7 +26,7 @@ npm i
 cd ../Frontend
 npm i
 
-cd..
+
 ```
 
 2.Ejecutar:
@@ -42,12 +42,12 @@ mongod
 ```
 cd Backend
 npm run server
-cd ..
+
 ```
 
 * Frontend
 ```
 cd Frontend
 npm run start
-cd ..
+
 ```
