@@ -4,7 +4,7 @@ const path = require('path')
 const dateFormat = require('dateformat')
 let student = require('../models/students')
 let students = {}
-var now = new Date();
+let now = new Date();
 let { date } = require('../data/dateformat')
 dateFormat.i18n = date
 
@@ -16,6 +16,7 @@ let { materias1, materias2, materias3, materias4 } = require('../data/subjects.j
 students.createStudent = async (req, res) => {
     const { ci, name, lastName, school_year } = req.body
 
+
     /*Nos aseguramos que el estudiante no exista en el sistema*/
 
     await student.findOne({ ci: ci }, function(err, exist) {
@@ -24,26 +25,26 @@ students.createStudent = async (req, res) => {
             res.json('El estudiante ya se encuentra registrado en el sistema!')
             console.log('El estudiante ya se encuentra registrado')
         } else {
-            res.json('null')
-            /*Se le asigna la materias al estudiante correspondiente al año*/
 
-            let subjects = { type: Object }
+			res.json('null')
+            
+            //Se le asigna la materias al estudiante correspondiente al año
 
             switch (school_year) {
                 case '1-A':
                 case '1-B':
                     {
 
-                        subjects = materias1
-                        return register()
+                       
+                        return register(ci,name,lastName,school_year,materias1)
                         break;
                     }
 
                 case '2-A':
                 case '2-B':
                     {
-                        subjects = materias2
-                        return register()
+                       
+                        return register(ci,name,lastName,school_year,materias2)
                         break;
 
                     }
@@ -51,8 +52,8 @@ students.createStudent = async (req, res) => {
                 case '3-A':
                 case '3-B':
                     {
-                        subjects = materias3
-                        return register()
+                        
+                        return register(ci,name,lastName,school_year,materias3)
                         break;
 
                     }
@@ -62,37 +63,14 @@ students.createStudent = async (req, res) => {
                 case '5-A':
                 case '5-B':
                     {
-                        subjects = materias4
-                        return register()
+                       
+                        return register(ci,name,lastName,school_year,materias4)
                         break;
 
                     }
-
-
-
-
-
-            }
-            /*Registra al estudiante en el sistema*/
-            async function register() {
-                let studentReg = new student()
-                studentReg.ci = ci;
-                studentReg.firstName = name;
-                studentReg.lastName = lastName;
-                studentReg.school_year = school_year;
-                studentReg.subjects = subjects
-                studentReg.created_at = dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT");
-                studentReg.save()
-                await console.log('guardado')
-
-
             }
         }
-
     })
-
-
-
 }
 
 
@@ -105,29 +83,28 @@ students.createStudents = (req, res) => {
     fs.createReadStream(archive)
         .pipe(csv.parse({ headers: true }))
         .on('error', error => console.error(error))
-        .on('data', row => {
+        .on('data', async (row) => {
 
-            student.findOne({ ci: row.cedula }, function(err, exist) {
-                if (exist !== null) {
-                    res.send('El estudiante existe')
+            await student.findOne({ ci: row.cedula }, function(err, exist) {
+                if (err || exist !== null) {
+                   console.log('El estudiante de cedula: ' + row.cedula + ' Ya se encuentra registrado')
                 } else {
-                    let subjects = { type: Object }
 
                     switch (row.curso) {
                         case '1-A':
                         case '1-B':
                             {
 
-                                subjects = materias1
-                                return register()
+                                
+                                return register(row.cedula,row.nombre,row.apellido,row.curso,materias1)
                                 break;
                             }
 
                         case '2-A':
                         case '2-B':
                             {
-                                subjects = materias2
-                                return register()
+                               
+                                return register(row.cedula,row.nombre,row.apellido,row.curso,materias2)
                                 break;
 
                             }
@@ -135,8 +112,8 @@ students.createStudents = (req, res) => {
                         case '3-A':
                         case '3-B':
                             {
-                                subjects = materias3
-                                return register()
+                              
+                                return register(row.cedula,row.nombre,row.apellido,row.curso,materias3)
                                 break;
 
                             }
@@ -146,49 +123,34 @@ students.createStudents = (req, res) => {
                         case '5-A':
                         case '5-B':
                             {
-                                subjects = materias4
-                                return register()
+                                
+                                return register(row.cedula,row.nombre,row.apellido,row.curso,materias4)
                                 break;
 
                             }
-
-
-
-
-
                     }
-
-
-                    async function register() {
-
-                        let studentReg = new student()
-                        studentReg.ci = row.cedula;
-                        studentReg.firstName = row.nombre;
-                        studentReg.lastName = row.apellido;
-                        studentReg.school_year = row.curso;
-                        studentReg.subjects = subjects;
-                        studentReg.created_at = dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT");
-                        studentReg.save()
-                        await console.log('guardado')
-
-
-                    }
-
-
                 }
-
-
-
-
-
             })
         })
 
-
         .on('end', rowCount => res.send('Todos los estudiantes del archivo CSV añadidos'));
-
 
 }
 
+// Registra al estudiante en el sistema
+            async function register(ci,name,lastName,school_year,subjects) {
+                const studentReg = new student()
+                studentReg.ci = ci;
+                studentReg.firstName = name;
+                studentReg.lastName = lastName;
+                studentReg.school_year = school_year;
+                studentReg.subjects = subjects;
+                studentReg.created_at = dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT");
+                await studentReg.save()
+                console.log('guardado')
+                
+
+
+            }
 
 module.exports = students

@@ -7,16 +7,17 @@ state={
 	ci:'',
 	firstName:'',
 	lastName:'',
-	school_year:''
+	school_year:'',
+	subjects:[]
 }
 
 		//Carga la informacion del estudiante con el id
-		async componentWillMount(){
+		async UNSAFE_componentWillMount(){
 			const studentid = this.props.match.params
 			const res = await axios.get('http://localhost:8080/studentInfo/'+studentid.id)
-			console.log(res.data)
-			this.setState({id:res.data._id,ci:res.data.ci,firstName:res.data.firstName,lastName:res.data.lastName,school_year:res.data.school_year})
 			
+			this.setState({id:res.data._id,ci:res.data.ci,firstName:res.data.firstName,lastName:res.data.lastName,school_year:res.data.school_year,subjects:res.data.subjects})
+			console.log(this.state.subjects)
 		}
 
 
@@ -65,13 +66,17 @@ state={
 				<th>Lapso 3</th>
 				<th rowspan="1">Promedio</th>
 			</tr>
-
-			<tr>
+			{this.state.subjects.map(subjects=>
+				<tr>
+					<td>{subjects.name}</td>
+					<td>{subjects.score[0]}</td>
+					<td>{subjects.score[1]}</td>
+					<td>{subjects.score[2]}</td>
+					<td>{Math.round((subjects.score[0]+subjects.score[1]+subjects.score[2])/3)}</td>
+				</tr>
+			)}
 			
-
-
-
-			</tr>
+			
 
 		</tbody>
 

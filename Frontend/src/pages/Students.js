@@ -1,45 +1,55 @@
 import React from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
 import MateriaTable from 'material-table'
 export default class Students extends React.Component {
 
+        state = {
+            students: [],
+            ci: '',
+            firstName: '',
+            lastName: '',
+            school_year: ''
+        }
 
-    state = {
-        students: []
+        handleInfo(id) {
+            console.log(id)
+            this.props.history.push('/StudentInfo/' + id);
 
-    }
+        }
 
-    handleInfo(id) {
-        console.log(id)
-        this.props.history.push('/StudentInfo/' + id);
+        //Actualiza los datos si se ha modificado la fila
+        async handleRowUpdate(newData, oldData, resolve) {
+            const data = newData
+            let ci = data.ci
+            let firstName = data.firstName
+            let lastName = data.lastName
+            let school_year = data.school_year
+            console.log(data.firstName)
+            await axios.post('http://localhost:8080/studentUpdate/' + data._id, { ci, firstName, lastName, school_year })
+            const res = await axios.get('http://localhost:8080/students')
+            this.setState({ students: res.data })
+            resolve()
 
-    }
+        }
 
+        async UNSAFE_componentWillMount() {
 
-    async componentWillMount() {
+            const res = await axios.get('http://localhost:8080/students')
+            this.setState({ students: res.data })
 
-        const res = await axios.get('http://localhost:8080/students')
-        this.setState({ students: res.data })
-
-    }
-
-
-
-
-    render() {
-
-        const columns = [
-            { title: 'Cedula', field: 'ci' },
-            { title: 'Nombre', field: 'firstName' },
-            { title: 'Apellido', field: 'lastName' },
-            { title: 'Curso', field: 'school_year' }
-
-        ]
+        }
 
 
 
+        render() {
 
+                const columns = [
+                    { title: 'Cedula', field: 'ci' },
+                    { title: 'Nombre', field: 'firstName' },
+                    { title: 'Apellido', field: 'lastName' },
+                    { title: 'Curso', field: 'school_year' }
+
+                ]
 
 
 
@@ -51,6 +61,17 @@ export default class Students extends React.Component {
 				data={this.state.students}
 				columns={columns}
 				  onRowClick={((e, selectedRow) =>this.handleInfo(selectedRow._id))}
+
+                  editable={{
+                           onRowUpdate: (newData, oldData) =>
+                           
+                           
+      new Promise((resolve) => {
+        this.handleRowUpdate(newData, oldData, resolve);
+  })
+                  }}
+
+
 
 //Opciones Tabla
   options={{
@@ -88,7 +109,7 @@ export default class Students extends React.Component {
             labelDisplayedRows: '{from}-{to} de {count}',
             firstAriaLabel: 'Primera Pagina',
                     firstTooltip: 'Primera Pagina',
-           	 previousAriaLabel: 'Pagina anterior',
+           	        previousAriaLabel: 'Pagina anterior',
                     previousTooltip: 'Pagina Anterior',
                     nextAriaLabel: 'Pagina Siguiente',
                     nextTooltip: 'Pagina Siguiente',

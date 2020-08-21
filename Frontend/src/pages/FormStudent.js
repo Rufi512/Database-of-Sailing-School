@@ -63,25 +63,35 @@ export default class FormStudent extends React.Component {
     render() {
         return (
             <div>
-                <h1 className="title">Registro de Estudiantes</h1>
-    <section className="form-users">
-    <p className="error" style={{display:this.state.vError}}>{this.state.error ? this.state.error: ''}</p>
+            <p className="error" style={{display:this.state.vError}}>{this.state.error ? this.state.error: ''}</p>
     <p className="pass" style={{display:this.state.pass}}>Estudiante Registrado con Exito</p>
-        <form onSubmit={this.handleSubmit.bind(this)}>
-            <div className="form-reg">
+                <div className="container-boxs">
 
-                <input className="reg-input" type="text" id="ci" name="ci" placeholder="Cedula del Alumno" pattern="[VveE1234567890.-]{1,900}" autoComplete="off" onChange={ci => this.setState({ci: ci.target.value})} required/>
+    <div className="container">
+        <h2>Registro de Estudiante</h2>
+    
+    <form onSubmit={this.handleSubmit.bind(this)}>
 
+        <div className="form-input">
+        <input  type="text" id="ci" name="ci" pattern="[VveE1234567890.-]{1,900}" autoComplete="off" onChange={ci => this.setState({ci: ci.target.value})} required/>
+        <label className="label-name">Cedula del Estudiante</label>
+        </div>
 
-                <input className="reg-input" type="text" id="nombres" name="name" pattern="[A-Za-záéíóúñ'´ ]{1,900}" placeholder="Nombre Completo del Alumno" autoComplete="off" title="Solo Caracteres Alfabeticos!" 
+        <div className="form-input">
+        <input  type="text" id="nombres" name="name" pattern="[A-Za-záéíóúñ'´ ]{1,900}" autoComplete="off" title="Solo Caracteres Alfabeticos!" 
                 onChange={name => this.setState({name: name.target.value})} required/>
+        <label className="label-name">Nombre del Estudiante</label>
+        </div>
 
-
-                <input className="reg-input" type="text" id="apellidos" name="lastName" placeholder="Apellido Completo del Alumno"  autoComplete="off" 
+        <div className="form-input">
+        <input  type="text" id="apellidos" name="lastName"  autoComplete="off" 
                 onChange={lastName => this.setState({lastName: lastName.target.value})} required/>
+        <label className="label-name">Apellido del Estudiante</label>
+        </div>
 
-                <label htmlFor="anio_actual">Curso Actual:</label>
-                <select name="school_year" id="anio_actual" onChange={school_year => this.setState({school_year: school_year.target.value})} value={this.state.school_year}>
+        <div className="form-input-select">
+          <label htmlFor="anio_actual">Curso Actual:</label>
+                   <select name="school_year" id="anio_actual" onChange={school_year => this.setState({school_year: school_year.target.value})} value={this.state.school_year}>
                         <option value="1-A">1-A</option>
                         <option value="1-B">1-B</option>
                         <option value="2-A">2-A</option>
@@ -93,22 +103,23 @@ export default class FormStudent extends React.Component {
                         <option value="5-A">5-A</option>
                         <option value="5-B">5-B</option>
                     </select>
-    
-
-            </div>
-    
-            <br/>
-            <br/>
-
-            <div className="buttons">
+        </div>
+      
+        <div className="buttons">
                 <button type="submit" id="boton-confirmar" onClick={e=>e.target.value}> Guardar Estudiante </button>
             </div>
+       
+    </form>
+    </div>
 
+    
+        
+    
+    
 
-        </form>
-        </section>
+            
 
-<section className="form-users">
+<div class="container-csv">
         <form onSubmit={this.handleSubmitFile.bind(this)}>
 
             <h2 style={{textAlign:'center'}}>Enviar archivo CSV</h2>
@@ -120,7 +131,11 @@ export default class FormStudent extends React.Component {
 
 
         </form>
-    </section>
+   </div>
+
+
+
+   </div>
             </div>
         )
     }

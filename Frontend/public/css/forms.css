@@ -1,93 +1,110 @@
 /*Registro Notas/Estudiantes*/
 
-
-.form_student{
-  margin-top: 40px;
-  display: grid;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: repeat(5,80px);
-  text-align: center;
+.container-boxs{
+  position: absolute;
+  width: 100%;
+  top:0;
+  bottom:0;
+  display: flex;
+  flex-direction: row;
+  margin:auto;
 }
-
-  .form_student select{
-    width: 400px;
-    height: 40px;
-  }
-
-    .form_student label{
-      font-size:19px;
-      margin-top:11px;
-   }
-
-      .reg-student{
-       width: 67%;
-       padding-right: 12%;
-       height: 45%;
-       font-size: 20px;
-     }
-
-
-
-
-
-
-
-/*Registro de Usuarios*/
-.form-reg {
-    margin-top: -25px;
-    margin-right: auto;
-    margin-left: auto;
-    width: 400px;
-    text-align: center;
+.container,.container-csv {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
     display: flex;
     flex-direction: column;
-    padding: 1em;
+    justify-content: center;
+    margin: auto;
+    width: 450px;
+    height: auto;
+    padding: 10px;
+    border-radius: 28px;
+    background-color: white;
+    box-shadow: 0px 5px 18px 2px #7595d0;
 
 }
 
-    .form-reg input[type="text"]:required,select{
-    background-color: rgba(255,255,255,0.0);
-    margin-top: 50px;
-    height: 25px;
-    font-size: 16px;
-    border: none;
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
-    border-bottom-color: #231f1f;
+.container-csv{
+  position: relative;
+  top:0;
+  bottom: 0;
+  right:0;
+
+}
+
+.container h2{
+    display: flex;
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+
+}
+
+.container form .form-input,
+.form-input-select {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.form-input-select {
+    margin: 15px 0;
+}
+
+.container form .form-input input {
+    border-top: none;
+    border-right: none;
+    border-left: none;
     outline: none;
-    box-shadow: none;
-    transition: all 0.5s;
+    font-size: 16px;
+    background-color: #f0f8ff00;
+    z-index: 1;
+    transition: all 0.3s ease;
 }
 
-      .form-reg input[type="text"]:focus {
-       border-bottom-color:#f94242;
-       transition: all 0.5s;
-   }
+.container form .form-input .label-name {
+    position: absolute;
+    transition: all 0.23s ease;
+}
 
-        .form-reg label{
-          text-align: left;
-          margin-top:40px;
-          margin-bottom: 15px;
-        }
+.form-input input:focus {
+    border-bottom-color: #4bbafa
+}
 
-         .form-reg select{
-          margin-top:0px;
-          height: auto;
-         }
-
-          .form-reg select:focus{
-            border-bottom-color:#f94242;
-            transition:all 0.5s;
-          }
-
-
-input[type="text"]::placeholder{
-  color: black;
+.form-input input:focus+.label-name,
+.form-input input:valid+.label-name {
+    transform: translateY(-30px);
+    font-size: 14px;
 }
 
 
+.form-input-select select {
+    margin-top: 15px;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom-width: 2px;
+    outline: none;
 
+}
 
+.form-input input:valid {
+    border-bottom-color: #43e88b
+}
 
 
 
