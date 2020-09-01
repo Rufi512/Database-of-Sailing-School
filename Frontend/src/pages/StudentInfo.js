@@ -8,7 +8,7 @@ state={
 	firstName:'',
 	lastName:'',
 	school_year:'',
-	subjects:[]
+	subjects:[],
 }
 
 		//Carga la informacion del estudiante con el id
@@ -22,14 +22,15 @@ state={
 
 
 
-
 	render() {
+		
 		return (
 			<div>
-				<table class="tabla_datos">
+			<div className="container-table">
+				<table className="tabla_datos">
 	<thead>
 		<tr>
-			<th colspan="5" rowspan="4">Informacion Del Estudiante</th>
+			<th colSpan="5" rowspan="4">Informacion Del Estudiante</th>
 		</tr>
 		
 	</thead>
@@ -55,7 +56,7 @@ state={
 			
 
 			<tr>
-				<th colspan="5">Informacion Academica</th>
+				<th colSpan="5">Informacion Academica</th>
 
 			</tr>
 
@@ -66,8 +67,8 @@ state={
 				<th>Lapso 3</th>
 				<th rowspan="1">Promedio</th>
 			</tr>
-			{this.state.subjects.map(subjects=>
-				<tr>
+			{this.state.subjects.map((subjects,i)=>
+				<tr key={i}>
 					<td>{subjects.name}</td>
 					<td>{subjects.score[0]}</td>
 					<td>{subjects.score[1]}</td>
@@ -83,9 +84,10 @@ state={
 
 
 </table>
-				
-	
+			
+	</div>
 
+	
 			</div>
 		)
 	}

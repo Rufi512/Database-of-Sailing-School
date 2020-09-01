@@ -106,6 +106,27 @@
     border-bottom-color: #43e88b
 }
 
+/*Edit StudentPage*/
+.container-table,.container-form-table{
+  position: absolute;
+  margin:auto;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  width: 100%;
+  height: 100%;
+}
+
+.container-table{
+  visibility: visible;
+  z-index: 1;
+}
+
+.container-form-table{
+  visibility: collapse;
+  z-index: 0;
+}
 
 
 
@@ -165,4 +186,45 @@ display: table;
 .buttons label{
 background-color:#1b1b1b;
 padding: 7.95px 34px;
+}
+
+.buttons-form{
+position: absolute;
+z-index: 1000;
+}
+
+.btn-edit,.btn-save,.btn-goback{
+  border:none;
+  padding: 10px 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  outline: none
+  
+}
+
+.btn-save{
+  background-color: #5ae65a;
+  transition: all 0.3s ease;
+}
+.btn-goback{
+  background-color: #e83535;
+  transition: all 0.3s ease;
+}
+
+.btn-edit{
+  background-color: #4eb1fc;
+  transition: all 0.3s ease;
+}
+
+.btn-save:hover{
+background-color: #4dc54d;
+}
+
+.btn-goback:hover{
+  background-color: #d13030;
+}
+
+.btn-edit:hover{
+  background-color: #459cde;
 }

@@ -6,7 +6,7 @@ const studentSchema=new Schema({
 	lastName: {type:String},
 	school_year:{type:String},
 	subjects: {type:Array},
-	created_at: {type:String}, 
+	last_modify: {type:String}, 
 })
 
 module.exports=model('student',studentSchema)

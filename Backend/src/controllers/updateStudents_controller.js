@@ -59,12 +59,22 @@ async function update(subjects){
         firstName: firstName,
         lastName:lastName,
         school_year:school_year,
- 		subjects:subjects
+ 		    subjects:subjects
       }
    })
 	res.json(student)
 	console.log('Estudiante Actualizado')
 }
 }
+
+
+//Actualizar Informacion
+
+upd.updateBasic = async (req,res)=>{
+    const {id} = req.params
+    const student = await students.update({_id:id},req.body)
+    res.json(student)
+}
+
 
 module.exports = upd
