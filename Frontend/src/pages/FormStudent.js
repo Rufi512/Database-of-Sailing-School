@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import '../components/css/forms.css'
 export default class FormStudent extends React.Component {
 
     constructor() {
@@ -64,7 +65,7 @@ export default class FormStudent extends React.Component {
         return (
             <div>
             <p className="error" style={{display:this.state.vError}}>{this.state.error ? this.state.error: ''}</p>
-    <p className="pass" style={{display:this.state.pass}}>Estudiante Registrado con Exito</p>
+            <p className="pass" style={{display:this.state.pass}}>Estudiante Registrado con Exito</p>
                 <div className="container-boxs">
 
     <div className="container">
@@ -119,7 +120,7 @@ export default class FormStudent extends React.Component {
 
             
 
-<div class="container-csv">
+<div className="container-csv">
         <form onSubmit={this.handleSubmitFile.bind(this)}>
 
             <h2 style={{textAlign:'center'}}>Enviar archivo CSV</h2>

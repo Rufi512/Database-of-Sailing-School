@@ -8,7 +8,7 @@ export default class Boxs extends React.Component {
 
 
 <Link className="a" to="/regStudents">
-  <div className="boxe">
+  <div className="box">
             <h3>Registro de Estudiantes</h3>
             <img src="src/icons/user-edit-solid.svg"/>
             <p>Ingrese aquí para registrar <br/> estudiantes</p>
@@ -16,7 +16,7 @@ export default class Boxs extends React.Component {
 </Link>
 
 <Link className="a" to="/students">
-        <div className="boxe">
+        <div className="box">
             <h3>Ver Notas</h3>
 
             <img src="src/icons/archive-solid.svg"/>
@@ -24,7 +24,7 @@ export default class Boxs extends React.Component {
         </div>
 </Link>
 <Link className="a" to="/">
-         <div className="boxe">
+         <div className="box">
             <h3>Administración de Usuarios</h3>
 
             <img src="src/icons/dvr-24px.svg"/>

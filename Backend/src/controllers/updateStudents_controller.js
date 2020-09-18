@@ -1,80 +1,44 @@
-const upd = {}
-const students = require('../models/students')
-let { materias1, materias2, materias3, materias4 } = require('../data/subjects.js');
+const upd = {};
+const students = require("../models/students");
+const trunk = require("../models/trunk");
+const { updateAll,update } = require("./saveStudents_controller");
+const {saveChest,saveonChest} = require("./trunk_controller")
 
-upd.updateStudent = async(req,res)=>{
-	const {ci,firstName,lastName,school_year} = req.body
-	const {id} = req.params
+//Actualiza la informacion del estudiante, informacion basica
+upd.updateStudent = async (req, res) => {
+    const { id } = req.params;
+    const { ci, firstName, lastName } = req.body;
+    //Llamamos a la funcion encargada de modificar en la base de datos
+    updateAll(id, ci, firstName, lastName);
+};
 
-	switch (school_year) {
-                case '1-A':
-                case '1-B':
-                    {
-
-                       
-                        return update(materias1)
-                        break;
-                    }
-
-                case '2-A':
-                case '2-B':
-                    {
-                       
-                        return update(materias2)
-                        break;
-
-                    }
-
-                case '3-A':
-                case '3-B':
-                    {
-                        
-                        return update(materias3)
-                        break;
-
-                    }
-
-                case '4-A':
-                case '4-B':
-                case '5-A':
-                case '5-B':
-                    {
-                       
-                        return update(materias4)
-                        break;
-
-                    }
-
-                    default:{
-                    	res.json('El año escolar no cumple con los parámetros')
-                    }
-            }
-
-//Actualiza los datos del estudiante
-async function update(subjects){
-
-	 const student = await students.update({_id: id},{ $set:
-      {
-      	ci:ci,
-        firstName: firstName,
-        lastName:lastName,
-        school_year:school_year,
- 		    subjects:subjects
-      }
-   })
-	res.json(student)
-	console.log('Estudiante Actualizado')
-}
-}
+//Actualiza la informacion del estudiante, informacion basica y Academica
+upd.updateStudentForm = async (req, res) => {
+    const { id } = req.params;
+    const { ci, firstName, lastName,subjects,status } = req.body;
+    //Llamamos a la funcion encargada de modificar en la base de datos
+    update(id, ci, firstName, lastName,subjects,status);
+};
 
 
-//Actualizar Informacion
+//Se activara con el boton para subir de grado al estudiante
+upd.upgradeStudent = async (req, res) => {
+    const { id } = req.params;
+    const { ci, firstName, lastName, school_year} = req.body;
+    const student = await students.findById(id);
+    const chest = await trunk.findById(id);
+    
+    if (!chest) {
+        //Si el chest no esta encontrado,se creara uno en base a su id,pero primero añadira sus notas en su respetiva posicion
+        saveChest(id,student.school_year, student.subjects);
+        console.log('No existe')
+    } else {
+        console.log('Ya existe,registrando')
+        saveonChest(id, student.school_year, student.subjects);
 
-upd.updateBasic = async (req,res)=>{
-    const {id} = req.params
-    const student = await students.update({_id:id},req.body)
-    res.json(student)
-}
+    }
+    
+    updateAll(id, ci, firstName, lastName, school_year);
+};
 
-
-module.exports = upd
+module.exports = upd;

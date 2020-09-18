@@ -1,22 +1,21 @@
 const { Router } = require('express')
 const fs = require('fs');
-const {showStudents,showStudent} = require('../controllers/showStudents_controller')
-const {saveStudent} = require('../controllers/trunk_controller')
-const {updateStudent,updateBasic} = require('../controllers/updateStudents_controller')
 const {createStudent,createStudents} = require('../controllers/createStudents_controller')
+const {showStudents,showStudent} = require('../controllers/showStudents_controller')
+const {updateStudent,updateStudentForm,upgradeStudent} = require('../controllers/updateStudents_controller.js')
 const router = Router()
 
 
 
-router.get('/students',showStudents)
+router.get('/students',showStudents) //Muestra la lista de estudiantes
 
-router.get('/studentInfo/:id',showStudent)
+router.get('/studentInfo/:id',showStudent) //Muestra informacion del estudiante
 
-router.post('/studentUpdate/:id',updateStudent)
+router.put('/studentUpdateInfo/:id',upgradeStudent) //Actualiza y guarda en trunk las notas del estudiante
 
-router.post('/studentUpdateBasic/:id',updateBasic) // Actualiza informacion del estudiante
+router.post('/studentUpdate/:id',updateStudent) //Actualiza informacion del estudiante (Basico)
 
-router.put('/studentUpdateInfo/:id',saveStudent) //Actualiza y guarda en trunk las notas del estudiante
+router.put('/studentUpdateForm/:id',updateStudentForm) //Actualiza informacion del estudiante (Cedula,Nombre,Apellido y Notas)
 
 router.post('/regStudent',createStudent) //Recibe formulario
 

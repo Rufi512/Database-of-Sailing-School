@@ -4,11 +4,7 @@ const trunkSchema=new Schema({
 	ci: {type:Number},
 	firstName: {type:String},
 	lastName: {type:String},
-	notes1:{type:Object},
-	notes2:{type:Object},
-	notes3:{type:Object},
-	notes4:{type:Object},
-	notes5:{type:Object}
+	record:{type:Array,"default":[null,null,null,null,null]}
 })
 
 module.exports=model('trunk',trunkSchema)
