@@ -21,7 +21,7 @@ module.exports = {
     },
 
 
-    //Actualiza la informacion del estudiante (Notas y Grado)
+    //Actualiza la información del estudiante (Notas y Grado)
     updateAll: async function(id,ci, firstName, lastName, school_year) {
         let subjects = materias1;
          switch (school_year) {
@@ -64,7 +64,7 @@ module.exports = {
                     }
             }
 
-        const student = await students.update({ _id: id }, {
+        await students.updateOne({ _id: id }, {
             $set: {
                 ci: ci,
                 firstName: firstName,
@@ -75,12 +75,13 @@ module.exports = {
             }
         })
         console.log('Estudiante Actualizado con nuevo grado')
+        res.json('Información académica actualizada')
     },
 
 
 //Actualiza al estudiante (Solo Cedula,nombre,apellido,sus notas de las materias y estado)
-    update: async function(id,ci,firstName,lastName,subjects,status){
-        await students.update({_id:id},{
+    update: async function(id,ci,firstName,lastName,subjects,status,res){
+        await students.updateOne({_id:id},{
             $set:{
                 ci:ci,
                 firstName:firstName,
@@ -90,9 +91,47 @@ module.exports = {
                 last_modify:dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")
             }
         })
-        
-        console.log('Estudiante Actualizado')
+        res.json('Estudiante Actualizado!')
 
-    }
+    },
+
+
+
+    comments: async function(id,comment,res){
+        now = new Date()
+        let author = "Anónimo"
+        let commit_Information = {
+            comment:comment,
+            author,
+            date_comment:dateFormat(now,"dddd, d De mmmm , yyyy, h:MM:ss TT")
+        }
+
+        await students.updateOne({_id:id}, {
+       $push:{
+           commits:[commit_Information]
+       }
+    })
+        res.json('Comentario Añadido')
+    },
+
+    unComment: async function(id,index,res){
+         var arrIndex = `commits.${index}`
+      await students.updateOne({_id:id}, {
+       $unset:{
+           [arrIndex]:1
+       }
+      
+    }),
+  
+   await students.updateOne({_id:id}, {
+   
+        $pull:{
+           commits:null
+       }
+    })
+    res.json('Comentario eliminado')
+       }
+       
+
 
 }

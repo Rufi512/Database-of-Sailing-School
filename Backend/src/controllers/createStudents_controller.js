@@ -9,7 +9,7 @@ const { materias1, materias2, materias3, materias4 } = require('../data/subjects
 
 //Registro de estudiante Individual
 students.createStudent = async (req, res) => {
-    const { ci, name, lastName, school_year } = req.body
+    const { ci, firstName, lastName, school_year } = req.body
 
 
     /*Nos aseguramos que el estudiante no exista en el sistema*/
@@ -31,7 +31,7 @@ students.createStudent = async (req, res) => {
                     {
 
                        
-                         register(ci,name,lastName,school_year,materias1)
+                         register(ci,firstName,lastName,school_year,materias1)
                         break;
                     }
 
@@ -39,7 +39,7 @@ students.createStudent = async (req, res) => {
                 case '2-B':
                     {
                        
-                         register(ci,name,lastName,school_year,materias2)
+                         register(ci,firstName,lastName,school_year,materias2)
                         break;
 
                     }
@@ -48,7 +48,7 @@ students.createStudent = async (req, res) => {
                 case '3-B':
                     {
                         
-                         register(ci,name,lastName,school_year,materias3)
+                         register(ci,firstName,lastName,school_year,materias3)
                         break;
 
                     }
@@ -59,7 +59,7 @@ students.createStudent = async (req, res) => {
                 case '5-B':
                     {
                        
-                         register(ci,name,lastName,school_year,materias4)
+                         register(ci,firstName,lastName,school_year,materias4)
                         break;
 
                     }

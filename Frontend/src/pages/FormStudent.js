@@ -1,98 +1,108 @@
-import React from 'react'
+import React,{useState} from 'react'
 import axios from 'axios'
-import '../components/css/forms.css'
-export default class FormStudent extends React.Component {
+import '../components/resources/css/forms.css'
 
-    constructor() {
-        super();
-        this.state = {
-           ci:'',
-           name:'',
-           lastName:'',
-           school_year:'1-A',
-           fileCsv:null,
-           pass:'none',
-           error:'',
-           vError:'none'
+const FormStudent = () =>{
+
+const [ci,setCi] = useState(null)
+const [firstName,setFirstName] = useState("")
+const [lastName,setLastName] = useState("")
+const [school_year,setSchool_year] = useState("1-A")
+const [csv,setCsv] = useState('')
+const [alerts,setAlerts] = useState("")
+const [alertCsv,setAlertCsv] = useState("")
+let result = null;
 
 
-
-        }
-    }
-
-
-    async handleSubmit(e) {
+    async function handleSubmit(e) {
+        result = null
      e.preventDefault();
-     this.setState({ error: '', vError: 'none', pass: 'none' })
-     const ci = this.state.ci
-     const name = this.state.name
-     const lastName = this.state.lastName
-     const school_year = this.state.school_year
-     const res = await axios.post('http://localhost:8080/regStudent', { ci, name, lastName, school_year })
+     animationAlerts('Enviando informacion')
+     const res = await axios.post('http://localhost:8080/regStudent', { ci, firstName, lastName, school_year })
+     .catch((err) => {
+       result = err;
+     });
+         
+         if(result){
+            animationAlerts('Error al conectar al servidor','#e83535','#000')
+         } else{
+            if(res.status == 200){
+                 animationAlerts('Estudiante registrado correctamente','#85ff85','#054207')
+            }else{
+                animationAlerts('El estudiante no ha sido registrado','#ea3a3a','#d50000')
+            }
+         }
+
+
 
         /*Se mostraran mensajes de error si los hay*/
-     .catch((err) => {
-         this.setState({ error: 'No se pudo establecer conexion al Servidor', vError: 'block' })
-         console.log(err)
-
-     });
-
-     if (this.state.error !== '') {
-         return
-     }
-     if (res.data) {
-         this.setState({ error: res.data, vError: 'block' })
-         console.log(this.state.error)
-     }
-     if (res.data === 'null' || null) {
-         this.setState({ vError: 'none', pass: 'block' })
-     }
-
-
+ 
  }
+
+
 
  /*Subida de estudiantes por CSV*/
 
- async handleSubmitFile(e) {
+ async function handleSubmitFile(e) {
      e.preventDefault()
-     const file = this.state.fileCsv
+     const file = csv
      let formData = new FormData();
      formData.append('students', file);
-     await axios.post('http://localhost:8080/regStudents', formData)
+     console.log(csv)
+     const res = await axios.post('http://localhost:8080/regStudents', formData)
+    if(res.status == 200){
+        animationAlerts('Estudiantes registrados correctamente','#85ff85','#054207')
+    }else{
+         animationAlerts('Ah ocurrido un error al procesar el archivo','#ea3a3a','#d50000')
+    }
  }
 
-    render() {
+
+  function animationAlerts(msj,colorBack,colorText){
+ const displayAlert = document.querySelector('.alert')
+   displayAlert.style.transform = 'translateY(-110%)'
+   displayAlert.style.background = '#fff'
+   displayAlert.style.color = '#000'
+   
+   setTimeout(()=>{displayAlert.style.transform = 'translateY(0%)' 
+    displayAlert.style.background = colorBack
+    displayAlert.style.color = colorText
+    setAlerts(msj)}, 500)
+  }
+
+    
         return (
             <div>
-            <p className="error" style={{display:this.state.vError}}>{this.state.error ? this.state.error: ''}</p>
-            <p className="pass" style={{display:this.state.pass}}>Estudiante Registrado con Exito</p>
+
+            <p className="alert">{alerts ? alerts: ''}</p>
+   
                 <div className="container-boxs">
 
     <div className="container">
         <h2>Registro de Estudiante</h2>
     
-    <form onSubmit={this.handleSubmit.bind(this)}>
+    <form onSubmit={handleSubmit}>
 
         <div className="form-input">
-        <input  type="text" id="ci" name="ci" pattern="[VveE1234567890.-]{1,900}" autoComplete="off" onChange={ci => this.setState({ci: ci.target.value})} required/>
+        <input  type="text" id="ci" name="ci" pattern="[VveE1234567890.-]{1,900}" autoComplete="off" onChange={e => setCi(e.target.value) } required/>
         <label className="label-name">Cedula del Estudiante</label>
         </div>
 
         <div className="form-input">
-        <input  type="text" id="nombres" name="name" pattern="[A-Za-záéíóúñ'´ ]{1,900}" autoComplete="off" title="Solo Caracteres Alfabeticos!" 
-                onChange={name => this.setState({name: name.target.value})} required/>
+        <input  type="text" id="nombres" name="firstName" pattern="[A-Za-záéíóúñ'´ ]{1,900}" autoComplete="off" title="Solo Caracteres Alfabeticos!" 
+                onChange={e => setFirstName(e.target.value)} required/>
         <label className="label-name">Nombre del Estudiante</label>
         </div>
 
         <div className="form-input">
         <input  type="text" id="apellidos" name="lastName"  autoComplete="off" 
-                onChange={lastName => this.setState({lastName: lastName.target.value})} required/>
+                onChange={e => setLastName(e.target.value)} required/>
         <label className="label-name">Apellido del Estudiante</label>
         </div>
 
         <div className="form-input-select">
           <label htmlFor="anio_actual">Curso Actual:</label>
-                   <select name="school_year" id="anio_actual" onChange={school_year => this.setState({school_year: school_year.target.value})} value={this.state.school_year}>
+                   <select name="school_year" id="anio_actual" onChange={e => setSchool_year(e.target.value)} value={school_year}>
                         <option value="1-A">1-A</option>
                         <option value="1-B">1-B</option>
                         <option value="2-A">2-A</option>
@@ -107,7 +117,7 @@ export default class FormStudent extends React.Component {
         </div>
       
         <div className="buttons">
-                <button type="submit" id="boton-confirmar" onClick={e=>e.target.value}> Guardar Estudiante </button>
+                <button type="submit" id="boton-confirmar"> Guardar Estudiante </button>
             </div>
        
     </form>
@@ -121,13 +131,16 @@ export default class FormStudent extends React.Component {
             
 
 <div className="container-csv">
-        <form onSubmit={this.handleSubmitFile.bind(this)}>
+        <form onSubmit={handleSubmitFile}>
 
             <h2 style={{textAlign:'center'}}>Enviar archivo CSV</h2>
+            <p style={{textAlign:'center'}}>{alertCsv ? alertCsv: ''}</p>
             <div className="buttons">
                 <label id="labelFile" htmlFor="file" className="btn btn-primary"> Subir CSV </label>
-                <input style={{display: "none"}} type="file" id="file" accept=".csv" onChange={fileCsv => this.setState({fileCsv:fileCsv.target.files[0]})} name="students"/>
-                <button id="boton-confirmar" onClick={e=>e.target.value}> Enviar </button>
+    
+                <input style={{display: "none"}} type="file" id="file" accept=".csv" onChange={(e)=>{ setCsv(e.target.files[0]) 
+                 setAlertCsv('Archivo cargado')}} name="students"/>
+                <button id="boton-confirmar"> Enviar </button>
             </div>
 
 
@@ -139,6 +152,9 @@ export default class FormStudent extends React.Component {
    </div>
             </div>
         )
-    }
+    
+
+
 }
 
+export default FormStudent

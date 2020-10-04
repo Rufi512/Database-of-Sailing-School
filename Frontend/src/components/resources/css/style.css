@@ -85,20 +85,21 @@ body {
     text-decoration: none;
 }
 
-.error,
-.pass {
+.alert{
+    position: absolute;
     text-align: center;
     margin: auto;
-    background: #fce8e6;
+    background: #ffffff;
     width: fit-content;
-    color: #d50000;
+    color: black;
     padding: 10px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    transform:translateY(-110%);
+    transition:all 0.3s ease;
 }
 
-.pass {
-    color: #054207;
-    background-color: #85ff85;
-}
 
 .tableMaterial {
     width: 90%;
@@ -134,3 +135,5 @@ tr{
     margin: auto;
     padding-left: 8px !important;
 }
+
+

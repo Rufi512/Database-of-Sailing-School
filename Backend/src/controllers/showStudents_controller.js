@@ -1,4 +1,5 @@
 const students = require('../models/students')
+const trunk = require('../models/trunk')
 const show={}
 
 //Lista de estudiantes
@@ -14,7 +15,17 @@ show.showStudent = async (req,res)=>{
 }
 
 
+//Muestra las notas anteriores y actuales del estudiante (baul)
 
+show.historyStudent = async (req,res)=>{
+	const chest = await trunk.findById(req.params.id)
+	if(!chest){
+		res.json('Informacion no disponible')
+	}else{
+		res.json(chest)
+	}
+
+}
 
 
 module.exports = show

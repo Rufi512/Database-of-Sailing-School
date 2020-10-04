@@ -1,0 +1,458 @@
+/*Registro Notas/Estudiantes*/
+
+.container-boxs {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-flow: wrap;
+    margin: auto;
+}
+
+.container,
+.container-csv {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    width: 450px;
+    height: auto;
+    padding: 10px;
+    border-radius: 28px;
+    background-color: white;
+    box-shadow: 0px 5px 18px 2px #7595d0;
+
+}
+
+.container-csv {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    right: 0;
+
+}
+
+.container h2 {
+    display: flex;
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+
+}
+
+.container form .form-input,
+.form-input-select {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.form-input-select {
+    margin: 15px 0;
+}
+
+.container form .form-input input {
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    outline: none;
+    font-size: 16px;
+    background-color: #f0f8ff00;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.container form .form-input .label-name {
+    position: absolute;
+    transition: all 0.23s ease;
+}
+
+.form-input input:focus {
+    border-bottom-color: #4bbafa
+}
+
+.form-input input:focus+.label-name,
+.form-input input:valid+.label-name {
+    transform: translateY(-30px);
+    font-size: 14px;
+}
+
+
+.form-input-select select {
+    margin-top: 15px;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom-width: 2px;
+    outline: none;
+
+}
+
+.form-input input:valid {
+    border-bottom-color: #43e88b
+}
+
+/*Edit StudentPage*/
+.container-table,
+.container-form-table {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.container-table {
+    visibility: visible;
+    z-index: 1;
+}
+
+.container-form-table {
+    visibility: collapse;
+    z-index: 0;
+}
+
+
+
+/*botones*/
+.buttons {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    display: table;
+}
+
+
+#boton-confirmar,
+#boton-regresar,
+.buttons label {
+    color: #F4F4F4FF;
+    border-style: none;
+    padding: 10px 44px;
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: #03b566;
+    margin: 20px 20px;
+    font-size: 16px;
+}
+
+
+#boton-confirmar:hover {
+    background-color: #009855;
+    transition: 1s;
+}
+
+
+#boton-confirmar:active {
+    text-shadow: none;
+    transition: 0.1s;
+}
+
+
+#boton-regresar {
+    background-color: #FE4C4CFF;
+    padding: 10px 37px;
+
+}
+
+
+#boton-regresar:hover {
+    background-color: #f93232;
+    transition: 1s;
+
+}
+
+
+#boton-regresar:active {
+    text-shadow: none;
+    transition: 0.1s;
+}
+
+
+.buttons label {
+    background-color: #1b1b1b;
+    padding: 7.95px 34px;
+}
+
+.buttons-form {
+    position: absolute;
+    z-index: 1000;
+}
+
+.btn-edit,
+.btn-save,
+.btn-goback {
+    border: none;
+    padding: 10px 10px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    outline: none
+}
+
+.btn-save {
+    background-color: #5ae65a;
+    transition: all 0.3s ease;
+}
+
+.btn-goback {
+    background-color: #e83535;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background-color: #4eb1fc;
+    transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+    background-color: #4dc54d;
+}
+
+.btn-goback:hover {
+    background-color: #d13030;
+}
+
+.btn-edit:hover {
+    background-color: #459cde;
+}
+
+/*Student-Information*/
+.container-student,
+.container-student-2 {
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 70px auto;
+    width: 80%;
+    max-width: 1300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-student h2 {
+    text-align: center;
+    margin: 0;
+    color: #131313;
+    padding: 10px 10px;
+}
+
+.container-student table,
+.container-student-2 table {
+    width: 100%;
+    background-color: #ffffff;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    min-width: 400px;
+}
+
+.container-student thead tr,
+.container-student-2 thead tr {
+    background-color: #f1f1f1;
+    color: #040404;
+    text-align: center;
+}
+
+.container-student table th,
+td,
+.container-student-2 table th {
+    padding: 12px 15px;
+    text-align: center;
+
+}
+
+.container-student table tbody tr,
+.container-student-2 table tbody tr {
+    border-bottom: 1px solid #171717;
+}
+
+.student-general th,
+.student-general td {
+    border: 1px solid #171717;
+
+}
+
+.student-notes td,
+.student-notes th {
+    border: 1px solid #171717;
+}
+
+.student-general thead th,
+.student-notes thead th {
+    font-weight: 600;
+}
+
+.time-edit {
+    margin-top: 5px;
+}
+
+.container-student-2 {
+    display: none;
+}
+
+
+/*Commits*/
+.box-comment {
+    display: flex;
+    flex-direction: column;
+}
+
+.box-comment .commit {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    background-color: whitesmoke;
+    margin: 10px 5px;
+}
+
+.box-comment .commit div:nth-child(1) span {
+    font-weight: bold;
+    font-size: 14px;
+
+}
+
+.box-comment .commit div:nth-child(1) p:nth-child(3) {
+    font-size: 12px;
+
+}
+
+.box-comment .commit div:nth-child(2) {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.icon {
+    width: 24px;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: relative;
+    background-color: black;
+    color: white;
+    font-size: 14px;
+    border-radius: 100px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    opacity: 0%;
+    visibility: collapse;
+    transition: 0.2s ease;
+    z-index: 1;
+}
+
+.tooltip:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 15px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    transform: translateY(-20%) rotate(45deg);
+    z-index: -1;
+    background-color: black;
+}
+
+
+.icon:hover+.tooltip {
+    opacity: 100%;
+    visibility: visible;
+}
+
+.button-comment {
+    background-color: #288bfb;
+    color: white;
+    border: none;
+    padding: 12px 10px;
+    border-radius: 8px;
+    outline: 0;
+    cursor: pointer;
+}
+
+.screen-back {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #0000007c;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    visibility: collapse;
+    opacity: 0%;
+    transition: all 0.25s ease;
+}
+
+.screen-comment {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    top:0;
+    bottom:0;
+    left: 0;
+    right: 0;
+    width: 500px;
+    height: 350px;
+    padding: 15px;
+    background-color: white;
+    z-index: 2;
+    margin: auto;
+    visibility: collapse;
+    opacity: 0%;
+    transition: all 0.25s ease;
+}
+
+.screen-comment div{
+  display: flex;
+  flex-direction:row-reverse;
+}
+
+.screen-comment div button{
+  margin:5px 2px;
+}
+
+.screen-comment textarea {
+    width: 500px;
+    height: 300px;
+    outline: none;
+    resize: none;
+}
+
+/*Break Point*/
+@media(max-width: 937px) {
+    .container-csv {
+        margin-top: 30px;
+    }
+}

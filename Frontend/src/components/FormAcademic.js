@@ -24,22 +24,23 @@ useEffect(() => {
 function changeEdit(){
 const container = document.querySelector('.container-student')
 const container2 = document.querySelector('.container-student-2')
-container.style.display = "block"
+container.style.display = "flex"
 container2.style.display = "none"
 }
 
 //Envia la informacion al servidor
 async function handleForm(values){
-	const {request} = data
+	const {request} = data 
 	const status = statusStudent
 	console.log(status)
 	const {ci,firstName,lastName,subjects} = values
-	//Solo para probar (Cambiar esto ya que se rompe)
-	setTimeout(()=>{
+	const res = await axios.put('http://localhost:8080/studentUpdateForm/' + data.id,{ci,firstName,lastName,subjects,status})
+	if(res.status == 200){
 		request(data.id)
 		changeEdit()
-	},1000)
-	await axios.put('http://localhost:8080/studentUpdateForm/' + data.id,{ci,firstName,lastName,subjects,status})
+	}else{
+		console.log('ha ocurrido un fucking error!')
+	}
 
     
 }
@@ -87,7 +88,6 @@ function statusButton(){
 			</thead>
 			<tbody>
 				<tr>
-
 					<td>
 					<Field name="ci" />
 					</td> 
@@ -105,7 +105,6 @@ function statusButton(){
 					  <td>
 					  <button type="button" onClick={statusButton}>{statusStudent ? 'Activo' : 'Inactivo' }</button>
 					 </td>
-					 
 				</tr>
 			</tbody>
 		</table>

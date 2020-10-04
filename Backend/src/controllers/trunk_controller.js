@@ -52,7 +52,6 @@ module.exports = {
             (trunkReg.firstName = student.firstName),
             (trunkReg.lastName = student.lastName),
             await trunkReg.save();
-        console.log("Guardado");
     },
 
       //Guarda al estudiante ya registrado en el chest sus notas
