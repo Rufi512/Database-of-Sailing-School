@@ -133,113 +133,8 @@
 
 
 
-/*botones*/
-.buttons {
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    display: table;
-}
-
-
-#boton-confirmar,
-#boton-regresar,
-.buttons label {
-    color: #F4F4F4FF;
-    border-style: none;
-    padding: 10px 44px;
-    cursor: pointer;
-    transition: 0.5s;
-    background-color: #03b566;
-    margin: 20px 20px;
-    font-size: 16px;
-}
-
-
-#boton-confirmar:hover {
-    background-color: #009855;
-    transition: 1s;
-}
-
-
-#boton-confirmar:active {
-    text-shadow: none;
-    transition: 0.1s;
-}
-
-
-#boton-regresar {
-    background-color: #FE4C4CFF;
-    padding: 10px 37px;
-
-}
-
-
-#boton-regresar:hover {
-    background-color: #f93232;
-    transition: 1s;
-
-}
-
-
-#boton-regresar:active {
-    text-shadow: none;
-    transition: 0.1s;
-}
-
-
-.buttons label {
-    background-color: #1b1b1b;
-    padding: 7.95px 34px;
-}
-
-.buttons-form {
-    position: absolute;
-    z-index: 1000;
-}
-
-.btn-edit,
-.btn-save,
-.btn-goback {
-    border: none;
-    padding: 10px 10px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    outline: none
-}
-
-.btn-save {
-    background-color: #5ae65a;
-    transition: all 0.3s ease;
-}
-
-.btn-goback {
-    background-color: #e83535;
-    transition: all 0.3s ease;
-}
-
-.btn-edit {
-    background-color: #4eb1fc;
-    transition: all 0.3s ease;
-}
-
-.btn-save:hover {
-    background-color: #4dc54d;
-}
-
-.btn-goback:hover {
-    background-color: #d13030;
-}
-
-.btn-edit:hover {
-    background-color: #459cde;
-}
-
 /*Student-Information*/
-.container-student,
-.container-student-2 {
-    position: relative;
+.container-student{
     top: 0;
     right: 0;
     left: 0;
@@ -247,7 +142,6 @@
     margin: 70px auto;
     width: 80%;
     max-width: 1300px;
-    display: flex;
     flex-direction: column;
 }
 
@@ -258,8 +152,7 @@
     padding: 10px 10px;
 }
 
-.container-student table,
-.container-student-2 table {
+.container-student table{
     width: 100%;
     background-color: #ffffff;
     border-collapse: collapse;
@@ -267,23 +160,19 @@
     min-width: 400px;
 }
 
-.container-student thead tr,
-.container-student-2 thead tr {
+.container-student thead tr{
     background-color: #f1f1f1;
     color: #040404;
     text-align: center;
 }
 
-.container-student table th,
-td,
-.container-student-2 table th {
+.container-student table th,td{
     padding: 12px 15px;
     text-align: center;
 
 }
 
-.container-student table tbody tr,
-.container-student-2 table tbody tr {
+.container-student table tbody tr{
     border-bottom: 1px solid #171717;
 }
 
@@ -307,9 +196,14 @@ td,
     margin-top: 5px;
 }
 
-.container-student-2 {
-    display: none;
+.view-information{
+  display:flex;
 }
+
+.edit-information{
+  display:none;
+}
+
 
 
 /*Commits*/

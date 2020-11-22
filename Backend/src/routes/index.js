@@ -1,31 +1,34 @@
-const { Router } = require('express')
-const fs = require('fs');
-const {createStudent,createStudents} = require('../controllers/createStudents_controller')
-const {showStudents,showStudent,historyStudent} = require('../controllers/showStudents_controller')
-const {updateStudent,updateStudentForm,upgradeStudent,commitStudent,deleteCommit} = require('../controllers/updateStudents_controller.js')
+const {Router} = require('express')
+const {createStudent, createStudents} = require('../controllers/createStudents_controller')
+const {showStudentsActive, showStudentsInactive, showStudentsGradues, showStudent, historyStudent} = require('../controllers/showStudents_controller')
+const {updateStudentForm, studentUpgrade, studentDegrade, commitStudent, deleteCommit} = require('../controllers/updateStudents_controller.js')
 const router = Router()
 
 
 
-router.get('/students',showStudents) //Muestra la lista de estudiantes
+router.get('/students/actives', showStudentsActive) //lista de estudiantes activos
 
-router.get('/studentInfo/:id',showStudent) //Muestra informacion del estudiante
+router.get('/students/inactives', showStudentsInactive) //lista de estudiantes inactivos
 
-router.get('/studentInfoHistory/:id',historyStudent) //Muestra historial del estudiante
+router.get('/students/gradues', showStudentsGradues) // lista de estudiantes graduados
 
-router.put('/studentUpdateInfo/:id',upgradeStudent) //Actualiza y guarda en trunk las notas del estudiante
+router.get('/student/Info/:id', showStudent) //Muestra informacion del estudiante
 
-router.post('/studentUpdate/:id',updateStudent) //Actualiza informacion del estudiante (Basico)
+router.get('/student/History/:id', historyStudent) //Muestra historial del estudiante
 
-router.put('/studentUpdateForm/:id',updateStudentForm) //Actualiza informacion del estudiante (Cedula,Nombre,Apellido y Notas)
+router.put('/student/Upgrade', studentUpgrade) //Gradua y guarda en el trunk las notas del estudiante
 
-router.post('/studentCommit/:id',commitStudent) //Añade Comentario sobre el estudiante
+router.put('/student/Degrade', studentDegrade) //Degrada al estudiante 
 
-router.post('/studentDeleteCommit/:id',deleteCommit) 
+router.put('/student/Form/:id', updateStudentForm) //Actualiza informacion del estudiante (Cedula,Nombre,Apellido y Notas)
 
-router.post('/regStudent',createStudent) //Recibe formulario
+router.post('/student/Commit/:id', commitStudent) //Añade Comentario sobre el estudiante
 
-router.post('/regStudents',createStudents) //Recibe csv
+router.post('/student/deleteCommit/:id', deleteCommit) //Borra el Comentario del estudiante
+
+router.post('/regStudent', createStudent) //Recibe formulario
+
+router.post('/regStudents', createStudents) //Recibe csv
 
 
 

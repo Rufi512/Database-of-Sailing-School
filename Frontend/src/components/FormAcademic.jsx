@@ -1,6 +1,8 @@
 import React,{useState,useEffect} from 'react'
 import { Formik, Form, Field , FieldArray} from 'formik';
-import axios from 'axios'
+import axios from 'axios';
+import {changeEdit} from './SomethingFunctions';
+import { Popup, displayPopup } from '../components/Alerts'
 
 
 
@@ -10,34 +12,29 @@ const FormAcademic = (props) =>{
 
 const [data,setData] = useState(props)
 const [statusStudent,setStatus] = useState(props)
-
+const [popup,setPopup] = useState({})
 
 useEffect(() => {
-	async function loadData() {
-	await setData(props);
-	await setStatus(props.status);
+	function loadData() {
+	setData(props);
+	setStatus(props.status);
 	}
        loadData()
    }, [props])
 
-
-function changeEdit(){
-const container = document.querySelector('.container-student')
-const container2 = document.querySelector('.container-student-2')
-container.style.display = "flex"
-container2.style.display = "none"
-}
-
 //Envia la informacion al servidor
 async function handleForm(values){
+  setPopup({text:'Actualizando informacion...',type:'request'})
+  displayPopup()
 	const {request} = data 
 	const status = statusStudent
-	console.log(status)
 	const {ci,firstName,lastName,subjects} = values
-	const res = await axios.put('http://localhost:8080/studentUpdateForm/' + data.id,{ci,firstName,lastName,subjects,status})
-	if(res.status == 200){
+	const res = await axios.put('http://localhost:8080/student/Form/' + data.id,{ci,firstName,lastName,subjects,status})
+	if(res.status === 200){
 		request(data.id)
-		changeEdit()
+		changeEdit(false)
+    setPopup({text:'Informacion actualizada',type:'pass'})
+    displayPopup('received')
 	}else{
 		console.log('ha ocurrido un fucking error!')
 	}
@@ -55,29 +52,32 @@ function statusButton(){
 }
 
 	return (
-			<div>
+			<React.Fragment>
+       <Popup popup={popup}/>
+      <div className="container-student edit-information">
 
-               <div className="container-student-2">
-                <div className="buttons-form-edit">
-				<button type="button" onClick={changeEdit}>Regresar</button>
-			</div>
+                
 
 		  <Formik
 		  //Iniciamos los valores que estan en el estado "data"
-	enableReinitialize = {true} 
-       initialValues={{
-       	 ci:data.ci,
-       	 firstName:data.firstName,
-       	 lastName:data.lastName,
-       	 subjects:data.subjects
+	        enableReinitialize = {true} 
+          initialValues={{
+       	    ci:data.ci,
+       	    firstName:data.firstName,
+       	    lastName:data.lastName,
+       	    subjects:data.subjects
        }}
    
        onSubmit={ (values) => {
          handleForm(values)
        }}
      >
-       <Form>
-         
+        <Form style={{margin:'auto',width:'100%'}}>
+        <div className="buttons-container" style={{width:'100%',display:'inline-flex',justifyContent:'space-around',marginBottom:'15px'}}>
+                    <button className="btn" type="button" onClick={(e) => { changeEdit(false) }}>Regresar</button>
+                    <button className="btn btn-confirm" type="submit">Actualizar</button>
+                </div>
+ 
          
 
 		<table className="student-general">
@@ -89,15 +89,15 @@ function statusButton(){
 			<tbody>
 				<tr>
 					<td>
-					<Field name="ci" />
+					<Field style={{width: '100px'}} name="ci" />
 					</td> 
 
 					<td>
-					<Field name="firstName" />
+            <Field style={{width:'110px'}} name="firstName" />
 					</td>
 
 					 <td>
-					<Field name="lastName" />
+             <Field style={{width:'110px'}} name="lastName" />
 					 </td> 
 
 					 <td>{data.school_year}</td>
@@ -133,9 +133,9 @@ function statusButton(){
                 {data.subjects.map((subjects, i) => (
                    <tr key={i}>
                    <td>{subjects.name}</td>
-                      <td> <Field type="number" name={`subjects.${i}.score[0]`}  min="0" max="20"/> </td> 
-                       <td> <Field type="number" name={`subjects.${i}.score[1]`} min="0" max="20"/> </td>
-                        <td> <Field type="number" name={`subjects.${i}.score[2]`} min="0" max="20"/> </td>
+                     <td> <Field style={{width:'35px'}} type="number" name={`subjects.${i}.score[0]`}  min="0" max="20"/> </td> 
+                       <td> <Field style={{width:'35px'}} type="number" name={`subjects.${i}.score[1]`} min="0" max="20"/> </td>
+                        <td> <Field style={{width:'35px'}} type="number" name={`subjects.${i}.score[2]`} min="0" max="20"/> </td>
                         <td>{Math.round((subjects.score[0]+subjects.score[1]+subjects.score[2])/3)}</td>
                     </tr>
                 ))}
@@ -146,9 +146,7 @@ function statusButton(){
 
 			</tbody>
 		</table>
-		<div>
-			<button type="submit">Actualizar</button>
-		</div>
+		
 		
        </Form>
      </Formik>
@@ -157,7 +155,7 @@ function statusButton(){
 				
 			
 			
-			</div>
+			</React.Fragment>
 			
 
 		)
