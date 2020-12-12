@@ -27,15 +27,39 @@ module.exports = {
   //Actualiza la información del estudiante (Notas y Grado)
   upgrade: async function (id) {
     const student = await students.findById(id)
+    const {comments} = student
+    const academic_information = {
+      school_year: student.school_year,
+      subjects: student.subjects,
+    };
     switch (student.school_year) {
       case '1-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.0": academic_information,
+                "annualComments.0": comments
+              },
+            }
+          );
           subjectsUpgrade = materias2
           newSchoolYear = '2-A'
           break;
         }
       case '1-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.0": academic_information,
+                "annualComments.0": comments
+              },
+            }
+          );
+
           subjectsUpgrade = materias2
           newSchoolYear = '2-B'
           break;
@@ -43,13 +67,30 @@ module.exports = {
 
       case '2-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.1": academic_information,
+                "annualComments.1": comments
+              },
+            }
+          );
           subjectsUpgrade = materias3
           newSchoolYear = '3-A'
           break;
         }
       case '2-B':
         {
-
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.1": academic_information,
+                "annualComments.1": comments
+              },
+            }
+          );
           subjectsUpgrade = materias3
           newSchoolYear = '3-B'
           break;
@@ -58,12 +99,30 @@ module.exports = {
 
       case '3-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.2": academic_information,
+                "annualComments.2": comments
+              },
+            }
+          );
           subjectsUpgrade = materias4
           newSchoolYear = '4-A'
           break;
         }
       case '3-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.2": academic_information,
+                "annualComments.2": comments
+              },
+            }
+          );
           subjectsUpgrade = materias4
           newSchoolYear = '4-B'
           break;
@@ -72,12 +131,30 @@ module.exports = {
 
       case '4-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.3": academic_information,
+                "annualComments.3": comments
+              },
+            }
+          );
           subjectsUpgrade = materias4
           newSchoolYear = '5-A'
           break;
         }
       case '4-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.3": academic_information,
+                "annualComments.3": comments
+              },
+            }
+          );
           newSchoolYear = '5-B'
           subjectsUpgrade = materias4
           break;
@@ -85,8 +162,16 @@ module.exports = {
       case '5-A':
       case '5-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.4": academic_information,
+                "annualComments.4": comments
+              },
+            }
+          );
           newSchoolYear = 'Graduado'
-
           subjectsUpgrade = null
           break;
 
@@ -97,7 +182,7 @@ module.exports = {
       $set: {
         school_year: newSchoolYear,
         subjects: subjectsUpgrade,
-        commits: [],
+        comments: [],
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")
       }
     })
@@ -114,12 +199,30 @@ module.exports = {
 
       case '2-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.0": [],
+                "annualComments.0": []
+              },
+            }
+          );
           subjectsUpgrade = materias1
           newSchoolYear = '1-A'
           break;
         }
       case '2-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.0": [],
+                "annualComments.0": []
+              },
+            }
+          );
           subjectsUpgrade = materias1
           newSchoolYear = '1-B'
           break;
@@ -128,12 +231,30 @@ module.exports = {
 
       case '3-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.1": [],
+                "annualComments.1": []
+              },
+            }
+          );
           subjectsUpgrade = materias2
           newSchoolYear = '2-A'
           break;
         }
       case '3-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.1": [],
+                "annualComments.1": []
+              },
+            }
+          );
           subjectsUpgrade = materias2
           newSchoolYear = '2-B'
           break;
@@ -142,25 +263,60 @@ module.exports = {
 
       case '4-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.2": [],
+                "annualComments.2": []
+              },
+            }
+          );
           subjectsUpgrade = materias3
           newSchoolYear = '3-A'
           break;
         }
       case '4-B':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.2": [],
+                "annualComments.2": []
+              },
+            }
+          );
           newSchoolYear = '3-B'
           subjectsUpgrade = materias3
           break;
         }
       case '5-A':
         {
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.3": [],
+                "annualComments.3": []
+              },
+            }
+          );
           subjectsUpgrade = materias4
           newSchoolYear = '4-A'
           break;
         }
       case '5-B':
         {
-
+          await students.updateOne(
+            {_id: id},
+            {
+              $set: {
+                "record.3": [],
+                "annualComments.3": []
+              },
+            }
+          );
           subjectsUpgrade = materias4
           newSchoolYear = '4-B'
           break;
@@ -172,7 +328,7 @@ module.exports = {
       $set: {
         school_year: newSchoolYear,
         subjects: subjectsUpgrade,
-        commits: [],
+        comments: [],
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")
       }
     })
@@ -209,14 +365,14 @@ module.exports = {
 
     await students.updateOne({_id: id}, {
       $push: {
-        commits: [commit_Information]
+        comments: [commit_Information]
       }
     })
     res.json('Comentario Añadido')
   },
 
   unComment: async function (id, index, res) {
-    var arrIndex = `commits.${index}`
+    var arrIndex = `comments.${index}`
     await students.updateOne({_id: id}, {
       $unset: {
         [arrIndex]: 1
@@ -227,7 +383,7 @@ module.exports = {
       await students.updateOne({_id: id}, {
 
         $pull: {
-          commits: null
+          comments: null
         }
       })
     res.json('Comentario eliminado')

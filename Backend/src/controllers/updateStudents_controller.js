@@ -1,8 +1,7 @@
 const upd = {};
 const students = require("../models/students");
-const trunk = require("../models/trunk");
+
 const {upgrade, degrade, update, comments, unComment} = require("./saveStudents_controller");
-const {createChest, saveonChest, eraseOnChest} = require("./trunk_controller")
 
 
 
@@ -19,15 +18,6 @@ upd.updateStudentForm = async (req, res) => {
 upd.studentUpgrade = async (req, res) => {
   const ids = req.body;
   for (const id of ids) {
-    const student = await students.findById(id);
-    const chest = await trunk.findById(id);
-    if (!chest) {
-      //Si el chest no esta encontrado,se creara uno en base a su id
-      await createChest(id, student.school_year, student.subjects);
-    } else {
-      await saveonChest(id, student.school_year, student.subjects);
-
-    }
 
     await upgrade(id);
 
@@ -47,7 +37,7 @@ upd.studentUpgrade = async (req, res) => {
 upd.studentDegrade = async (req, res) => {
   const ids = req.body;
   for (const id of ids) {
-    await eraseOnChest(id)
+
     await degrade(id);
   }
   if (ids === 1) {

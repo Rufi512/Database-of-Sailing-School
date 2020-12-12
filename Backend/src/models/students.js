@@ -7,8 +7,10 @@ const studentSchema = new Schema({
   school_year: {type: String},
   subjects: {type: Array},
   last_modify: {type: String},
-  commits: {type: Array},
-  status: {type: Boolean, "default": true}
+  comments: {type: Array},
+  status: {type: Boolean, "default": true},
+  record: {type: Array, "default": [[], [], [], [], []]},
+  annualComments: {type: Array, "default": [[], [], [], [], []]}
 })
 
 module.exports = model('student', studentSchema)

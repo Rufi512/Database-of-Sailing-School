@@ -9,9 +9,8 @@ export default class Content extends React.Component {
       <div>
         <h1 className="title">Unidad Educativa Colegio Juan Bosco</h1>
         <div>
+
           <section className="boxs">
-
-
             <Link className="a" to="/regStudents">
               <div className="box">
                 <h3>Registro de Estudiantes</h3>

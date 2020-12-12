@@ -25,7 +25,7 @@ useEffect(() => {
 //Envia la informacion al servidor
 async function handleForm(values){
   setPopup({text:'Actualizando informacion...',type:'request'})
-  displayPopup()
+  displayPopup('','.popupFormAcademic')
 	const {request} = data 
 	const status = statusStudent
 	const {ci,firstName,lastName,subjects} = values
@@ -34,7 +34,7 @@ async function handleForm(values){
 		request(data.id)
 		changeEdit(false)
     setPopup({text:'Informacion actualizada',type:'pass'})
-    displayPopup('received')
+    displayPopup('received','.popupFormAcademic')
 	}else{
 		console.log('ha ocurrido un fucking error!')
 	}
@@ -53,7 +53,7 @@ function statusButton(){
 
 	return (
 			<React.Fragment>
-       <Popup popup={popup}/>
+       <Popup popup={popup} zone={'popupFormAcademic'}/>
       <div className="container-student edit-information">
 
                 
@@ -160,5 +160,7 @@ function statusButton(){
 
 		)
 }
+
+
 
 export default FormAcademic

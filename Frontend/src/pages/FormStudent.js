@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 import {Popup, displayPopup} from '../components/Alerts'
+import {checkInputs} from '../components/SomethingFunctions'
 import '../components/resources/css/forms.css'
 
 const FormStudent = () => {
@@ -34,6 +35,7 @@ const FormStudent = () => {
         displayPopup('received')
       } else {
         setPopup({text: 'El estudiante ya se encuentra registrado', type: 'error'})
+        displayPopup()
       }
     }
 
@@ -76,20 +78,20 @@ const FormStudent = () => {
           <form onSubmit={handleSubmit}>
 
             <div className="form-input">
-              <input type="text" id="ci" name="ci" pattern="[VveE1234567890.-]{1,900}" autoComplete="off" onChange={e => setCi(e.target.value)} required />
-              <label className="label-name">Cedula del Estudiante</label>
+              <input type="text" id="ci" name="ci" pattern="[VveE1234567890.-]{1,900}" autoComplete="off" onChange={e => {setCi(e.target.value); checkInputs(e.target.id, e.target.value)}} required />
+              <label id="label-ci" className="label-name">Cedula del Estudiante</label>
             </div>
 
             <div className="form-input">
-              <input type="text" id="nombres" name="firstName" pattern="[A-Za-záéíóúñ'´ ]{1,900}" autoComplete="off" title="Solo Caracteres Alfabeticos!"
-                onChange={e => setFirstName(e.target.value)} required />
-              <label className="label-name">Nombre del Estudiante</label>
+              <input type="text" id="firstName" name="firstName" pattern="[A-Za-záéíóúñ'´ ]{1,900}" autoComplete="off" title="Solo Caracteres Alfabeticos!"
+                onChange={e => {setFirstName(e.target.value); checkInputs(e.target.id, e.target.value)}} required />
+              <label id="label-firstName" className="label-name">Nombre del Estudiante</label>
             </div>
 
             <div className="form-input">
-              <input type="text" id="apellidos" name="lastName" autoComplete="off"
-                onChange={e => setLastName(e.target.value)} required />
-              <label className="label-name">Apellido del Estudiante</label>
+              <input type="text" id="lastName" name="lastName" autoComplete="off"
+                onChange={e => {setLastName(e.target.value); checkInputs(e.target.id, e.target.value)}} required />
+              <label id="label-lastName" className="label-name">Apellido del Estudiante</label>
             </div>
 
             <div className="form-input-select">

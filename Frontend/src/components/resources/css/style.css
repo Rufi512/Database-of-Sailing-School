@@ -147,7 +147,7 @@ flex-direction:row;
 }
 
 
-.btn{
+.btn,.btn-history{
     color: black;
     background-color:white;
     border-style: none;
@@ -163,23 +163,23 @@ flex-direction:row;
   }
 
 .btn-confirm{
-  background-color: #46f9ad !important;
-  color: #15201c !important;
+  background-color: #38af7d !important;
+    color: #fbfbfb !important;
 }
 
 .btn-confirm:hover{
-    background-color: #3dd592 !important;
+    background-color: #228a5c !important;
     transition: 1s;
 }
 
 .btn-cancel{
-    background-color: #E33B3B !important;
-    color:#200606 !important;
+    background-color: #e43737 !important;
+    color: #f9f9f9 !important;
 }
 
 
 .btn-cancel:hover {
-    background-color: #f93232 !important;
+    background-color: #d63535 !important;
     transition: 1s;
 
 }
@@ -218,6 +218,11 @@ flex-direction:row;
         margin-left: 4px;
 }
 
+.btn-active-history{
+  color: #fffefe;
+    background-color: #289cf9;
+}
+
 /*Tabla de Estudiantes*/
 
 .tableMaterial {
@@ -227,6 +232,10 @@ flex-direction:row;
     display: flex;
     flex-direction: column;
     margin: auto;
+}
+
+.tableMaterial table{
+  border:none;
 }
 
 .tableMaterial select{
@@ -250,6 +259,16 @@ tr{
     padding-left: 0px;
 }
 
+.MTableToolbar-title-9{
+  width: 300px;
+  background-color: none;
+    height: 64px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    color:black;
+}
+
 .MTableToolbar-spacer-7 {
     display: contents;
 }
@@ -269,4 +288,17 @@ color:whitesmoke;
 .MuiButtonBase-root .MuiTableSortLabel-root:hover{
     color:white;
     cursor: poiner;
+}
+
+/*CheckBoxs*/
+.MuiSvgIcon-root{
+  fill: #000000 !important;
+}
+
+.MuiCheckbox-colorSecondary.Mui-checked {
+    color: #4a4a4a !important;
+}
+/*general styles*/
+select{
+  outline:0;
 }

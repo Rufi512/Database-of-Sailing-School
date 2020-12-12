@@ -1,7 +1,17 @@
 import React, {useState, useEffect} from 'react'
 
-export const displayPopup = (status) => {
-  const displayPopup = document.querySelector('.popup')
+export const displayPopup = (status,zone) => {
+  document.querySelector('.popup').style.transform = 'translateY(-110%)'
+  
+  let Zone = null
+  if(zone !== undefined || zone !== null || zone !== ""){
+    Zone=zone
+  }
+  if(zone === undefined){
+    Zone = '.popup'
+  }
+
+  const displayPopup = document.querySelector(Zone)
   displayPopup.style.transform = 'translateY(-110%)'
 
   setTimeout(() => {
@@ -11,7 +21,7 @@ export const displayPopup = (status) => {
   if(status === 'received'){
   setTimeout(()=>{
     displayPopup.style.transform = 'translateY(-110%)'
-  },6000)    
+  },5000)    
 }
 
  if(status === 'hidden'){
@@ -35,14 +45,16 @@ export const displayAlert = (value) =>{
 
 export const Popup = (props) => {
   const [popupText, setPopupText] = useState("")
+  const [zone,setZone] = useState("")
   const [type, setType] = useState("")
   useEffect(() => {
     setPopupText(props.popup.text)
     setType(props.popup.type)
+    setZone(props.zone)
   }, [props]);
 
   return (
-    <div className={`popup ${type ? type : ''}`}>
+    <div className={`popup ${type ? type : ''} ${zone ? zone:''}`}>
       <p>{popupText ? popupText : ''}</p>
     </div>
   )
@@ -51,21 +63,31 @@ export const Popup = (props) => {
 
 export const Alert = (props) => {
   const [alerts, setAlerts] = useState("")
+  
   useEffect(()=>{
     setAlerts(props.alert)
+    
+
+
+   
   },[props])
 
   return (
     <div className="alert">
       <div>
         <p style={{textAlign:'center'}}>{alerts ? alerts : ''}  </p>
-        <div className="buttons-container"><button className="btn btn-cancel" onClick={(e)=>{displayAlert(false)}}>Cancelar</button> <button className="btn btn-confirm" onClick={(e)=>{props.actions(props.confirm)}}>Continuar</button></div>
+        <div className="buttons-container">
+          <button className="btn btn-cancel" onClick={(e)=>{displayAlert(false)}}>Cancelar</button>
+          <button className="btn btn-confirm" onClick={(e)=>{
+            if(props.nameActions === "upgradeAndDegrade"){
+                props.upgradeAndDegrade(props.confirm)  
+            }
+            if(props.nameActions === "delete"){
+                props.deleteStudent(props.confirm)
+            } 
+        }}>Continuar</button></div>
       </div>
     </div>
   )
 
 }
-
-
-
-

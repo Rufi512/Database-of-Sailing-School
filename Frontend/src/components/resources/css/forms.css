@@ -1,5 +1,9 @@
 /*Registro Notas/Estudiantes*/
 
+table{
+  border: 1px solid black
+}
+
 .container-boxs {
     position: absolute;
     width: 100%;
@@ -87,12 +91,21 @@
     border-bottom-color: #4bbafa
 }
 
-.form-input input:focus+.label-name,
-.form-input input:valid+.label-name {
-    transform: translateY(-30px);
-    font-size: 14px;
+.form-input input:empty+.label-name{
+ transform: translateY(0px) ;
+    font-size: 16px ;
 }
 
+
+.input-active{
+    transform: translateY(-30px) !important;
+    font-size: 14px !important;
+  }
+
+.form-input input:focus+.label-name{
+    transform: translateY(-30px);
+    font-size: 14px;
+  }
 
 .form-input-select select {
     margin-top: 15px;
@@ -131,7 +144,9 @@
     z-index: 0;
 }
 
-
+.container form select{
+  background:none;
+}
 
 /*Student-Information*/
 .container-student{
@@ -342,6 +357,37 @@
     height: 300px;
     outline: none;
     resize: none;
+}
+
+
+/*History*/
+.view-history{
+  position:relative;
+  display:none;
+}
+
+.slide-history{
+display:flex;
+transform:translate3d(0,0,0);
+overflow: hidden;
+}
+
+.container-history{
+  position: relative;
+display: flex;
+flex-direction: column;
+flex-shrink: 0;
+flex-grow: 0;
+width: 100%;
+align-content: center;
+align-items: center;
+transform: translateX(0%);
+}
+
+.alert-history{
+  text-align:center;
+  background-color:white;
+  width:90%;
 }
 
 /*Break Point*/

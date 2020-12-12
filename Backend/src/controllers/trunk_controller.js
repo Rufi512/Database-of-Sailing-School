@@ -1,4 +1,4 @@
-const trunk = require('../models/trunk')
+/*const trunk = require('../models/trunk')
 const students = require('../models/students')
 
 module.exports = {
@@ -51,17 +51,14 @@ module.exports = {
     }
 
     trunkReg._id = student.id;
-    (trunkReg.ci = student.ci),
-      (trunkReg.firstName = student.firstName),
-      (trunkReg.lastName = student.lastName),
-      await trunkReg.save();
+    await trunkReg.save();
   },
 
   //Guarda al estudiante ya registrado en el chest sus notas
 
-  saveonChest: async function (id, school_year) {
+  saveSchoolYear: async function (id, school_year) {
     const student = await students.findById(id);
-    const {ci, firstName, lastName, commits} = student
+    const {commits} = student
     const academic_information = {
       school_year: student.school_year,
       subjects: student.subjects,
@@ -70,13 +67,10 @@ module.exports = {
     switch (school_year) {
       case "1-A":
       case "1-B": {
-        await trunk.updateOne(
+        await students.updateOne(
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
               "record.0": academic_information,
               "comments.0": commits
             },
@@ -91,9 +85,6 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
               "record.1": academic_information,
               "comments.1": commits
             },
@@ -108,9 +99,6 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
               "record.2": academic_information,
               "comments.2": commits
             },
@@ -125,9 +113,6 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
               "record.3": academic_information,
               "comments.3": commits
             },
@@ -142,9 +127,6 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
               "record.4": academic_information,
               "comments.4": commits
             },
@@ -159,7 +141,7 @@ module.exports = {
 
   eraseOnChest: async function (id) {
     const student = await students.findById(id)
-    const {ci, firstName, lastName, school_year} = student
+    const {school_year} = student
 
     switch (school_year) {
       case "2-A":
@@ -168,11 +150,8 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
-              "record.0": null,
-              "comments.0": null
+              "record.0": [],
+              "comments.0": []
             },
           }
         );
@@ -185,11 +164,8 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
-              "record.1": null,
-              "comments.1": null
+              "record.1": [],
+              "comments.1": []
             },
           }
         );
@@ -202,11 +178,8 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
-              "record.2": null,
-              "comments.2": null
+              "record.2": [],
+              "comments.2": []
             },
           }
         );
@@ -219,11 +192,8 @@ module.exports = {
           {_id: id},
           {
             $set: {
-              ci: ci,
-              firstName: firstName,
-              lastName: lastName,
-              "record.3": null,
-              "comments.3": null
+              "record.3": [],
+              "comments.3": []
             },
           }
         );
@@ -233,7 +203,4 @@ module.exports = {
 
 
   }
-}
-
-
-
+}*/
