@@ -75,9 +75,50 @@ body {
 
 
 .a {
+    color:white;
     text-decoration: none;
 }
 
+/*Sidebar*/
+.sidebar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color:#1f1f1f;
+    color:white;
+  }
+
+  .sidebar div ul{
+    display: flex;
+    list-style: none;
+    padding: 0;
+  }
+
+  .sidebar div ul li{
+    margin: 0 5px;
+    padding: 2px 5px;
+    cursor:pointer;
+    transition: all 0.5s ease;
+  }
+
+  .sidebar div ul li:hover,.sidebar-tag-active{
+    background-color:#443f3d;
+  }
+
+  .sidebar div:last-child{
+    display:inline-flex;
+    align-items:center;
+  }
+  
+  .sidebar div:last-child h2{
+    margin-right:10px;
+  }
+
+  .sidebar div:last-child img{
+   width:70px;
+   height:70px;
+   border-radius:100%;
+  }
 /*alerts,popups and errors*/
 .alert{
   position: fixed;
@@ -189,11 +230,25 @@ flex-direction:row;
   color:white !important;
 }
 
-.buttons-upgrade-degrade{
-    display: flex;
-    justify-content: space-between;
-    margin: 0px 5px;
+.btn-floating{
+  position:fixed;
+  right:0;
+  background-color: #000000cc;
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  justify-content: space-around;
+  margin: 0px 5px;
+  right: -5px;
+  transform:translateX(100%);
+  z-index:10000;
+  transition: all 0.5s ease;
+ 
 }
+
+
+
+
 
 .buttons-upgrade-degrade .btn{
   background-color:snow;
@@ -222,6 +277,41 @@ flex-direction:row;
   color: #fffefe;
     background-color: #289cf9;
 }
+
+.options-student{
+  margin-top:30px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/*Buttons Student Info*/
+.buttons-actions{
+  background-color:#ffffff;
+  margin: auto;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.buttons-actions div{
+  display:flex;
+  padding: 0px 10px;
+  cursor: pointer;
+  transition:all 0.5s ease;
+}
+
+.buttons-actions div:hover{
+  background-color:#d2d2d2;
+}
+
+.buttons-actions div img{
+  width:32px;
+  margin-right: 10px;
+}
+
+
 
 /*Tabla de Estudiantes*/
 

@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react'
+import {academicInformation} from '../API'
 import { Formik, Form, Field , FieldArray} from 'formik';
-import axios from 'axios';
-import {changeEdit} from './SomethingFunctions';
+import {changeView} from './SomethingFunctions';
 import { Popup, displayPopup } from '../components/Alerts'
 
 
@@ -29,14 +29,16 @@ async function handleForm(values){
 	const {request} = data 
 	const status = statusStudent
 	const {ci,firstName,lastName,subjects} = values
-	const res = await axios.put('http://localhost:8080/student/Form/' + data.id,{ci,firstName,lastName,subjects,status})
-	if(res.status === 200){
+  const information ={ci,firstName,lastName,subjects,status}
+	const result = await academicInformation(data.id,information)
+    if(result === true){
 		request(data.id)
-		changeEdit(false)
+		changeView('general')
     setPopup({text:'Informacion actualizada',type:'pass'})
     displayPopup('received','.popupFormAcademic')
 	}else{
-		console.log('ha ocurrido un fucking error!')
+		setPopup({text:'Error al conectar al servidor',type:'error'})
+    displayPopup('error','.popupFormAcademic')
 	}
 
     
@@ -50,6 +52,10 @@ function statusButton(){
 		setStatus(true)
 	}
 }
+
+if(props.school_year === "Graduado"){
+  return( <div className="container-student edit-information"> </div>)
+}else{
 
 	return (
 			<React.Fragment>
@@ -74,7 +80,7 @@ function statusButton(){
      >
         <Form style={{margin:'auto',width:'100%'}}>
         <div className="buttons-container" style={{width:'100%',display:'inline-flex',justifyContent:'space-around',marginBottom:'15px'}}>
-                    <button className="btn" type="button" onClick={(e) => { changeEdit(false) }}>Regresar</button>
+                    <button className="btn" type="button" onClick={(e) => { changeView('general') }}>Regresar</button>
                     <button className="btn btn-confirm" type="submit">Actualizar</button>
                 </div>
  
@@ -159,6 +165,7 @@ function statusButton(){
 			
 
 		)
+}
 }
 
 

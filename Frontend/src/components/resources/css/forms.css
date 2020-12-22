@@ -5,13 +5,11 @@ table{
 }
 
 .container-boxs {
-    position: absolute;
+    position: relative;
     width: 100%;
-    top: 0;
-    bottom: 0;
     display: flex;
     flex-flow: wrap;
-    margin: auto;
+    margin: 10px 0;
 }
 
 .container,
@@ -363,7 +361,7 @@ table{
 /*History*/
 .view-history{
   position:relative;
-  display:none;
+  display:none; 
 }
 
 .slide-history{

@@ -74,7 +74,6 @@ students.createStudent = async (req, res) => {
 
 //Registro de estudiantes masivo
 students.createStudents = (req, res) => {
-    
     const archive = req.file.path
     fs.createReadStream(archive)
         .pipe(csv.parse({ headers: true }))
@@ -128,7 +127,10 @@ students.createStudents = (req, res) => {
             })
         })
 
-        .on('end', () =>{ 
+        .on('end', async () =>{
+          await fs.unlink('./public/csv/'+req.file.originalname, (err)=>{
+		console.log(err)
+	});
            res.json('Todos los estudiantes del archivo CSV añadidos')
     });
 

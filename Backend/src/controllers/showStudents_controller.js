@@ -4,12 +4,12 @@ const show = {}
 
 //Lista de estudiantes
 show.showStudentsActive = async (req, res) => {
-  const student = await students.find({'status': true}).sort({_id: -1})
+  const student = await students.find({'status': true,'school_year':{$ne:'Graduado'}}).sort({_id: -1})
   res.json(student)
 }
 
 show.showStudentsInactive = async (req, res) => {
-  const student = await students.find({'status': false}).sort({_id: -1})
+  const student = await students.find({'status': false,'school_year':{$ne:'Graduado'}}).sort({_id: -1})
   res.json(student)
 }
 

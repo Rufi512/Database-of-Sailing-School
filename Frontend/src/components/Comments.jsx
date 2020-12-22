@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import {deleteComments} from '../API.js'
 import trashSvg from '../components/resources/icons/trash-solid.svg'
 
 export const Comments = (props) => {
   const [commits, setCommits] = useState(null)
   const [studentInfo, setStudentInfo] = useState(false)
-
+  const [gradue, setGradue] = useState("")
   useEffect(() => {
     setCommits(props.comments)
     if (props.comments === [] || props.comments === undefined || props.comments.length === 0) {
@@ -14,18 +14,21 @@ export const Comments = (props) => {
       setCommits(props.comments)
     }
     setStudentInfo(props.studentInfo)
+    setGradue(props.gradue)
+
   }, [props])
 
 
   //Borra los comentarios
   async function deleteComment(index) {
-    const res = await axios.post('http://localhost:8080/student/deleteCommit/' + props.id, {index})
-    if (res.status === 200) {
+    const result = await deleteComments(props.id, index)
+    if (result === true) {
       props.actions(props.id)
-    } else {
-      console.log('Error')
     }
+  }
 
+  if (gradue === "Graduado" && commits === null && studentInfo === true) {
+    return ('')
   }
 
   if (commits === null && studentInfo === false) {
@@ -97,6 +100,10 @@ export const Comments = (props) => {
       </React.Fragment>
     )
 
+
+
   }
+
+
 
 }

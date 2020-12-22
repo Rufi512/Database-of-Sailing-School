@@ -14,6 +14,11 @@ export const InfoAcademic = (props) =>{
             <p>La informacion solicitada aun no esta disponible!</p>
       </div>
     )}
+  if(subjects === null){
+    return(
+   '' 
+    )
+  }
   return(
 <table className="student-notes">
           <thead>

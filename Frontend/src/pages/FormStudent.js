@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
+import {registerStudent} from '../API'
+import {Navbar} from '../components/Navbar'
 import {Popup, displayPopup} from '../components/Alerts'
 import {checkInputs} from '../components/SomethingFunctions'
 import '../components/resources/css/forms.css'
@@ -17,20 +19,16 @@ const FormStudent = () => {
 
 
   async function handleSubmit(e) {
-    let result = null
     e.preventDefault();
     displayPopup();
     setPopup({text: 'Enviando informacion', type: 'request'})
-    const res = await axios.post('http://localhost:8080/regStudent', {ci, firstName, lastName, school_year})
-      .catch((err) => {
-        result = err;
-      });
-
-    if (result) {
+    const student = {ci,firstName,lastName,school_year}
+    const result = await registerStudent(student)    
+    if (result === false) {
       displayPopup();
       setPopup({text: 'Error al conectar al servidor', type: 'error'})
     } else {
-      if (res.data === 'null') {
+      if (result === 'register') {
         setPopup({text: 'Estudiante registrado correctamente', type: 'pass'})
         displayPopup('received')
       } else {
@@ -48,11 +46,13 @@ const FormStudent = () => {
 
   async function handleSubmitFile(e) {
     e.preventDefault()
+    displayPopup();
+    setPopup({text: 'Enviando informacion', type: 'request'})
     const file = csv
     let formData = new FormData();
     formData.append('students', file);
     console.log(csv)
-    const res = await axios.post('http://localhost:8080/regStudents', formData)
+    const res = await axios.post('/regStudents', formData)
     if (res.status === 200) {
       setPopup({text: 'Estudiantes registrados correctamente', type: 'pass'})
       displayPopup('received')
@@ -67,7 +67,7 @@ const FormStudent = () => {
 
   return (
     <div>
-
+      <Navbar active={1} />
       <Popup popup={popup} />
 
       <div className="container-boxs">

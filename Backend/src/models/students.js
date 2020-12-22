@@ -9,8 +9,8 @@ const studentSchema = new Schema({
   last_modify: {type: String},
   comments: {type: Array},
   status: {type: Boolean, "default": true},
-  record: {type: Array, "default": [[], [], [], [], []]},
-  annualComments: {type: Array, "default": [[], [], [], [], []]}
+  record: {type: Array, "default": [null, null, null, null, null]},
+  annualComments: {type: Array, "default": [null, null, null, null, null]}
 })
 
 module.exports = model('student', studentSchema)

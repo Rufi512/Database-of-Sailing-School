@@ -1,15 +1,15 @@
 const express = require('express');
-const path = require('path')
-const morgan = require('morgan')
-const cors = require('cors')
-const multer = require('multer')
+const path = require('path');
+const morgan = require('morgan');
+const cors = require('cors');
+const multer = require('multer');
 const app = express();
 
 //initialization
 require('./database')
 
 //Settings
-app.set('port',8080)
+app.set('port',(process.env.PORT || 8080))
 
 //middlewares
 app.use(morgan('dev'))
@@ -41,5 +41,5 @@ app.use(express.static(path.join(__dirname, 'public')))
 //Initialization server
 
 app.listen(app.get('port'),()=>{
-	console.log('servidor iniciado en puerto: ' + app.get('port'));
+	console.log('server on port: ' + app.get('port'));
 })

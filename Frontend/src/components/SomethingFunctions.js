@@ -1,16 +1,3 @@
-
-export const changeEdit = (value) => {
-  const container = document.querySelector('.view-information')
-  const containerEdit = document.querySelector('.edit-information')
-  if (value === true) {
-    container.style.display = "none"
-    containerEdit.style.display = 'flex'
-  } else {
-    container.style.display = "flex"
-    containerEdit.style.display = 'none'
-  }
-}
-
 //muestra la pantalla para comentar
 
 export const screenComment = (value) => {
@@ -33,16 +20,32 @@ export const screenComment = (value) => {
 
 }
 
-//Muestra historial del estudiante
-export const viewHistory = (value)=>{
+//Muestra historial y edición del estudiante
+export const changeView = (value,gradue)=>{
  const container = document.querySelector('.view-information')
   const containerHistory = document.querySelector('.view-history')
-  if (value === true) {
-    container.style.display = "none"
-    containerHistory.style.display = 'flex'
-  } else {
-    container.style.display = "flex"
-    containerHistory.style.display = 'none'
+ const containerEdit = document.querySelector('.edit-information')
+
+  if(gradue === 'Graduado'){
+    return
+  }
+
+  if(value === 'edit'){
+    containerEdit.style.display = 'flex';
+    container.style.display = 'none';
+    containerHistory.style.display = 'none';
+  }
+
+  if(value === 'history'){
+    containerEdit.style.display = 'none';
+    container.style.display = 'none';
+    containerHistory.style.display = 'flex';
+  }
+ 
+  if(value === 'general'){
+    containerEdit.style.display = 'none';
+    container.style.display = 'flex';
+    containerHistory.style.display = 'none';
   }
 
 }

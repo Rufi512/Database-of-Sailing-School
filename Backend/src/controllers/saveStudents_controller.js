@@ -32,6 +32,8 @@ module.exports = {
       school_year: student.school_year,
       subjects: student.subjects,
     };
+
+
     switch (student.school_year) {
       case '1-A':
         {
@@ -166,6 +168,7 @@ module.exports = {
             {_id: id},
             {
               $set: {
+                status:false,
                 "record.4": academic_information,
                 "annualComments.4": comments
               },
@@ -186,14 +189,12 @@ module.exports = {
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")
       }
     })
-    console.log('Estudiante Actualizado con nuevo grado')
-
   },
 
   degrade: async function (id) {
     const student = await students.findById(id)
     if (student.school_year === '1-A' || student.school_year === '1-B') {
-      return console.log('No se puede degradar mas al estudiantes:' + student.firstName)
+      return console.log('No se puede degradar mas al estudiante:' + student.firstName)
     }
     switch (student.school_year) {
 
@@ -203,8 +204,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.0": [],
-                "annualComments.0": []
+                "record.0": null,
+                "annualComments.0": null
               },
             }
           );
@@ -218,8 +219,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.0": [],
-                "annualComments.0": []
+                "record.0": null,
+                "annualComments.0": null
               },
             }
           );
@@ -235,8 +236,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.1": [],
-                "annualComments.1": []
+                "record.1": null,
+                "annualComments.1": null
               },
             }
           );
@@ -250,8 +251,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.1": [],
-                "annualComments.1": []
+                "record.1": null,
+                "annualComments.1": null
               },
             }
           );
@@ -267,8 +268,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.2": [],
-                "annualComments.2": []
+                "record.2": null,
+                "annualComments.2": null
               },
             }
           );
@@ -282,8 +283,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.2": [],
-                "annualComments.2": []
+                "record.2": null,
+                "annualComments.2": null
               },
             }
           );
@@ -297,8 +298,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.3": [],
-                "annualComments.3": []
+                "record.3": null,
+                "annualComments.3": null
               },
             }
           );
@@ -312,8 +313,8 @@ module.exports = {
             {_id: id},
             {
               $set: {
-                "record.3": [],
-                "annualComments.3": []
+                "record.3": null,
+                "annualComments.3": null
               },
             }
           );
@@ -332,8 +333,6 @@ module.exports = {
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")
       }
     })
-    console.log('Estudiante Degradado')
-
   },
 
   //Actualiza al estudiante (Solo Cedula,nombre,apellido,sus notas de las materias y estado)
