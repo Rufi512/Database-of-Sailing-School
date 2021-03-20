@@ -1,0 +1,548 @@
+/*Login*/
+
+.container-login {
+  background: #f7f7f7;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+  border-radius: 5px;
+  padding: 30px 0;
+  max-width: 600px;
+}
+
+.container-login form {
+  width: 95%;
+}
+
+.container-login form div {
+  margin: 45px 0;
+}
+
+.container-login .form-input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-login .form-input div {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.container-login .form-input div img {
+  position: absolute;
+  right: 0;
+}
+
+.container-login .form-input div input {
+  width: 91%;
+  padding-right: 9%;
+}
+
+.container-login .form-input label {
+  font-weight: 700;
+}
+
+.container-login .form-input input {
+  border: none;
+  background: none;
+  outline: 0;
+  padding-top: 5px;
+  height: 25px;
+  font-size: 16px;
+  border-bottom: 2px solid #8e8e8e;
+  transition: all 0.3s;
+}
+
+.container-login .form-input input:focus {
+  border-bottom-color: #2171b5;
+}
+
+.input-password {
+  position: relative;
+  display: flex;
+}
+
+.input-password img {
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.input-password input {
+  width: 91%;
+  padding-right: 9%;
+}
+
+/*Registro Notas/Estudiantes*/
+
+table {
+  border: 1px solid black;
+}
+
+.container-boxs {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: wrap;
+  margin: 10px 0;
+}
+
+.container,
+.container-csv {
+  position: relative;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+  justify-content: center;
+  width: 90%;
+  max-width: 500px;
+  height: auto;
+  padding: 10px;
+  border-radius: 28px;
+  background-color: white;
+  box-shadow: 0px 5px 18px 2px #7595d0;
+}
+
+.container-csv {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.container h2 {
+  display: flex;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}
+
+.container form .form-input,
+.form-input-select {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.form-input-select {
+  margin: 5px 0;
+}
+
+.container .form-input input {
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  outline: none;
+  font-size: 16px;
+  background-color: #f0f8ff00;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.container .form-input .label-name {
+  position: absolute;
+  transition: all 0.23s ease;
+}
+
+.container .form-input input:focus {
+  border-bottom-color: #4bbafa;
+}
+
+.container .form-input input:empty + .label-name {
+  transform: translateY(0px);
+  font-size: 16px;
+}
+
+.container .input-active {
+  transform: translateY(-30px) !important;
+  font-size: 14px !important;
+}
+
+.container .form-input input:focus + .label-name {
+  transform: translateY(-30px);
+  font-size: 14px;
+}
+
+.container .form-input-select select {
+  margin-top: 15px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom-width: 2px;
+  outline: none;
+}
+
+.container .form-input input:valid {
+  border-bottom-color: #43e88b;
+}
+
+/*Edit StudentPage*/
+.container-table,
+.container-form-table {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.container-table {
+  visibility: visible;
+  z-index: 1;
+}
+
+.container-form-table {
+  visibility: collapse;
+  z-index: 0;
+}
+
+.container form select {
+  background: none;
+}
+
+/*Student-Information*/
+.container-student {
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: 70px auto;
+  width: 80%;
+  max-width: 1300px;
+  flex-direction: column;
+}
+
+.container-student h2 {
+  text-align: center;
+  margin: 0;
+  color: #131313;
+  padding: 10px 10px;
+}
+
+.container-student table {
+  width: 100%;
+  background-color: #ffffff;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  margin: 0px auto;
+}
+
+.container-student thead tr {
+  background-color: #f1f1f1;
+  color: #040404;
+  text-align: center;
+}
+
+.container-student table th,
+td {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.container-student table tbody tr {
+  border-bottom: 1px solid #171717;
+}
+
+.student-general th,
+.student-general td {
+  border: 1px solid #171717;
+}
+
+.student-notes td,
+.student-notes th {
+  border: 1px solid #171717;
+}
+
+.student-general thead th,
+.student-notes thead th {
+  font-weight: 600;
+}
+
+.time-edit {
+  margin-top: 5px;
+}
+
+.view-information {
+  display: flex;
+}
+
+.edit-information {
+  margin: 0 auto !important;
+  display: none;
+}
+
+/*Commits*/
+.box-comment {
+  display: flex;
+  flex-direction: column;
+}
+
+.box-comment .commit {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  background-color: whitesmoke;
+  margin: 10px 5px;
+}
+
+.box-comment .commit div:nth-child(1) span {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.box-comment .commit div:nth-child(1) p:nth-child(3) {
+  font-size: 12px;
+}
+
+.box-comment .commit div:nth-child(2) {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.icon {
+  width: 24px;
+  cursor: pointer;
+}
+
+.tooltip {
+  position: relative;
+  background-color: black;
+  color: white;
+  font-size: 14px;
+  border-radius: 100px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  opacity: 0%;
+  visibility: collapse;
+  transition: 0.2s ease;
+  z-index: 1;
+}
+
+.tooltip:after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 15px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  transform: translateY(-20%) rotate(45deg);
+  z-index: -1;
+  background-color: black;
+}
+
+.icon:hover + .tooltip {
+  opacity: 100%;
+  visibility: visible;
+}
+
+.button-comment {
+  background-color: #288bfb;
+  color: white;
+  border: none;
+  padding: 12px 10px;
+  border-radius: 8px;
+  outline: 0;
+  cursor: pointer;
+}
+
+.screen-back {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #0000007c;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  visibility: collapse;
+  opacity: 0%;
+  transition: all 0.25s ease;
+}
+
+.screen-comment {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 94%;
+  height: 300px;
+  max-width: 500px;
+  padding: 15px;
+  background-color: white;
+  z-index: 2;
+  margin: auto;
+  visibility: collapse;
+  opacity: 0%;
+  transition: all 0.25s ease;
+}
+
+.screen-comment div {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.screen-comment div button {
+  margin: 5px 2px;
+}
+
+.screen-comment textarea {
+  height: 300px;
+  outline: none;
+  resize: none;
+}
+
+/*History*/
+.view-history {
+  position: relative;
+  display: none;
+}
+
+.slide-history {
+  display: flex;
+  transform: translate3d(0, 0, 0);
+  overflow: hidden;
+}
+
+.container-history {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-grow: 0;
+  width: 100%;
+  align-content: center;
+  align-items: center;
+  transform: translateX(0%);
+}
+
+.alert-history {
+  text-align: center;
+  background-color: white;
+  width: 90%;
+}
+
+/*Break Point*/
+@media (max-width: 1040px) {
+  .container-csv {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 937px) {
+  .container-csv {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container,
+  .container-csv {
+    width: 80%;
+    border-radius: 5px;
+    margin: 10px auto;
+  }
+
+  .container h2,
+  .container-csv h2 {
+    font-size: 18px;
+  }
+
+  .container .form-input input:empty + .label-name {
+    font-size: 14px;
+  }
+
+  .container form {
+    width: 90%;
+  }
+
+  .container-student {
+    width: 98%;
+  }
+
+  .container .form-input input:focus + .label-name {
+    font-size: 12px;
+  }
+
+  .form-input-select label {
+    font-size: 14px;
+  }
+
+  .container .input-active {
+    transform: translateY(-30px) !important;
+    font-size: 12px !important;
+  }
+
+  .student-general tr td input {
+    width: 50px !important;
+  }
+}
+
+@media (max-width: 565px) {
+  .container-login {
+    height: 100vh;
+    border-radius: 0px;
+  }
+}
+
+@media (max-width: 460px) {
+  .container-student table th td,
+  .container-student table th,
+  .container-student table td {
+    padding: 5px 0;
+  }
+
+  .student-general tr td input {
+    width: 40px !important;
+  }
+
+  .student-notes tbody tr td input {
+    width: 30px !important;
+  }
+
+  .container-student table,
+  .student-notes table {
+    font-size: 12px !important;
+  }
+
+  .buttons-actions div {
+    font-size: 12px;
+  }
+
+  .buttons-actions div img {
+    width: 15px !important;
+  }
+}

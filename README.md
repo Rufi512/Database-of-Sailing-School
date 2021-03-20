@@ -1,10 +1,10 @@
-# Database-School
+# Database of Sailing School
 
 ## En desarrollo
 
 Aplicación Stack MERN para registrar, consultar, modificar las calificaciones de los estudiantes
 
-<img src="https://github.com/Rufi512/Database-School/blob/master/Capture.png" />
+<img src="https://github.com/Rufi512/Database-of-Sailing-School/blob/master/Capture.png" />
 
 ### Objetivos
 
@@ -16,17 +16,20 @@ Aplicación Stack MERN para registrar, consultar, modificar las calificaciones d
 
 * Exportar las calificaciones de cada alumno en PDF
 
+* Aspectos mínimos de seguridad
+
 ### Como ejecutar
 
 1.Instala las dependencias:
 ```
-cd Backend
+cd backend
 npm i
+```
 
-cd ../Frontend
+y las del frontend
+```
+cd frontend
 npm i
-
-
 ```
 
 2.Ejecutar:
@@ -38,16 +41,14 @@ mongod
 ```
 
 
-* Backend
-```
-cd Backend
-npm run server
+* Backend: 
 
 ```
-
-* Frontend
+npm run dev
 ```
-cd Frontend
+
+* Frontend:
+
+```
 npm run start
-
 ```
