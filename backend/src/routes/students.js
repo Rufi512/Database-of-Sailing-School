@@ -1,32 +1,41 @@
 import {Router} from 'express'
+import * as usersCtrl from '../controllers/user_controller'
+import {authJwt} from '../middlewares'
 import * as studentCtrl from '../controllers/students_controller'
 
 const router = Router()
 
-router.get('/actives', studentCtrl.active) //lista de estudiantes activos
+//GET
 
-router.get('/inactives', studentCtrl.inactive) //lista de estudiantes inactivos
+router.get('/actives', [authJwt.verifyToken], studentCtrl.active) //lista de estudiantes activos
 
-router.get('/gradues', studentCtrl.gradues) // lista de estudiantes graduados
+router.get('/inactives', [authJwt.verifyToken], studentCtrl.inactive) //lista de estudiantes inactivos
 
-router.get('/info/:id', studentCtrl.showStudent) //Muestra informacion del estudiante
+router.get('/gradues', [authJwt.verifyToken], studentCtrl.gradues) // lista de estudiantes graduados
 
-router.post('/register', studentCtrl.createStudent) //Recibe formulario
+router.get('/info/:id', [authJwt.verifyToken],  studentCtrl.showStudent) //Muestra informacion del estudiante
 
-router.post('/register/file', studentCtrl.createStudents) //Recibe csv
+//POST
 
-router.post('/comment/:id', studentCtrl.commentStudent)  // Añade comentario al estudiante
+router.post('/register', [authJwt.verifyToken], studentCtrl.createStudent) //Recibe formulario
 
-router.put('/info/:id', studentCtrl.updateStudent) //Actualiza informacion del estudiante (Cedula,Nombre,Apellido y Notas)
+router.post('/register/file', [authJwt.verifyToken], studentCtrl.createStudents) //Recibe csv
 
-router.put('/graduate', studentCtrl.graduateStudent) //Gradua las estudiantes
+router.post('/comment/:id', [authJwt.verifyToken], studentCtrl.commentStudent)  // Añade comentario al estudiante
 
-router.put('/demote', studentCtrl.demoteStudent) //Gradua las estudiantes
+//PUT
 
-//delete
-router.post('/comment/delete/:id', studentCtrl.uncomment)  // Borra comentario al estudiante
+router.put('/info/:id', [authJwt.verifyToken], studentCtrl.updateStudent) //Actualiza informacion del estudiante (Cedula,Nombre,Apellido y Notas)
 
-router.post('/delete', studentCtrl.deleteStudents) // Borra al estudiantes de toda la base de datos
+router.put('/graduate', [authJwt.verifyToken,authJwt.isModerator], studentCtrl.graduateStudent) //Gradua las estudiantes
+
+router.put('/demote', [authJwt.verifyToken,authJwt.isModerator], studentCtrl.demoteStudent) //Gradua las estudiantes
+
+//DELETE
+
+router.post('/comment/delete/:id',[authJwt.verifyToken], studentCtrl.uncomment)  // Borra comentario al estudiante
+
+router.post('/delete', [authJwt.verifyToken,authJwt.isAdmin], studentCtrl.deleteStudents) // Borra al estudiantes de toda la base de datos
 
 
 export default router

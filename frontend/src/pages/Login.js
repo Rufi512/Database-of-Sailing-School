@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import eye from "../static/icons/eye.svg";
 import eyeClose from "../static/icons/eyeClose.svg";
+import boscoImg from '../static/logos/jb.jpg';
+import CarrouselImages from '../components/CarrouselImages'
+import Cookies from 'js-cookie'
+import { Popup, displayPopup } from "../components/Alerts";
+import {loginUser} from '../API'
+
 const Login = (props) => {
   const [user, setUser] = useState({});
   const [show, setShow] = useState(false);
+  const [popup, setPopup] = useState({});
+
 
   const hiddenPass = () => {
     if (show === true) {
@@ -11,25 +19,36 @@ const Login = (props) => {
     } else {
       setShow(true);
     }
-    console.log(show);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(user.password);
-    if(user.password === "12345"){
- 
-        props.history.push('/home')
+    const res = await loginUser(user)
+    if (res.status === 200) {
+       Cookies.set('token', res.data.token);
+       Cookies.set('rol', res.data.rol);
+       window.location.href = '/home'
+    }
+     if (res.status >= 400){
+      setPopup({ text: res.data, type: "error" });
+      displayPopup("error", ".Login");
+    }
+     if (res.status >= 500){
+      setPopup({ text: 'Error al conectar con el servidor', type: "error" });
+      displayPopup("error", ".Login");
     }
   };
 
   return (
     <React.Fragment>
-      <div className="container-login">
-        <h2 style={{ textAlign: "center" , marginBottom:'40px', marginTop:'0px'}}>
-          Unidad Educativa Colegio Juan Bosco
-        </h2>
+    <Popup popup={popup} zone={"Login"} />
 
+    <div className="carrousel-imgs">
+          <CarrouselImages/>
+    </div>
+    
+      <div className="container-login">
+      <img src={boscoImg} alt="bosco"/>
         <form
           onSubmit={handleSubmit}
           style={{ width: "95%", display: "flex", flexDirection: "column" }}
@@ -40,8 +59,8 @@ const Login = (props) => {
             </label>
             <input
               type="text"
-              id="ci"
-              name="ci"
+              id="user"
+              name="user"
               autoComplete="off"
               onChange={(e) => {
                 setUser({ ...user, user: e.target.value });
@@ -74,6 +93,7 @@ const Login = (props) => {
             </div>
           </div>
           <p
+          onClick={(e)=>{alert('Estoy de adorno :p')}}
             style={{
               textAlign: "end",
               color: "#2d2d2d",
@@ -85,7 +105,7 @@ const Login = (props) => {
           </p>
 
           <button
-            style={{ marginTop: "50px" }}
+            style={{ marginTop: "10px" }}
             type="submit"
             className="btn btn-login"
           >

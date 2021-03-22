@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../static/img/logo.jpg";
+import logo from "../static/logos/logo.jpg";
+import Cookies from 'js-cookie'
 import { ReactComponent as CloseIcon } from "../static/icons/close.svg";
 import { ReactComponent as BarsIcon } from "../static/icons/bars-solid.svg";
 export const Navbar = (props) => {
@@ -76,12 +77,18 @@ export const Navbar = (props) => {
                 Lista de estudiantes
               </li>{" "}
             </Link>
+            <Link className="a" to="/control" onClick={(e)=>{document.getElementsByTagName("body")[0].style.overflowY = "unset";}}>
             <li className={`${props.active === 3 ? "sidebar-tag-active" : ""}`}>
               Administración
             </li>
+            </Link>
+
+            <Link className="a" to="/" onClick={(e)=>{document.getElementsByTagName("body")[0].style.overflowY = "unset"; Cookies.remove('token'); Cookies.remove('rol')}}>
             <li className={`${props.active === 4 ? "sidebar-tag-active" : ""}`}>
               Salir de la sesión
             </li>
+            </Link>
+
           </ul>
         </div>
         <div>

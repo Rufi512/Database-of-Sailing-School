@@ -71,12 +71,14 @@ const Students = (props) => {
     if (upgrade === true && active === true) {
       const result = await gradeStudent("upgrade", ids);
 
-    
+      if(result.status === 200){
+        request(listStudent);
+        setPopup({ text: result.data, type: "pass" });
+      }
 
       if (result.status >= 400) {
         request(listStudent);
         setPopup({ text: result.data, type: "error" });
-        displayPopup("received");
       }
 
       if (result.status >= 500) {
@@ -85,21 +87,24 @@ const Students = (props) => {
           text: "Ah ocurrido un error al realizar la accion :(",
           type: "error",
         });
-        displayPopup("received");
+        
       }
+      displayPopup("received");
 
-        request(listStudent);
-        setPopup({ text: result.data, type: "pass" });
-        displayPopup("received");
+        
     }
 
     if (upgrade === false && active === true) {
       const result = await gradeStudent("degrade", ids);
 
+      if(result.status === 200){
+        request(listStudent);
+        setPopup({ text: result.data, type: "pass" });
+      }
+
       if (result.status >= 400) {
         request(listStudent);
         setPopup({ text: result.data, type: "error" });
-        displayPopup("received");
       }
 
       if (result.status >= 500) {
@@ -108,13 +113,11 @@ const Students = (props) => {
           text: "Ah ocurrido un error al realizar la accion :(",
           type: "error",
         });
-        displayPopup("received");
-      }
       
-        request(listStudent);
-        setPopup({ text: result.data, type: "pass" });
-        displayPopup("received");
+      }
 
+        displayPopup("received");
+      
     }
   };
 
@@ -128,18 +131,23 @@ const Students = (props) => {
       const result = await deleteStudents(ids);
       if (result.status === 200) {
         setPopup({ text: "Estudiantes Eliminados", type: "pass" });
-        displayPopup("received");
         request(listStudent);
-      } else {
-        setPopup({
-          text: "Ah ocurrido un error al realizar la accion :(",
-          type: "error",
-        });
-        displayPopup("received");
-      }
+      } 
+
+       if (result.status >= 400) {
+        setPopup({ text: result.data, type: "error" });
+        request(listStudent);
+      } 
+
+       if (result.status >= 500) {
+        setPopup({ text: "Ah ocurrido un error al realizar la accion :(", type: "error" });
+        request(listStudent);
+      } 
+
     }
     displayAlert(false);
     showHiddenSelect(false);
+    displayPopup("received");
   }
 
   const questionAction = async (value, nameAction) => {

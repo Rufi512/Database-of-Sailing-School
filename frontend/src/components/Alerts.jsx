@@ -14,6 +14,7 @@ export const displayPopup = (status, zone) => {
   const displayPopup = document.querySelector(Zone);
   displayPopup.style.transform = "translateY(-110%)";
 
+
   setTimeout(() => {
     displayPopup.style.transform = "translateY(0%)";
   }, 500);
@@ -22,6 +23,12 @@ export const displayPopup = (status, zone) => {
     setTimeout(() => {
       displayPopup.style.transform = "translateY(-110%)";
     }, 5000);
+  }
+
+  if (status === "error") {
+    setTimeout(() => {
+      displayPopup.style.transform = "translateY(-110%)";
+    }, 4000);
   }
 
   if (status === "hidden") {
@@ -72,7 +79,6 @@ export const Alert = (props) => {
         <p style={{ textAlign: "center" }}>{alerts ? alerts : ""} </p>
         <div className="buttons-container">
           <button
-           style={{margin: "2px 10px"}}
             className="btn btn-cancel"
             onClick={(e) => {
               displayAlert(false);
@@ -82,13 +88,15 @@ export const Alert = (props) => {
           </button>
           <button
             className="btn btn-confirm"
-            style={{margin: "2px 10px"}}
             onClick={(e) => {
               if (props.nameActions === "upgradeAndDegrade") {
                 props.upgradeAndDegrade(props.confirm);
               }
               if (props.nameActions === "delete") {
                 props.deleteStudent(props.confirm);
+              }
+              if (props.nameActions === "deleteUsers") {
+                props.deleteUsers(props.userDelete);
               }
             }}
           >

@@ -5,13 +5,14 @@ import cors  from 'cors';
 import multer  from 'multer';
 import students from './routes/students'
 import auth from './routes/auth'
-import {createRoles} from './libs/initialRoles'
+import user from './routes/user'
+import {initialSetup} from './libs/initialSetup'
 const app = express();
 
 
 //Settings
 app.set('port',(process.env.PORT || 8080))
-createRoles()
+initialSetup()
 //middlewares
 app.use(morgan('dev'))
 app.use(cors())
@@ -39,6 +40,7 @@ app.use(multer({fileFilter: function (req, file, cb) {
 //Routes
 app.use('/api/students',students)
 app.use('/api/auth',auth)
+app.use('/api/user',user)
 app.use(express.static(path.join(__dirname, 'public')))
 
 

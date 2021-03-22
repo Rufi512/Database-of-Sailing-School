@@ -35,6 +35,34 @@ body {
   color: #131313;
 }
 
+.carrousel-imgs{
+    position: fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    width: 100%;
+    height:100vh;
+    display: flex;
+    animation:100s slidein infinite linear;
+
+  }
+
+.carrousel-imgs img{
+  width: fit-content;
+  height:inherit;
+}
+
+@keyframes slidein {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-980%);
+  }
+}
+
 .boxs {
   margin-top: 100px;
   display: flex;
@@ -149,8 +177,11 @@ body {
 }
 
 .alert div div {
-  display: flex;
-  flex-direction: row;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: min-content;
+    flex-direction: column-reverse;
 }
 
 .alert div {
@@ -169,7 +200,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 10;
+  z-index: 1000;
   transform: translateY(-110%);
   transition: all 0.3s ease;
 }
@@ -195,6 +226,10 @@ body {
   margin: auto;
   display: flex;
   flex-flow: wrap;
+}
+
+.alert .buttons-container button{
+ margin: 5px 0;
 }
 
 .btn,
@@ -234,6 +269,8 @@ body {
   color: white;
   background: #2077bb;
   font-weight: 500;
+  width: 100px;
+  height: 30px;
 }
 
 .btn-login:hover {
@@ -427,6 +464,7 @@ select {
   outline: 0;
 }
 
+
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
@@ -526,8 +564,13 @@ select {
 
   /*Buttons*/
   .btn {
-    font-size: 14px;
+    font-size: 14px
   }
+
+  /*Carrousel Img*/
+
+  
+
 }
 
 @media (max-width: 747px) {

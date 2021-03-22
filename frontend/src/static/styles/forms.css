@@ -1,25 +1,37 @@
 /*Login*/
 
 .container-login {
+  position: relative;
   background: #f7f7f7;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 90%;
   align-content: center;
   justify-content: center;
   margin: auto;
   align-items: center;
   border-radius: 5px;
-  padding: 30px 0;
-  max-width: 600px;
+  padding: 5px 0;
+  max-width: 385px;
 }
 
+.container-login img:first-child {
+  width: 68px;
+  height: 70px;
+  position: absolute;
+  border-radius: 100%;
+  box-shadow: 0px 4px 8px 2px #98958c;
+  top: -35px;
+}
 .container-login form {
-  width: 95%;
+  background: white;
+  padding: 10px;
+  color: black;
+  width: 55%;
 }
 
 .container-login form div {
-  margin: 45px 0;
+  margin: 25px 0;
 }
 
 .container-login .form-input {
@@ -455,6 +467,135 @@ td {
   width: 90%;
 }
 
+/*Control Usuarios*/
+
+.control-users {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.users-container {
+  background: white;
+  width: 80%;
+  max-width: 650px;
+}
+
+.user {
+  display: flex;
+  padding: 8px;
+  border-bottom: 2px solid #797979;
+}
+
+.user p {
+  margin: 0;
+}
+
+.user-general {
+  display: flex;
+  flex: 1;
+}
+
+.user-information {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-information div p {
+  margin: 0 3px;
+}
+
+.buttons-container-user {
+  margin: auto;
+}
+
+.buttons-container-user button,
+.screen-edit-user form button,
+.button-register-user {
+  width: 65px;
+  height: 25px;
+  color: white;
+  border: none;
+  background: black;
+  border-radius: 4px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.user-information div {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.users-container table {
+  background: #808080;
+}
+
+.screen-edit-user {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000000ad;
+  width: 100%;
+  height: 100vh;
+  z-index: 10000;
+  color: white;
+  overflow-y: auto;
+  overflow-x: hidden;
+  visibility: visible;
+  opacity: 0;
+  z-index: -1;
+  max-width: 100% !important;
+  transition: all 0.3s ease;
+}
+
+.screen-edit-user form {
+  width: 90%;
+  max-width: 600px;
+  border-radius: 5px;
+}
+
+.screen-edit-user form div {
+  margin: 5px 0;
+}
+
+.screen-edit-user form select {
+  font-size: 14px;
+}
+
+.screen-edit-user form button {
+  display: flex;
+  margin: auto;
+  width: 116px;
+  align-items: center;
+  background: #347fe0;
+}
+
+.buttons-control {
+  display: flex;
+}
+
+.buttons-control button {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttons-control button:first-child {
+  background: #cacaca;
+  color: black;
+}
+
+.button-register-user {
+  width: fit-content;
+  background: #0d5daf;
+}
+
 /*Break Point*/
 @media (max-width: 1040px) {
   .container-csv {
@@ -477,7 +618,8 @@ td {
   }
 
   .container h2,
-  .container-csv h2 {
+  .container-csv h2,
+  .control-users h2 {
     font-size: 18px;
   }
 
@@ -497,7 +639,8 @@ td {
     font-size: 12px;
   }
 
-  .form-input-select label {
+  .form-input-select label,
+  .screen-edit-user .form-input label {
     font-size: 14px;
   }
 
@@ -509,12 +652,25 @@ td {
   .student-general tr td input {
     width: 50px !important;
   }
-}
 
-@media (max-width: 565px) {
-  .container-login {
-    height: 100vh;
-    border-radius: 0px;
+  /*Control User*/
+  .users-container .user,
+  .users-container .user .user-general {
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .screen-edit-user form h2 {
+    margin: 7px 0;
+  }
+
+  .screen-edit-user .form-input label {
+    margin-bottom: 0px !important;
+  }
+
+  .user-information div {
+    justify-content: center;
   }
 }
 

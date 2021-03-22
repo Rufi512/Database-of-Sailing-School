@@ -8,6 +8,7 @@ import { date } from "../libs/dateformat";
 import { materias1, materias2, materias3, materias4 } from "../libs/subjects.js";
 import { graduate, demote } from "./graduation_controller";
 let now = new Date();
+
 dateFormat.i18n = date;
 
 //Lista de estudiantes
@@ -124,18 +125,28 @@ export const createStudent = async (req, res) => {
 
 export const createStudents = (req, res) => {
   const archive = req.file.path;
+  let studentsRegister = []
   fs.createReadStream(archive)
     .pipe(csv.parse({ headers: true }))
     .on("error", (error) => console.error(error))
     .on("data", async (row) => {
-      const studentFind = await student.findOne({ ci: row.cedula });
 
+      const studentFind = await student.findOne({ $or: [{ ci: row.cedula }, { firstName: row.nombre }] });
       if (studentFind) {
         console.log(
-          "Estudiante de cedula:" + row.cedula + "ha sido registrado anteriormente"
+          "Estudiante de cedula:" + row.cedula + " ha sido registrado anteriormente"
         );
-        return;
+        return
       }
+     
+     
+      if(studentsRegister.find(el => el === row.cedula)){
+        console.log('la cedula:',row.cedula,' Repite!')
+        return
+      }
+
+
+      studentsRegister.push(row.cedula) 
 
       const newStudent = new student({
         ci: row.cedula,
@@ -172,6 +183,7 @@ export const createStudents = (req, res) => {
           break;
         }
       }
+    
       await newStudent.save();
     })
 
@@ -179,6 +191,7 @@ export const createStudents = (req, res) => {
       await fs.unlink("./public/csv/" + req.file.originalname, (err) => {
         console.log(err);
       });
+      
       res.json("Todos los estudiantes del archivo CSV añadidos");
     });
 };
