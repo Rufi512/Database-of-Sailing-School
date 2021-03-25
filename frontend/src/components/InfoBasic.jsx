@@ -23,11 +23,10 @@ export const InfoBasic = (props) => {
             <th>Estado</th>
           </tr>
         </thead>
-
         <tbody>
           <tr>
-            <td>{student.ci}</td> <td>{student.firstName}</td>{" "}
-            <td>{student.lastName}</td> <td>{student.school_year}</td>{" "}
+            <td>{student.ci}</td><td>{student.firstName}</td>{" "}
+            <td>{student.lastName}</td><td>{student.school_year}</td>{" "}
             <td>{student.status ? "Activo" : "Inactivo"}</td>
           </tr>
         </tbody>
@@ -41,20 +40,12 @@ export const InfoBasic = (props) => {
       style={{ display: props.gradue === "Graduado" ? "none" : "" }}
     >
       <thead>
-        <tr>
-          <th colSpan="5">Informacion Basica</th>
-        </tr>
-        <tr>
-          <th>Cedula</th> <th>Nombre</th> <th>Apellido</th> <th>Curso</th>{" "}
-          <th>Estado</th>
-        </tr>
+        <tr><th colSpan="5">Informacion Basica</th></tr>
+        <tr><th>Cedula</th><th>Nombre</th><th>Apellido</th><th>Curso</th><th>Estado</th></tr>
       </thead>
-
       <tbody>
         <tr>
-          <td>{student.ci}</td> <td>{student.firstName}</td>{" "}
-          <td>{student.lastName}</td> <td>{student.school_year}</td>{" "}
-          <td>{student.status ? "Activo" : "Inactivo"}</td>
+          <td>{student.ci}</td><td>{student.firstName}</td><td>{student.lastName}</td><td>{student.school_year}</td><td>{student.status ? "Activo" : "Inactivo"}</td>
         </tr>
       </tbody>
     </table>

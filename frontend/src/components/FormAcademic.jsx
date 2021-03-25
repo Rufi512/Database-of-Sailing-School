@@ -94,26 +94,15 @@ const FormAcademic = (props) => {
               <table className="student-general">
                 <thead>
                   <tr>
-                    <th>Cedula</th> <th>Nombre</th> <th>Apellido</th> <th>Curso</th>{" "}
-                    <th>Estado</th>
+                    <th>Cedula</th><th>Nombre</th><th>Apellido</th><th>Curso</th><th>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
-                      <Field style={{ width: "100px" }}  type="text"name="ci" />
-                    </td>
-
-                    <td>
-                      <Field style={{ width: "110px" }}  type="text" name="firstName" />
-                    </td>
-
-                    <td>
-                      <Field style={{ width: "110px" }}  type="text" name="lastName" />
-                    </td>
-
+                    <td><Field style={{ width: "100px" }}  type="text" name="ci"/></td>
+                    <td><Field style={{ width: "110px" }}  type="text" name="firstName"/></td>
+                    <td><Field style={{ width: "110px" }}  type="text" name="lastName" /></td>
                     <td>{data.school_year}</td>
-
                     <td>
                       <button type="button" onClick={statusButton}>
                         {statusStudent ? "Activo" : "Inactivo"}

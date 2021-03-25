@@ -12,7 +12,7 @@ dateFormat.i18n = date;
 //Actualiza la información del estudiante (Notas y Grado)
 export const graduate = async (id) => {
   const studentFind = await student.findById(id);
-  const { comments } = studentFind;
+  
   const academic_information = {
     school_year: studentFind.school_year,
     subjects: studentFind.subjects,
@@ -25,7 +25,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.0": academic_information,
-            "annual_comments.0": comments,
           },
         }
       );
@@ -39,7 +38,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.0": academic_information,
-            "annual_comments.0": comments,
           },
         }
       );
@@ -55,7 +53,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.1": academic_information,
-            "annual_comments.1": comments,
           },
         }
       );
@@ -69,7 +66,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.1": academic_information,
-            "annual_comments.1": comments,
           },
         }
       );
@@ -84,7 +80,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.2": academic_information,
-            "annual_comments.2": comments,
           },
         }
       );
@@ -98,7 +93,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.2": academic_information,
-            "annual_comments.2": comments,
           },
         }
       );
@@ -113,7 +107,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.3": academic_information,
-            "annual_comments.3": comments,
           },
         }
       );
@@ -127,7 +120,6 @@ export const graduate = async (id) => {
         {
           $set: {
             "record.3": academic_information,
-            "annual_comments.3": comments,
           },
         }
       );
@@ -143,7 +135,6 @@ export const graduate = async (id) => {
           $set: {
             status: false,
             "record.4": academic_information,
-            "annual_comments.4": comments,
           },
         }
       );
@@ -159,7 +150,6 @@ export const graduate = async (id) => {
       $set: {
         school_year: newSchoolYear,
         subjects: subjectsUpgrade,
-        comments: [],
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
       },
     }
@@ -180,7 +170,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.0": null,
-            "annual_comments.0": null,
           },
         }
       );
@@ -194,7 +183,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.0": null,
-            "annual_comments.0": null,
           },
         }
       );
@@ -209,7 +197,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.1": null,
-            "annual_comments.1": null,
           },
         }
       );
@@ -223,7 +210,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.1": null,
-            "annual_comments.1": null,
           },
         }
       );
@@ -238,7 +224,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.2": null,
-            "annual_comments.2": null,
           },
         }
       );
@@ -252,7 +237,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.2": null,
-            "annual_comments.2": null,
           },
         }
       );
@@ -266,7 +250,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.3": null,
-            "annual_comments.3": null,
           },
         }
       );
@@ -280,7 +263,6 @@ export const demote = async (id) => {
         {
           $set: {
             "record.3": null,
-            "annual_comments.3": null,
           },
         }
       );
@@ -296,7 +278,6 @@ export const demote = async (id) => {
       $set: {
         school_year: newSchoolYear,
         subjects: subjectsUpgrade,
-        comments: [],
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
       },
     }

@@ -30,6 +30,7 @@ const ControlUsers = () => {
     }
 
     if (res.status >= 400) {
+      setUsers([])
       setPopup({ text: res.data, type: "error" });
       displayPopup("error", ".control");
     }

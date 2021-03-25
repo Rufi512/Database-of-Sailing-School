@@ -1,11 +1,14 @@
 import student from "../models/student";
+import user from "../models/user";
+import comment from "../models/comment";
 import mongoose from "mongoose";
 import dateFormat from "dateformat";
 import fs from "fs";
 import path from "path";
 import * as csv from "fast-csv";
 import { date } from "../libs/dateformat";
-import { materias1, materias2, materias3, materias4 } from "../libs/subjects.js";
+import { materias1, materias2, materias3, materias4} from "../libs/subjects.js";
+import { getComments } from "./comment_controller";
 import { graduate, demote } from "./graduation_controller";
 let now = new Date();
 
@@ -14,7 +17,10 @@ dateFormat.i18n = date;
 //Lista de estudiantes
 export const active = async (req, res) => {
   const studentsActive = await student
-    .find({ status: true, school_year: { $ne: "Graduado" } })
+    .find(
+      { status: true, school_year: { $ne: "Graduado" } },
+      { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
+    )
     .sort({ _id: -1 });
   const actives = studentsActive.length;
 
@@ -27,11 +33,14 @@ export const active = async (req, res) => {
 
 export const inactive = async (req, res) => {
   const studentsInactive = await student
-    .find({ status: false, school_year: { $ne: "Graduado" } })
+    .find(
+      { status: false, school_year: { $ne: "Graduado" } },
+      { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
+    )
     .sort({ _id: -1 });
   const inactive = studentsInactive.length;
   if (!inactive) {
-    return res.status(404).json("Estudiantes inactivos no encontrados" );
+    return res.status(404).json("Estudiantes inactivos no encontrados");
   } else {
     return res.json(studentsInactive);
   }
@@ -39,7 +48,10 @@ export const inactive = async (req, res) => {
 
 export const gradues = async (req, res) => {
   const studentsGradues = await student
-    .find({ school_year: "Graduado" })
+    .find(
+      { school_year: "Graduado" },
+      { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
+    )
     .sort({ _id: -1 });
   const gradues = studentsGradues.length;
   if (!gradues) {
@@ -52,15 +64,15 @@ export const gradues = async (req, res) => {
 //Consulta Estudiante individual
 export const showStudent = async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
-  if (validId) {
-    const studentFind = await student.findById(req.params.id);
-    if (student) {
-      res.json(studentFind);
-    } else {
-      res.status(404).json("Estudiante no encontrado o eliminado");
-    }
+  if (!validId) return res.status(402).json("Identificador no valido");
+
+  const studentFind = await student.findById(req.params.id);
+  const comments = await getComments(req.params.id);
+
+  if (studentFind) {
+    res.json({ student: studentFind, comments: comments });
   } else {
-    return res.status(402).json("Identificador no valido" );
+    res.status(404).json("Estudiante no encontrado o eliminado");
   }
 };
 
@@ -74,7 +86,7 @@ export const createStudent = async (req, res) => {
   if (studentFind)
     return res
       .status(400)
-      .json( "El estudiate ha sido registrado anteriormente en el sistema!");
+      .json("El estudiate ha sido registrado anteriormente en el sistema!");
 
   const newStudent = new student({
     ci,
@@ -113,7 +125,7 @@ export const createStudent = async (req, res) => {
     }
 
     default:
-      return res.status(400).json("Año escolar invalido" );
+      return res.status(400).json("Año escolar invalido");
   }
 
   const saveStudent = await newStudent.save();
@@ -125,28 +137,29 @@ export const createStudent = async (req, res) => {
 
 export const createStudents = (req, res) => {
   const archive = req.file.path;
-  let studentsRegister = []
+  let studentsRegister = [];
   fs.createReadStream(archive)
     .pipe(csv.parse({ headers: true }))
     .on("error", (error) => console.error(error))
     .on("data", async (row) => {
-
-      const studentFind = await student.findOne({ $or: [{ ci: row.cedula }, { firstName: row.nombre }] });
+      const studentFind = await student.findOne({
+        $or: [{ ci: row.cedula }, { firstName: row.nombre }],
+      });
       if (studentFind) {
         console.log(
-          "Estudiante de cedula:" + row.cedula + " ha sido registrado anteriormente"
+          "Estudiante de cedula:" +
+            row.cedula +
+            " ha sido registrado anteriormente"
         );
-        return
-      }
-     
-     
-      if(studentsRegister.find(el => el === row.cedula)){
-        console.log('la cedula:',row.cedula,' Repite!')
-        return
+        return;
       }
 
+      if (studentsRegister.find((el) => el === row.cedula)) {
+        console.log("la cedula:", row.cedula, " Repite!");
+        return;
+      }
 
-      studentsRegister.push(row.cedula) 
+      studentsRegister.push(row.cedula);
 
       const newStudent = new student({
         ci: row.cedula,
@@ -183,7 +196,7 @@ export const createStudents = (req, res) => {
           break;
         }
       }
-    
+
       await newStudent.save();
     })
 
@@ -191,7 +204,7 @@ export const createStudents = (req, res) => {
       await fs.unlink("./public/csv/" + req.file.originalname, (err) => {
         console.log(err);
       });
-      
+
       res.json("Todos los estudiantes del archivo CSV añadidos");
     });
 };
@@ -249,67 +262,18 @@ export const demoteStudent = async (req, res) => {
   }
 };
 
-//Registra comentario
-
-export const commentStudent = async (req, res) => {
-  now = new Date();
-  let author = "Anónimo";
-  const commit_Information = {
-    comment: req.body.comment,
-    author,
-    date_comment: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
-  };
-
-  await student.updateOne(
-    { _id: req.params.id },
-    {
-      $push: {
-        comments: [commit_Information],
-      },
-    }
-  );
-  res.json("Comentario Añadido");
-};
-
-//Borra comentario
-
-export const uncomment = async (req, res) => {
-  console.log(req.body,req.params)
-  var arrIndex = `comments.${req.body.index}`;
-  await student.updateOne(
-    { _id: req.params.id },
-    {
-      $unset: {
-        [arrIndex]: 1,
-      },
-    }
-  ),
-    await student.updateOne(
-      { _id: req.params.id },
-      {
-        $pull: {
-          comments: null,
-        },
-      }
-    );
-  res.json("Comentario eliminado");
-};
-
 //Borrar estudiante/s
 
 export const deleteStudents = async (req, res) => {
-
-  const ids = req.body
-
+  const ids = req.body;
 
   for (const id of ids) {
-     const validId = mongoose.Types.ObjectId.isValid(id);
-     if(validId){
-    await student.findByIdAndDelete(id);
-  }else{
-    console.log('Id Error: ' + id)
+    const validId = mongoose.Types.ObjectId.isValid(id);
+    if (!validId) return res.status(400).json('ID invalido')
+      await comment.deleteMany({user:id});
+      await student.findByIdAndDelete(id);
+    
   }
-}
 
   res.json("Estudiante/s Eliminado/s");
 };

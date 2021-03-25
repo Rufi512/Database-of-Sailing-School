@@ -132,7 +132,11 @@ export const gradeStudent = async (value, ids) => {
 
 export const commentStudent = async (id, comment) => {
   const res = await axios
-    .post("/api/students/comment/" + id, { comment })
+    .post(
+      "/api/students/comment/" + id,
+      { comment },
+      { headers: { "x-access-token": accessToken } }
+    )
     .catch((err) => {
       return err.response;
     });
@@ -186,16 +190,13 @@ export const deleteStudents = async (ids) => {
   return res;
 };
 
-export const deleteComments = async (id, index) => {
+export const deleteComments = async (id) => {
   const res = await axios
-    .post(
-      "/api/students/comment/delete/" + id,
-      { index },
-      { headers: { "x-access-token": accessToken } }
-    )
+    .delete("/api/students/comment/delete/" + id, {
+      headers: { "x-access-token": accessToken },
+    })
     .catch((err) => {
       return err.response;
     });
   return res;
 };
-

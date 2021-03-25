@@ -7,10 +7,8 @@ const studentSchema = new Schema({
   school_year: {type: String,required:true},
   subjects: {type: Array},
   last_modify: {type: String},
-  comments: {type: Array},
   status: {type: Boolean, "default": true},
-  record: {type: Array, "default": [null, null, null, null, null]},
-  annual_comments: {type: Array, "default": [null, null, null, null, null]}
+  record: {type: Array, "default": [null, null, null, null, null]}
 },{
   versionKey:false
 })

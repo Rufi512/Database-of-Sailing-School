@@ -1,4 +1,5 @@
 import user from "../models/user";
+import comment from "../models/comment"
 import roles from "../models/roles";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
@@ -113,12 +114,12 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
-  if (!validId) {
-    return res.status(404).json("ID invalido");
-  }
+  if (!validId) return res.status(404).json("ID invalido")
+
   const userFind = await user.findById(req.params.id);
   if (userFind) {
     await user.findByIdAndDelete(req.params.id);
+    await comment.deleteMany({user:req.params.id});
   } else {
     return res.status(404).json("Usuario no encontrado");
   }

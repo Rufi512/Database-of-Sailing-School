@@ -21,11 +21,8 @@ import book from "../static/icons/book.svg";
 import arrow from "../static/icons/arrow.svg";
 
 const StudentInfo = (props) => {
-  const [student, setStudent] = useState({});
-  const [subjects, setSubjects] = useState([]);
-  const [record, setRecord] = useState([]);
-  const [annualComments, setAnnualComments] = useState([]);
-  const [commits, setCommits] = useState([]);
+  const [student, setStudent] = useState({subjects:[],record:[]});
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [alert, setAlert] = useState("");
   const [action, setAction] = useState("upgradeAndDegrade");
@@ -33,27 +30,21 @@ const StudentInfo = (props) => {
   const [popup, setPopup] = useState({});
 
   async function request(id) {
-    const result = await studentInformation(id);
-    console.log(result);
+    const res = await studentInformation(id);
 
-    if (result.status === 200) {
-      setStudent(result.data);
-      setSubjects(result.data.subjects);
-      setCommits(result.data.comments);
-      setRecord(result.data.record);
-      setAnnualComments(result.data.annual_comments);
+    if (res.status === 200) {
+      setStudent(res.data.student)
+      setComments(res.data.comments)
     }
 
-    if (result.status >= 400) {
-      setPopup({ text: result.data, type: "error" });
+    if (res.status >= 400) {
+      setPopup({ text: res.data, type: "error" });
       displayPopup("", ".popupStudentInfo");
-      return "";
     }
 
-    if (result.status >= 500) {
+    if (res.status >= 500) {
       setPopup({ text: "Ocurrio un error al requerir informacion!", type: "error" });
       displayPopup("", ".popupStudentInfo");
-      return "";
     }
   }
 
@@ -68,19 +59,19 @@ const StudentInfo = (props) => {
   //Añade comentario
   async function sendComment(e) {
     e.preventDefault();
-    const result = await commentStudent(student._id, comment);
-    if (result.status === 200) {
+    const res = await commentStudent(student._id, comment);
+    if (res.status === 200) {
       screenComment(false);
       setComment("");
       request(student._id);
     }
 
-    if (result.status >= 400) {
-      setPopup({ text: result.data, type: "error" });
+    if (res.status >= 400) {
+      setPopup({ text: res.data, type: "error" });
       displayPopup("received", ".popupStudentInfo");
     }
 
-    if (result.status >= 500) {
+    if (res.status >= 500) {
       setPopup({ text: "Error al conectar con el servidor :(", type: "error" });
       displayPopup();
     }
@@ -114,32 +105,32 @@ const StudentInfo = (props) => {
     displayPopup("", ".popupStudentInfo");
     setPopup({ text: "Enviando informacion", type: "request" });
     let gradue = null;
-    let result = null;
+    let res = null;
     if (value === true) {
-      result = await gradeStudent("upgrade", [student._id]);
+      res = await gradeStudent("upgrade", [student._id]);
       gradue = true;
     } else {
-      result = await gradeStudent("degrade", [student._id]);
+      res = await gradeStudent("degrade", [student._id]);
       gradue = false;
     }
 
-    if (result.status >= 400) {
-      setPopup({ text: result.data, type: "error" });
+    if (res.status >= 400) {
+      setPopup({ text: res.data, type: "error" });
       displayPopup("received", ".popupStudentInfo");
     }
 
-    if (result.status >= 500) {
+    if (res.status >= 500) {
       setPopup({ text: "Error al conectar con servidor", type: "error" });
       displayPopup("received", ".popupStudentInfo");
     }
 
-    if (result.status === 200 && gradue === true) {
+    if (res.status === 200 && gradue === true) {
       setPopup({ text: "Estudiante Graduado", type: "pass" });
       displayPopup("received", ".popupStudentInfo");
       request(student._id);
     }
 
-    if (result.status === 200 && gradue === false) {
+    if (res.status === 200 && gradue === false) {
       setPopup({ text: "Estudiante Degradado", type: "error" });
       displayPopup("received", ".popupStudentInfo");
       request(student._id);
@@ -149,18 +140,18 @@ const StudentInfo = (props) => {
   //Borra al estudiante
   async function deleteStudent(value) {
     if (value === true) {
-      const result = await deleteStudents([student._id]);
-      if (result.status === 200) {
+      const res = await deleteStudents([student._id]);
+      if (res.status === 200) {
         displayAlert(false);
         props.history.push("/students/");
       }
 
-      if (result.status >= 400) {
-        setPopup({ text: result.data, type: "error" });
+      if (res.status >= 400) {
+        setPopup({ text: res.data, type: "error" });
         displayPopup("received", ".popupStudentInfo");
       }
 
-      if (result.status >= 500) {
+      if (res.status >= 500) {
         setPopup({ text: "Error al conectar con el servidor", type: "error" });
         displayPopup("received", ".popupStudentInfo");
       }
@@ -178,8 +169,8 @@ const StudentInfo = (props) => {
           <Popup popup={popup} zone={"popupStudentInfo"} />
           <HistoryStudent
             student={student}
-            record={record}
-            annualComments={annualComments}
+            record={student.record}
+            comments={comments}
             gradue={student.school_year}
           />
         </div>
@@ -245,18 +236,18 @@ const StudentInfo = (props) => {
           confirm={confirm}
         />
         <InfoBasic student={student} gradue={student.school_year} />
-        <InfoAcademic information={subjects} zone={true} />
+        <InfoAcademic information={student.subjects} zone={true} />
 
         <div className="time-edit">
           <p>Fecha de modificacion ultima vez: {student.last_modify}</p>
         </div>
 
         <Comments
-          comments={commits}
+          comments={comments}
           actions={request}
           studentInfo={true}
-          id={student._id}
-          gradue={student.school_year}
+          studentId={student._id}
+          school_year={student.school_year}
         />
 
         <div
@@ -308,15 +299,15 @@ const StudentInfo = (props) => {
         firstName={student.firstName}
         lastName={student.lastName}
         status={student.status}
-        subjects={subjects}
+        subjects={student.subjects}
         school_year={student.school_year}
         request={request}
       />
 
       <HistoryStudent
         student={student}
-        record={record}
-        annualComments={annualComments}
+        record={student.record}
+        comments={comments}
         gradue={student.school_year}
       />
     </React.Fragment>

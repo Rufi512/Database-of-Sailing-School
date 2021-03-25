@@ -1,5 +1,6 @@
 import {Router} from 'express'
 import * as usersCtrl from '../controllers/user_controller'
+import * as commentCtrl from '../controllers/comment_controller'
 import {authJwt} from '../middlewares'
 import * as studentCtrl from '../controllers/students_controller'
 
@@ -21,7 +22,7 @@ router.post('/register', [authJwt.verifyToken], studentCtrl.createStudent) //Rec
 
 router.post('/register/file', [authJwt.verifyToken], studentCtrl.createStudents) //Recibe csv
 
-router.post('/comment/:id', [authJwt.verifyToken], studentCtrl.commentStudent)  // Añade comentario al estudiante
+router.post('/comment/:id', [authJwt.verifyToken], commentCtrl.commentStudent)  // Añade comentario al estudiante
 
 //PUT
 
@@ -33,7 +34,7 @@ router.put('/demote', [authJwt.verifyToken,authJwt.isModerator], studentCtrl.dem
 
 //DELETE
 
-router.post('/comment/delete/:id',[authJwt.verifyToken], studentCtrl.uncomment)  // Borra comentario al estudiante
+router.delete('/comment/delete/:id',[authJwt.verifyToken], commentCtrl.uncomment)  // Borra comentario al estudiante
 
 router.post('/delete', [authJwt.verifyToken,authJwt.isAdmin], studentCtrl.deleteStudents) // Borra al estudiantes de toda la base de datos
 

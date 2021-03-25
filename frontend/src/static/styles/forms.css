@@ -242,6 +242,7 @@ table {
   width: 80%;
   max-width: 1300px;
   flex-direction: column;
+  padding-bottom: 10px;
 }
 
 .container-student h2 {
@@ -303,10 +304,10 @@ td {
   display: none;
 }
 
-/*Commits*/
+/*Comments*/
 .box-comment {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
 }
 
 .box-comment .commit {
