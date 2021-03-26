@@ -28,12 +28,12 @@ const FormStudent = () => {
 
     if (result.status >= 400) {
       setPopup({ text: result.data, type: "error" });
-      displayPopup();
+      displayPopup("error");
     }
 
     if (result.status >= 500) {
       setPopup({ text: "Error al conectar con servidor", type: "error" });
-      displayPopup();
+      displayPopup("error");
     }
   }
 
@@ -48,20 +48,27 @@ const FormStudent = () => {
     formData.append("students", file);
 
     const result = await registerStudents(formData);
+     
+     console.log(result)
 
     if (result.status === 200) {
-      setPopup({ text: result.data, type: "pass" });
+      setPopup({ text: result.data.message, type: "pass" });
       displayPopup("received");
     }
 
-    if (result.status >= 400) {
-      setPopup({ text: result.data, type: "error" });
-      displayPopup();
+    if (result.status === 400) {
+      let text = "Error en el archivo CSV\n"
+      for(const el of result.data.errors){
+        text += el + "\n"
+      }
+      alert(text)
+      setPopup({ text: result.data.message, type: "error" });
+      displayPopup("error");
     }
 
     if (result.status >= 500) {
       setPopup({ text: "Error al conectar con servidor", type: "error" });
-      displayPopup();
+      displayPopup("error");
     }
   }
 
@@ -80,7 +87,7 @@ const FormStudent = () => {
                 type="text"
                 id="ci"
                 name="ci"
-                pattern="[VveE1234567890.-]{1,900}"
+                pattern="[1234567890.-]{1,900}"
                 autoComplete="off"
                 onChange={(e) => {
                   setCi(e.target.value);
@@ -100,7 +107,7 @@ const FormStudent = () => {
                 name="firstName"
                 pattern="[A-Za-záéíóúñ'´ ]{1,900}"
                 autoComplete="off"
-                title="Solo Caracteres Alfabeticos!"
+                title="Solo Caracteres Alfabéticos!"
                 onChange={(e) => {
                   setFirstName(e.target.value);
                   checkInputs(e.target.id, e.target.value);
@@ -118,6 +125,8 @@ const FormStudent = () => {
                 id="lastName"
                 name="lastName"
                 autoComplete="off"
+                pattern="[A-Za-záéíóúñ'´ ]{1,900}"
+                title="Solo Caracteres Alfabéticos!"
                 onChange={(e) => {
                   setLastName(e.target.value);
                   checkInputs(e.target.id, e.target.value);

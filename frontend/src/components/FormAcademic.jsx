@@ -31,10 +31,17 @@ const FormAcademic = (props) => {
     if (result.status === 200) {
       request(data.id);
       changeView("general");
-      setPopup({ text: "Informacion actualizada", type: "pass" });
+      setPopup({ text: result.data, type: "pass" });
       displayPopup("received", ".popupFormAcademic");
-    } else {
-      setPopup({ text: "Error al conectar al servidor", type: "error" });
+    }
+
+    if (result.status >= 400) {
+      setPopup({ text: result.data, type: "error" });
+      displayPopup("error", ".popupFormAcademic");
+    }
+
+    if (result.status >= 500) {
+      setPopup({ text: "Error al conectar con el servidor :(", type: "error" });
       displayPopup("error", ".popupFormAcademic");
     }
   }
@@ -94,14 +101,32 @@ const FormAcademic = (props) => {
               <table className="student-general">
                 <thead>
                   <tr>
-                    <th>Cedula</th><th>Nombre</th><th>Apellido</th><th>Curso</th><th>Estado</th>
+                    <th>Cedula</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Curso</th>
+                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><Field style={{ width: "100px" }}  type="text" name="ci"/></td>
-                    <td><Field style={{ width: "110px" }}  type="text" name="firstName"/></td>
-                    <td><Field style={{ width: "110px" }}  type="text" name="lastName" /></td>
+                    <td>
+                      <Field style={{ width: "100px" }} type="text" name="ci" />
+                    </td>
+                    <td>
+                      <Field
+                        style={{ width: "110px" }}
+                        type="text"
+                        name="firstName"
+                      />
+                    </td>
+                    <td>
+                      <Field
+                        style={{ width: "110px" }}
+                        type="text"
+                        name="lastName"
+                      />
+                    </td>
                     <td>{data.school_year}</td>
                     <td>
                       <button type="button" onClick={statusButton}>

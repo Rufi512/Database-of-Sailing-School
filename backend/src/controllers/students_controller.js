@@ -7,7 +7,12 @@ import fs from "fs";
 import path from "path";
 import * as csv from "fast-csv";
 import { date } from "../libs/dateformat";
-import { materias1, materias2, materias3, materias4} from "../libs/subjects.js";
+import {
+  materias1,
+  materias2,
+  materias3,
+  materias4,
+} from "../libs/subjects.js";
 import { getComments } from "./comment_controller";
 import { graduate, demote } from "./graduation_controller";
 let now = new Date();
@@ -25,9 +30,14 @@ export const active = async (req, res) => {
   const actives = studentsActive.length;
 
   if (!actives) {
-    return res.status(404).json("Estudiantes activos no encontrados");
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(404)
+      .json("Estudiantes activos no encontrados");
   } else {
-    return res.json(studentsActive);
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json(studentsActive);
   }
 };
 
@@ -40,9 +50,14 @@ export const inactive = async (req, res) => {
     .sort({ _id: -1 });
   const inactive = studentsInactive.length;
   if (!inactive) {
-    return res.status(404).json("Estudiantes inactivos no encontrados");
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(404)
+      .json("Estudiantes inactivos no encontrados");
   } else {
-    return res.json(studentsInactive);
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json(studentsInactive);
   }
 };
 
@@ -55,9 +70,14 @@ export const gradues = async (req, res) => {
     .sort({ _id: -1 });
   const gradues = studentsGradues.length;
   if (!gradues) {
-    return res.status(404).json("Estudiantes graduados no encontrados");
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(404)
+      .json("Estudiantes graduados no encontrados");
   } else {
-    return res.json(studentsGradues);
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json(studentsGradues);
   }
 };
 
@@ -70,9 +90,14 @@ export const showStudent = async (req, res) => {
   const comments = await getComments(req.params.id);
 
   if (studentFind) {
-    res.json({ student: studentFind, comments: comments });
+    res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json({ student: studentFind, comments: comments });
   } else {
-    res.status(404).json("Estudiante no encontrado o eliminado");
+    res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(404)
+      .json("Estudiante no encontrado o eliminado");
   }
 };
 
@@ -130,46 +155,80 @@ export const createStudent = async (req, res) => {
 
   const saveStudent = await newStudent.save();
   console.log(saveStudent);
-  res.json("Estudiante registrado");
+  res
+    .setHeader("Refresh-Token", req.refreshToken)
+    .json("Estudiante registrado");
 };
 
 //Registro estudiante masivo
 
 export const createStudents = (req, res) => {
   const archive = req.file.path;
+  let rows = 1;
+  let headerError = { exist: false, description: "" };
+  let rowErrors = [];
   let studentsRegister = [];
   fs.createReadStream(archive)
     .pipe(csv.parse({ headers: true }))
-    .on("error", (error) => console.error(error))
+    .on("headers", (header) => {
+      if (
+        header[0] !== "Cedula" ||
+        header[1] !== "Nombre" ||
+        header[2] !== "Apellido" ||
+        header[3] !== "Curso"
+      ) {
+        headerError.exist = true;
+        headerError.description =
+          "las cabeceras no cumplen con el formato solicitado: Cedula | Nombre | Apellido | Curso";
+      }
+    })
+    .on("error", (err) => {
+      return;
+    })
     .on("data", async (row) => {
-      const studentFind = await student.findOne({
-        $or: [{ ci: row.cedula }, { firstName: row.nombre }],
-      });
-      if (studentFind) {
-        console.log(
-          "Estudiante de cedula:" +
-            row.cedula +
-            " ha sido registrado anteriormente"
+      rows += 1;
+
+      if (headerError.exist) {
+        return;
+      }
+
+      if (!Number(row.Cedula)) {
+        return rowErrors.push("La cedula contiene letras en la fila: " + rows);
+      }
+
+      if (!/^[A-Za-záéíóúñ'´ ]+$/.test(row.Nombre)) {
+        return rowErrors.push("El nombre contiene letras en la fila: " + rows);
+      }
+
+      if (!/^[A-Za-záéíóúñ'´ ]+$/.test(row.Apellido)) {
+        return rowErrors.push(
+          "El apellido contiene numeros en la fila: " + rows
         );
+      }
+
+      const studentFind = await student.findOne({
+        $or: [{ ci: row.Cedula }, { firstName: row.Nombre }],
+      });
+
+      if (studentFind) {
         return;
       }
 
-      if (studentsRegister.find((el) => el === row.cedula)) {
-        console.log("la cedula:", row.cedula, " Repite!");
+      if (studentsRegister.find((el) => el === row.Cedula)) {
         return;
       }
 
-      studentsRegister.push(row.cedula);
+      studentsRegister.push(row.Cedula);
 
       const newStudent = new student({
-        ci: row.cedula,
-        firstName: row.nombre,
-        lastName: row.apellido,
-        school_year: row.curso,
+        ci: row.Cedula,
+        firstName: row.Nombre,
+        lastName: row.Apellido,
+        school_year: row.Curso,
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
       });
 
-      switch (row.curso) {
+      switch (row.Curso) {
         case "1-A":
         case "1-B": {
           newStudent.subjects = materias1;
@@ -195,6 +254,12 @@ export const createStudents = (req, res) => {
           newStudent.subjects = materias4;
           break;
         }
+
+        default: {
+          newStudent.school_year = "1-A";
+          newStudent.subjects = materias1;
+          break;
+        }
       }
 
       await newStudent.save();
@@ -205,16 +270,59 @@ export const createStudents = (req, res) => {
         console.log(err);
       });
 
-      res.json("Todos los estudiantes del archivo CSV añadidos");
+      if (headerError.exist) {
+        return res
+          .setHeader("Refresh-Token", req.refreshToken)
+          .status(400)
+          .json({
+            message:
+              "Ha ocurrido un error al procesar CSV, " +
+              headerError.description,
+          });
+      }
+
+      if (rowErrors.length !== 0) {
+        return res
+          .setHeader("Refresh-Token", req.refreshToken)
+          .status(400)
+          .json({
+            message: "Algunos estudiantes no pudieron ser añadidos!",
+            errors: rowErrors,
+          });
+      }
+      res
+        .setHeader("Refresh-Token", req.refreshToken)
+        .json({ message: "Todos los estudiantes del archivo CSV añadidos" });
     });
 };
 
-//Actualiza al estudiante (Solo Cedula,nombre,apellido,sus notas de las materias y estado)
+//Actualiza al estudiante (Solo Cedula,Nombre,apellido,sus notas de las materias y estado)
 
 export const updateStudent = async (req, res) => {
   const { ci, firstName, lastName, subjects, status } = await student.findById(
     req.params.id
   );
+
+  if (!Number(req.body.ci)) {
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(400)
+      .json("Parametros en Cedula invalidos!");
+  }
+
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.firstName)) {
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(400)
+      .json("Parametros en Nombre invalidos!");
+  }
+
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.lastName)) {
+    return res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .status(400)
+      .json("Parametros en Apellido invalidos!");
+  }
 
   await student.updateOne(
     { _id: req.params.id },
@@ -229,7 +337,9 @@ export const updateStudent = async (req, res) => {
       },
     }
   );
-  res.json("Estudiante Actualizado!");
+  res
+    .setHeader("Refresh-Token", req.refreshToken)
+    .json("Estudiante Actualizado!");
 };
 
 //Graduar estudiante/s
@@ -241,9 +351,13 @@ export const graduateStudent = async (req, res) => {
   }
 
   if (ids.length === 1) {
-    res.json("Estudiante graduado");
+    res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json("Estudiante graduado");
   } else {
-    res.json("Estudiantes graduados");
+    res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json("Estudiantes graduados");
   }
 };
 
@@ -256,9 +370,13 @@ export const demoteStudent = async (req, res) => {
   }
 
   if (ids.length === 1) {
-    res.json("Estudiante graduado");
+    res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json("Estudiante graduado");
   } else {
-    res.json("Estudiantes graduados");
+    res
+      .setHeader("Refresh-Token", req.refreshToken)
+      .json("Estudiantes graduados");
   }
 };
 
@@ -269,11 +387,12 @@ export const deleteStudents = async (req, res) => {
 
   for (const id of ids) {
     const validId = mongoose.Types.ObjectId.isValid(id);
-    if (!validId) return res.status(400).json('ID invalido')
-      await comment.deleteMany({user:id});
-      await student.findByIdAndDelete(id);
-    
+    if (!validId) return res.status(400).json("ID invalido");
+    await comment.deleteMany({ user: id });
+    await student.findByIdAndDelete(id);
   }
 
-  res.json("Estudiante/s Eliminado/s");
+  res
+    .setHeader("Refresh-Token", req.refreshToken)
+    .json("Estudiante/s Eliminado/s");
 };

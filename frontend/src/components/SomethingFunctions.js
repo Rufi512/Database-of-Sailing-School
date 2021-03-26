@@ -23,7 +23,7 @@ export const screenComment = (value) => {
 //Muestra historial y edición del estudiante
 export const changeView = (value,gradue)=>{
  const container = document.querySelector('.view-information')
-  const containerHistory = document.querySelector('.view-history')
+const containerHistory = document.querySelector('.view-history')
  const containerEdit = document.querySelector('.edit-information')
 
   if(gradue === 'Graduado'){

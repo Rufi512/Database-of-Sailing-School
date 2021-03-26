@@ -61,12 +61,12 @@ export const commentStudent = async (req, res) => {
   });
   
   newComment.save()
-  res.json('Comentario añadido')
+  res.setHeader('Refresh-Token', req.refreshToken).json('Comentario añadido')
 };
 
 //Borra comentario
 
 export const uncomment = async (req, res) => {
   await comment.findByIdAndDelete(req.params.id)
-  res.json("Comentario eliminado");
+  res.setHeader('Refresh-Token', req.refreshToken).json("Comentario eliminado");
 };

@@ -8,6 +8,7 @@ const secret = process.env.SECRET ? process.env.SECRET : "secretWord";
 export const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
+
     if (!token) return res.status(403).json("No se ha obtenido el token");
     //Verificamos el token con el secret
     const decoded = jwt.verify(token, secret);
@@ -25,13 +26,44 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
-export const isModerator = async (req, res, next) => {
+export const refreshToken = async (req,res,next) =>{
+  
+  //Generamos el token nuevo
+
+  const token = jwt.sign({ id: req.userId }, secret, {
+    expiresIn: 480, //8 minutes
+  });
+
+  req.refreshToken = token
+  next()
+
+}
+
+export const isTeacher = async (req, res, next) => {
   //Requerimos el id del usuario y buscamos los roles en la base de datos
 
   const userFind = await user.findById(req.userId);
+
   const rol = await roles.find({ _id: { $in: userFind.rol } });
 
   //Si el usuario registrado posee el rol necesario continua
+
+  for (const el of rol) {
+    if (el.name === "Teacher" || el.name === "Moderator" || el.name === "Admin") {
+      next();
+      return;
+    }
+  }
+
+  return res.status(403).json("Debes ser Maestro para completar la acción!");
+};
+
+export const isModerator = async (req, res, next) => {
+
+  const userFind = await user.findById(req.userId);
+
+  const rol = await roles.find({ _id: { $in: userFind.rol } });
+
 
   for (const el of rol) {
     if (el.name === "Moderator" || el.name === "Admin") {
@@ -44,7 +76,9 @@ export const isModerator = async (req, res, next) => {
 };
 
 export const isAdmin = async (req, res, next) => {
+
   const userFind = await user.findById(req.userId);
+  
   const rol = await roles.find({ _id: { $in: userFind.rol } });
 
   if (rol[0].name === "Admin") {

@@ -39,12 +39,12 @@ const StudentInfo = (props) => {
 
     if (res.status >= 400) {
       setPopup({ text: res.data, type: "error" });
-      displayPopup("", ".popupStudentInfo");
+      displayPopup("error", ".popupStudentInfo");
     }
 
     if (res.status >= 500) {
       setPopup({ text: "Ocurrio un error al requerir informacion!", type: "error" });
-      displayPopup("", ".popupStudentInfo");
+      displayPopup("error", ".popupStudentInfo");
     }
   }
 
@@ -162,6 +162,20 @@ const StudentInfo = (props) => {
     return (
       <React.Fragment>
         <Navbar />
+         <div className="buttons-actions">
+       
+        <div
+          onClick={(e) => {
+            questionAction(true, "delete");
+            setAction("delete");
+          }}
+        >
+          <img src={trash} alt="trash" />
+          <p>Eliminar</p>
+        </div>
+
+      </div>
+      
         <div
           className="container-student view-information"
           style={{ margin: "0 auto" }}
@@ -235,7 +249,7 @@ const StudentInfo = (props) => {
           nameActions={action}
           confirm={confirm}
         />
-        <InfoBasic student={student} gradue={student.school_year} />
+        <InfoBasic student={student} year={student.school_year} />
         <InfoAcademic information={student.subjects} zone={true} />
 
         <div className="time-edit">
@@ -273,6 +287,10 @@ const StudentInfo = (props) => {
               <button
                 className="button-comment"
                 type="button"
+                style={{
+                  background:'#d4d4d4',
+                  color:'black'
+                }}
                 onClick={(e) => {
                   screenComment(false);
                 }}

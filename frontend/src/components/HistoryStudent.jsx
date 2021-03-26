@@ -4,27 +4,25 @@ import { InfoAcademic } from "./InfoAcademic";
 import { Comments } from "./Comments";
 import { changeView, switchYear, switchActive } from "./SomethingFunctions";
 export const HistoryStudent = (props) => {
+  let buttonNumber = -1
   const [history, setHistory] = useState([]);
-  const [schoolYears, setSchoolYears] = useState([]);
 
   useEffect(() => {
     async function load() {
-      let yearsAvalaible = [];
-      let history = [];
-      const records = props.record;
-
-      for (const record of records) {
-        if (record !== null) {
-          history.push(record.subjects);
-          yearsAvalaible.push(record.school_year);
-        }
-      }
-
-      setSchoolYears(yearsAvalaible);
-      setHistory(history);
+      setHistory(props.record);
     }
     load();
   }, [props]);
+
+  if (!history[0] && !history[1] && !history[2] && !history[3] && !history[4]) {
+    return (
+      <div className="alert-history view-history" style={{ margin: "auto" }}>
+        <p style={{ margin: "20px auto" }}>
+          La informacion solicitada aun no esta disponible!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -55,24 +53,30 @@ export const HistoryStudent = (props) => {
         <p style={{ display: props.gradue === "Graduado" ? "none" : "" }}>
           Secciones cursadas
         </p>
-        <div className="buttons-container-history" style={{}}>
-          {schoolYears.map((el, i) => {
-            if (el !== undefined) {
+        <div className="buttons-container-history">
+          {
+            
+
+            history.map((el, i) => {
+            
+            if (el) {
+              buttonNumber += 1
               return (
                 <button
                   className={`btn-history ${
                     i === 0 ? "btn-active-history" : ""
                   }`}
-                  data-index={i}
+                  data-index={buttonNumber}
                   onClick={(e) => {
                     switchYear(e.target.dataset.index);
                     switchActive(e.target.dataset.index);
                   }}
                   key={i}
                 >
-                  {el}
+                  {el.school_year}
                 </button>
               );
+              
             }
             return "";
           })}
@@ -80,80 +84,27 @@ export const HistoryStudent = (props) => {
       </div>
 
       <div className="slide-history">
-        <div className="container-history">
-          <InfoBasic
-            student={props.student}
-            zone={"HistoryStudent"}
-            gradue={props.gradue}
-          />
-          <InfoAcademic information={history[0]} />
-          <br />
-          <Comments
-            comments={props.comments}
-            year={schoolYears[0]}
-            studentInfo={false}
-          />
-        </div>
-
-        <div className="container-history">
-          <InfoBasic
-            student={props.student}
-            zone={"HistoryStudent"}
-            gradue={props.gradue}
-          />
-          <InfoAcademic information={history[1]} />
-          <br />
-          <Comments
-            comments={props.comments}
-            year={schoolYears[1]}
-            studentInfo={false}
-          />
-        </div>
-
-        <div className="container-history">
-          <InfoBasic
-            student={props.student}
-            zone={"HistoryStudent"}
-            gradue={props.gradue}
-          />
-          <InfoAcademic information={history[2]} />
-          <br />
-          <Comments
-            comments={props.comments}
-            year={schoolYears[2]}
-            studentInfo={false}
-          />
-        </div>
-
-        <div className="container-history">
-          <InfoBasic
-            student={props.student}
-            zone={"HistoryStudent"}
-            gradue={props.gradue}
-          />
-          <InfoAcademic information={history[3]} />
-          <br />
-          <Comments
-            comments={props.comments}
-            year={schoolYears[3]}
-            studentInfo={false}
-          />
-        </div>
-
-        <div className="container-history">
-          <InfoBasic
-            student={props.student}
-            zone={"HistoryStudent"}
-            gradue={props.gradue}
-          />
-          <InfoAcademic information={history[4]} />
-          <br />
-          <Comments
-            comments={props.comments}
-            year={schoolYears[4]}
-            studentInfo={false}
-          />
-        </div>
+        {history.map((el, i) => {
+          if (el) {
+            return (
+              <div className="container-history" key={i}>
+                <InfoBasic
+                  student={props.student}
+                  zone={"HistoryStudent"}
+                  gradue={props.gradue}
+                />
+                <InfoAcademic information={el.subjects} />
+                <br />
+                <Comments
+                  comments={props.comments}
+                  year={el.school_year}
+                  studentInfo={false}
+                />
+              </div>
+            );
+          }
+          return "";
+        })}
       </div>
     </div>
   );

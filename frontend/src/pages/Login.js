@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import eye from "../static/icons/eye.svg";
 import eyeClose from "../static/icons/eyeClose.svg";
 import boscoImg from '../static/logos/jb.jpg';
-import CarrouselImages from '../components/CarrouselImages'
 import Cookies from 'js-cookie'
 import { Popup, displayPopup } from "../components/Alerts";
 import {loginUser} from '../API'
@@ -27,7 +26,7 @@ const Login = (props) => {
     if (res.status === 200) {
        Cookies.set('token', res.data.token);
        Cookies.set('rol', res.data.rol);
-       window.location.href = '/home'
+       props.history.push("/home")
     }
      if (res.status >= 400){
       setPopup({ text: res.data, type: "error" });
@@ -42,17 +41,14 @@ const Login = (props) => {
   return (
     <React.Fragment>
     <Popup popup={popup} zone={"Login"} />
-
-    <div className="carrousel-imgs">
-          <CarrouselImages/>
-    </div>
     
       <div className="container-login">
-      <img src={boscoImg} alt="bosco"/>
+     
         <form
           onSubmit={handleSubmit}
           style={{ width: "95%", display: "flex", flexDirection: "column" }}
         >
+         <img src={boscoImg} alt="bosco"/>
           <div className="form-input">
             <label id="label-ci" style={{ marginBottom: "10px" }}>
               Cedula o Correo Electronico
@@ -98,7 +94,9 @@ const Login = (props) => {
               textAlign: "end",
               color: "#2d2d2d",
               cursor: "pointer",
-              margin: "0",
+              marginTop: "0",
+              marginLeft:"auto",
+              width:"fit-content"
             }}
           >
             Olvido su contraseña?

@@ -8,7 +8,6 @@ import { ReactComponent as EmailIcon } from "../static/icons/email.svg";
 import { ReactComponent as KeyIcon } from "../static/icons/key.svg";
 import { ReactComponent as IdIcon } from "../static/icons/id.svg";
 
-const rolUser = Cookies.get("rol");
 
 const ControlUsers = () => {
   const [user, setChangeUser] = useState({});
@@ -20,17 +19,41 @@ const ControlUsers = () => {
   const [action, setAction] = useState("");
   const [popup, setPopup] = useState({});
 
+  useEffect(() => {
+    if (Cookies.get("rol") !== "Admin") {
+      return;
+    }
+    const requestUsers = async () => {
+      const res = await getUsersList();
+
+      if (res.status === 200) {
+        setUsers(res.data);
+      }
+
+      if (res.status >= 400) {
+        setPopup({ text: res.data, type: "error" });
+        displayPopup("error", ".control");
+      }
+
+      if (res.status >= 500) {
+        setPopup({ text: "Error al conectar con el servidor", type: "error" });
+        displayPopup("error", ".control");
+      }
+    };
+    requestUsers();
+
+    setChangeUser({ rol: "Teacher" });
+  }, []);
+
   const request = async () => {
-    
     const res = await getUsersList();
-    
 
     if (res.status === 200) {
       setUsers(res.data);
     }
 
     if (res.status >= 400) {
-      setUsers([])
+      setUsers([]);
       setPopup({ text: res.data, type: "error" });
       displayPopup("error", ".control");
     }
@@ -39,15 +62,10 @@ const ControlUsers = () => {
       setPopup({ text: "Error al conectar con el servidor", type: "error" });
       displayPopup("error", ".control");
     }
-
-    
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    screenEdit.style.zIndex = "-1";
-    screenEdit.style.opacity = "0";
-    screenEdit.style.visibility = "hidden";
 
     if (send === "register") {
       const res = await registerUser(user);
@@ -55,6 +73,9 @@ const ControlUsers = () => {
         request();
         setPopup({ text: res.data, type: "pass" });
         displayPopup("received");
+        screenEdit.style.zIndex = "-1";
+        screenEdit.style.opacity = "0";
+        screenEdit.style.visibility = "hidden";
       }
       if (res.status >= 400) {
         setPopup({ text: res.data, type: "error" });
@@ -73,7 +94,11 @@ const ControlUsers = () => {
         request();
         setPopup({ text: res.data, type: "pass" });
         displayPopup("received");
+        screenEdit.style.zIndex = "-1";
+        screenEdit.style.opacity = "0";
+        screenEdit.style.visibility = "hidden";
       }
+
       if (res.status >= 400) {
         setPopup({ text: res.data, type: "error" });
         displayPopup("error");
@@ -112,37 +137,9 @@ const ControlUsers = () => {
     setAction("deleteUser");
   };
 
-  useEffect(() => {
-    if (rolUser !== "Admin") {
-      return;
-    }
-    const requestUsers = async () => {
-      
-      const res = await getUsersList();
-
-      if (res.status === 200) {
-        setUsers(res.data);
-      }
-
-      if (res.status >= 400) {
-        setPopup({ text: res.data, type: "error" });
-        displayPopup("error", ".control");
-      }
-
-      if (res.status >= 500) {
-        setPopup({ text: "Error al conectar con el servidor", type: "error" });
-        displayPopup("error", ".control");
-      }
-      
-    };
-    requestUsers();
-
-    setChangeUser({ rol: "Teacher" });
-  }, []);
-
   const screenEdit = document.querySelector(".screen-edit-user");
 
-  if (users.length === 0 && rolUser !== "Admin") {
+  if (Cookies.get("rol")  !== "Admin") {
     return (
       <React.Fragment>
         <Popup popup={popup} zone={"control"} />
@@ -155,9 +152,7 @@ const ControlUsers = () => {
         <Navbar active={3} />
         <div className="control-users">
           <h2>Administracion de Usuarios</h2>
-          <p>
-           No eres Administrador,por lo tanto no podras ver los usuarios
-          </p>
+          <p>No eres Administrador,por lo tanto no podras ver los usuarios</p>
         </div>
       </React.Fragment>
     );
@@ -273,7 +268,9 @@ const ControlUsers = () => {
               type="text"
               id="ci"
               name="ci"
+              pattern="[1234567890]{1,900}"
               autoComplete="off"
+              title="Solo Caracteres Numéricos!"
               value={user.ci ? user.ci : ""}
               onChange={(e) => {
                 setChangeUser({ ...user, ci: e.target.value });
@@ -288,6 +285,8 @@ const ControlUsers = () => {
               id="firstName"
               name="firstName"
               autoComplete="off"
+              pattern="[A-Za-záéíóúñ'´ ]{1,900}"
+              title="Solo Caracteres Alfabéticos!"
               value={user.firstName ? user.firstName : ""}
               onChange={(e) => {
                 setChangeUser({ ...user, firstName: e.target.value });
@@ -302,6 +301,8 @@ const ControlUsers = () => {
               id="lastName"
               name="lastName"
               autoComplete="off"
+              pattern="[A-Za-záéíóúñ'´ ]{1,900}"
+              title="Solo Caracteres Alfabéticos!"
               value={user.lastName ? user.lastName : ""}
               onChange={(e) => {
                 setChangeUser({ ...user, lastName: e.target.value });

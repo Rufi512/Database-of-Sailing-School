@@ -20,7 +20,7 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   margin: 0;
-  font-family: "opensans";
+  font-family: 'Roboto', sans-serif;
 }
 
 #root {
@@ -33,34 +33,6 @@ body {
   text-align: center;
   margin-top: 70px;
   color: #131313;
-}
-
-.carrousel-imgs{
-    position: fixed;
-    top:0;
-    bottom:0;
-    left:0;
-    right:0;
-    width: 100%;
-    height:100vh;
-    display: flex;
-    animation:100s slidein infinite linear;
-
-  }
-
-.carrousel-imgs img{
-  width: fit-content;
-  height:inherit;
-}
-
-@keyframes slidein {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-980%);
-  }
 }
 
 .boxs {
@@ -216,8 +188,8 @@ body {
 }
 
 .error {
-  background-color: #f94545;
-  color: #0c0000;
+    background-color: #ce1a1a;
+    color: #ffffff;
 }
 
 /*botones*/
@@ -530,6 +502,7 @@ select {
   .bar-top {
     display: flex;
     width: 100%;
+    height:50px !important;
     justify-content: space-between;
     background: #1f1f1f;
     color: white;
