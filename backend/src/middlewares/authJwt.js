@@ -26,18 +26,6 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
-export const refreshToken = async (req,res,next) =>{
-  
-  //Generamos el token nuevo
-
-  const token = jwt.sign({ id: req.userId }, secret, {
-    expiresIn: 480, //8 minutes
-  });
-
-  req.refreshToken = token
-  next()
-
-}
 
 export const isTeacher = async (req, res, next) => {
   //Requerimos el id del usuario y buscamos los roles en la base de datos
@@ -86,7 +74,5 @@ export const isAdmin = async (req, res, next) => {
     return;
   }
 
-  return res
-    .status(403)
-    .json("Debes ser Administrador para completar la acción!");
+  return res.status(403).json("Debes ser Administrador para completar la acción!");
 };

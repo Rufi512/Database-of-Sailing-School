@@ -18,44 +18,31 @@ export const getUsers = async (req, res) => {
 
   users.pop();
 
-  res.setHeader("Refresh-Token", req.refreshToken).json(users);
+  res.json(users);
 };
 
 export const createUser = async (req, res) => {
   console.log("Secret:", secret);
   const { ci, firstName, lastName, email, password, rol } = req.body;
   if (!ci || !firstName || !lastName || !email || !password || !rol)
-    return res
-      .status(401)
-      .json("Petición no valida,rellene los campos correctamente");
+    return res.status(401).json("Petición no valida,rellene los campos correctamente");
 
   if (!Number(ci)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parámetros en Cédula inválidos,solo números!");
+    return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parámetros en Nombre inválidos,solo caracteres!");
+    return res.status(400).json("Parámetros en Nombre inválidos,solo caracteres!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parámetros en Apellido inválidos,solo caracteres!");
+    return res.status(400).json("Parámetros en Apellido inválidos,solo caracteres!");
   }
 
   const userFind = await user.findOne({ $or: [{ email: email }, { ci: ci }] });
 
   if (userFind)
-    return res
-      .status(400)
-      .json("Ya hay un usuario con la misma cédula registrado!");
+    return res.status(400).json("Ya hay un usuario con la misma cédula registrado!");
 
   //Creamos el usuario
   const newUser = new user({
@@ -80,7 +67,7 @@ export const createUser = async (req, res) => {
 
   const savedUser = await newUser.save();
 
-  res.setHeader("Refresh-Token", req.refreshToken).json("Usuario registrado");
+  res.json("Usuario registrado");
 };
 
 export const updateUser = async (req, res) => {
@@ -103,24 +90,15 @@ export const updateUser = async (req, res) => {
     return res.status(400).json("Petición no valida");
 
   if (!Number(ci)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parámetros en Cédula inválidos,solo números!");
+    return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parámetros en Nombre inválidos,solo caracteres!");
+    return res.status(400).json("Parámetros en Nombre inválidos,solo caracteres!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parámetros en Apellido inválidos,solo caracteres!");
+    return res.status(400).json("Parámetros en Apellido inválidos,solo caracteres!");
   }
 
   const userFind = await user.findById(req.params.id);
@@ -171,5 +149,5 @@ export const deleteUser = async (req, res) => {
   } else {
     return res.status(404).json("Usuario no encontrado");
   }
-  res.setHeader("Refresh-Token", req.refreshToken).json("Usuario Eliminado");
+  res.json("Usuario Eliminado");
 };

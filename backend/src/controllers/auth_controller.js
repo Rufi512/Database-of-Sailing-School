@@ -27,7 +27,7 @@ export const signIn = async (req, res) => {
 
   //Generamos el token
   const token = jwt.sign({ id: userFound.id }, secret, {
-    expiresIn: 480, //8 minutes
+    expiresIn: 86400, //24 hours
   });
 
   const rolFind = await roles.findOne({_id: { $in: userFound.rol } })

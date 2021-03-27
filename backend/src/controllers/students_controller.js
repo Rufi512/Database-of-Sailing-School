@@ -30,14 +30,9 @@ export const active = async (req, res) => {
   const actives = studentsActive.length;
 
   if (!actives) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(404)
-      .json("Estudiantes activos no encontrados");
+    return res.status(404).json("Estudiantes activos no encontrados");
   } else {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json(studentsActive);
+    return res.json(studentsActive);
   }
 };
 
@@ -50,14 +45,9 @@ export const inactive = async (req, res) => {
     .sort({ _id: -1 });
   const inactive = studentsInactive.length;
   if (!inactive) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(404)
-      .json("Estudiantes inactivos no encontrados");
+    return res.status(404).json("Estudiantes inactivos no encontrados");
   } else {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json(studentsInactive);
+    return res.json(studentsInactive);
   }
 };
 
@@ -70,14 +60,9 @@ export const gradues = async (req, res) => {
     .sort({ _id: -1 });
   const gradues = studentsGradues.length;
   if (!gradues) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(404)
-      .json("Estudiantes graduados no encontrados");
+    return res.status(404).json("Estudiantes graduados no encontrados");
   } else {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json(studentsGradues);
+    return res.json(studentsGradues);
   }
 };
 
@@ -90,14 +75,9 @@ export const showStudent = async (req, res) => {
   const comments = await getComments(req.params.id);
 
   if (studentFind) {
-    res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json({ student: studentFind, comments: comments });
+    res.json({ student: studentFind, comments: comments });
   } else {
-    res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(404)
-      .json("Estudiante no encontrado o eliminado");
+    res.status(404).json("Estudiante no encontrado o eliminado");
   }
 };
 
@@ -109,9 +89,7 @@ export const createStudent = async (req, res) => {
   const studentFind = await student.findOne({ ci: ci });
 
   if (studentFind)
-    return res
-      .status(400)
-      .json("El estudiate ha sido registrado anteriormente en el sistema!");
+    return res.status(400).json("El estudiate ha sido registrado anteriormente en el sistema!");
 
   const newStudent = new student({
     ci,
@@ -154,10 +132,8 @@ export const createStudent = async (req, res) => {
   }
 
   const saveStudent = await newStudent.save();
-  console.log(saveStudent);
-  res
-    .setHeader("Refresh-Token", req.refreshToken)
-    .json("Estudiante registrado");
+
+  res.json("Estudiante registrado");
 };
 
 //Registro estudiante masivo
@@ -271,10 +247,7 @@ export const createStudents = (req, res) => {
       });
 
       if (headerError.exist) {
-        return res
-          .setHeader("Refresh-Token", req.refreshToken)
-          .status(400)
-          .json({
+        return res.status(400).json({
             message:
               "Ha ocurrido un error al procesar CSV, " +
               headerError.description,
@@ -282,17 +255,12 @@ export const createStudents = (req, res) => {
       }
 
       if (rowErrors.length !== 0) {
-        return res
-          .setHeader("Refresh-Token", req.refreshToken)
-          .status(400)
-          .json({
+        return res.status(400).json({
             message: "Algunos estudiantes no pudieron ser añadidos!",
             errors: rowErrors,
           });
       }
-      res
-        .setHeader("Refresh-Token", req.refreshToken)
-        .json({ message: "Todos los estudiantes del archivo CSV añadidos" });
+      res.json({ message: "Todos los estudiantes del archivo CSV añadidos" });
     });
 };
 
@@ -304,24 +272,15 @@ export const updateStudent = async (req, res) => {
   );
 
   if (!Number(req.body.ci)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parametros en Cedula invalidos!");
+    return res.status(400).json("Parametros en Cedula invalidos!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.firstName)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parametros en Nombre invalidos!");
+    return res.status(400).json("Parametros en Nombre invalidos!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.lastName)) {
-    return res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .status(400)
-      .json("Parametros en Apellido invalidos!");
+    return res.status(400).json("Parametros en Apellido invalidos!");
   }
 
   await student.updateOne(
@@ -337,9 +296,7 @@ export const updateStudent = async (req, res) => {
       },
     }
   );
-  res
-    .setHeader("Refresh-Token", req.refreshToken)
-    .json("Estudiante Actualizado!");
+  res.json("Estudiante Actualizado!");
 };
 
 //Graduar estudiante/s
@@ -351,13 +308,9 @@ export const graduateStudent = async (req, res) => {
   }
 
   if (ids.length === 1) {
-    res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json("Estudiante graduado");
+    res.json("Estudiante graduado");
   } else {
-    res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json("Estudiantes graduados");
+    res.json("Estudiantes graduados");
   }
 };
 
@@ -370,13 +323,9 @@ export const demoteStudent = async (req, res) => {
   }
 
   if (ids.length === 1) {
-    res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json("Estudiante graduado");
+    res.json("Estudiante graduado");
   } else {
-    res
-      .setHeader("Refresh-Token", req.refreshToken)
-      .json("Estudiantes graduados");
+    res.json("Estudiantes graduados");
   }
 };
 
@@ -392,7 +341,5 @@ export const deleteStudents = async (req, res) => {
     await student.findByIdAndDelete(id);
   }
 
-  res
-    .setHeader("Refresh-Token", req.refreshToken)
-    .json("Estudiante/s Eliminado/s");
+  res.json("Estudiante/s Eliminado/s");
 };
