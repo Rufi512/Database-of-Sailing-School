@@ -115,22 +115,11 @@ export const getUsersList = async () => {
 
 export const loginUser = async (user) => {
   const res = await axios
-    .post("/api/auth/login", user, {
-      headers: { "x-access-token": Cookies.get("token") },
-    })
+    .post("/api/auth/login", user, )
     .catch((err) => {
       return err.response;
     });
-  if (res.headers["refresh-token"]) {
-    Cookies.set("token", res.headers["refresh-token"]);
-  }
-  if (res.status === 401) {
-    alert("Token vencido o perdido");
-    Cookies.remove("token");
-    Cookies.remove("rol");
-    window.location.href = "/";
-    return;
-  }
+  
   return res;
 };
 
