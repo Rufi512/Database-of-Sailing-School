@@ -42,7 +42,7 @@ export const createUser = async (req, res) => {
   const userFind = await user.findOne({ $or: [{ email: email }, { ci: ci }] });
 
   if (userFind)
-    return res.status(400).json("Ya hay un usuario con la misma cédula registrado!");
+    return res.status(400).json("Ya hay un usuario con la misma cédula o email registrado!");
 
   //Creamos el usuario
   const newUser = new user({
@@ -67,11 +67,13 @@ export const createUser = async (req, res) => {
 
   const savedUser = await newUser.save();
 
-  res.json("Usuario registrado");
+  res.json("Usuario Registrado");
 };
 
 export const updateUser = async (req, res) => {
+
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+
   if (!validId) {
     return res.status(404).json("ID invalido");
   }
@@ -80,13 +82,12 @@ export const updateUser = async (req, res) => {
     ci,
     firstName,
     lastName,
-    email,
-    password,
-    rol,
-    allowPassword,
-  } = req.body;
+    email
+  } = await user.findById(req.params.id);
 
-  if (!ci || !firstName || !lastName || !email || !rol)
+  const userFind = await user.findOne({ $or: [{ email: req.body.email }, { ci: req.body.ci }] });
+
+  if (!req.body.ci || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.rol)
     return res.status(400).json("Petición no valida");
 
   if (!Number(ci)) {
@@ -101,22 +102,28 @@ export const updateUser = async (req, res) => {
     return res.status(400).json("Parámetros en Apellido inválidos,solo caracteres!");
   }
 
-  const userFind = await user.findById(req.params.id);
-  const rolFind = await roles.findOne({ name: { $in: rol } });
+  if(userFind && userFind.ci !== ci ){ 
+    return res.status(400).json("Cambio de cédula rechazado,la cédula la posee otro usuario!");
+  }
 
-  if (!userFind) return res.status(400).json("Usuario no existe en el sistema");
+  if(userFind && userFind.email !== email ){ 
+    return res.status(400).json("Cambio de email rechazado,el email esta en uso!");
+  }
+
+  const rolFind = await roles.findOne({ name: { $in: req.body.rol } });
+
   if (!rolFind) return res.status(400).json("Rol no existe");
 
-  if (password && allowPassword) {
+  if (req.body.password && req.body.allowPassword) {
     await user.updateOne(
       { _id: req.params.id },
       {
         $set: {
-          ci,
-          firstName,
-          lastName,
-          email,
-          password: await user.encryptPassword(password),
+          ci:req.body.ci,
+          firstName:req.body.firstName,
+          lastName:req.body.lastName,
+          email:req.body.email,
+          password: await user.encryptPassword(req.body.password),
           rol: rolFind._id,
         },
       }
@@ -126,10 +133,10 @@ export const updateUser = async (req, res) => {
       { _id: req.params.id },
       {
         $set: {
-          ci,
-          firstName,
-          lastName,
-          email,
+          ci:req.body.ci,
+          firstName:req.body.firstName,
+          lastName:req.body.lastName,
+          email:req.body.email,
           rol: rolFind._id,
         },
       }

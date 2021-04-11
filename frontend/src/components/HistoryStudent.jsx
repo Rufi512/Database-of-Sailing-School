@@ -16,10 +16,22 @@ export const HistoryStudent = (props) => {
 
   if (!history[0] && !history[1] && !history[2] && !history[3] && !history[4]) {
     return (
-      <div className="alert-history view-history" style={{ margin: "auto" }}>
-        <p style={{ margin: "20px auto" }}>
+      <div className="alert-history view-history" style={{ margin: "auto",flexDirection:'column',background:'none' }}>
+        
+        <button
+            className="btn"
+            type="button"
+            onClick={(e) => {
+              changeView("general");
+            }}
+          >
+            Regresar
+          </button>
+
+        <p style={{ margin: "20px auto",width:'100%',background:'#ffffff',height:'45px',display:'flex',justifyContent:'center',alignItems:'center' }}>
           La informacion solicitada aun no esta disponible!
         </p>
+
       </div>
     );
   }

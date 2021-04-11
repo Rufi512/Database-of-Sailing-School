@@ -313,7 +313,7 @@ const ControlUsers = () => {
           <div className="form-input">
             <label style={{ marginBottom: "10px" }}>Correo Electronico</label>
             <input
-              type="text"
+              type="email"
               id="email"
               name="email"
               autoComplete="off"

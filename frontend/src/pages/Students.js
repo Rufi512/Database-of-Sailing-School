@@ -28,7 +28,7 @@ const Students = (props) => {
     }
 
     if (result.status >= 500) {
-      setError("No se pudo establecer la conexion al servidor :(");
+      setError("No se pudo establecer la conexión al servidor :(");
       return setStudents();
     }
 
@@ -84,7 +84,7 @@ const Students = (props) => {
       if (result.status >= 500) {
         request(listStudent);
         setPopup({
-          text: "Ah ocurrido un error al realizar la accion :(",
+          text: "Ah ocurrido un error al realizar la acción :(",
           type: "error",
         });
         
@@ -110,7 +110,7 @@ const Students = (props) => {
       if (result.status >= 500) {
         request(listStudent);
         setPopup({
-          text: "Ah ocurrido un error al realizar la accion :(",
+          text: "Ah ocurrido un error al realizar la acción :(",
           type: "error",
         });
       
@@ -140,7 +140,7 @@ const Students = (props) => {
       } 
 
        if (result.status >= 500) {
-        setPopup({ text: "Ah ocurrido un error al realizar la accion :(", type: "error" });
+        setPopup({ text: "Ah ocurrido un error al realizar la acción :(", type: "error" });
         request(listStudent);
       } 
 

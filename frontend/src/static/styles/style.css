@@ -172,7 +172,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 100000;
   transform: translateY(-110%);
   transition: all 0.3s ease;
 }
@@ -359,68 +359,68 @@ body {
 /*Tabla de Estudiantes*/
 
 .tableMaterial {
-  width: 90%;
-  position: relative;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  margin: auto;
+  width: 90% ;
+  position: relative !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: auto !important;
 }
 
 .tableMaterial table {
-  border: none;
+  border: none !important;
 }
 
 .tableMaterial select {
-  width: 200px;
-  margin: auto;
+  width: 200px !important;
+  margin: auto !important;
 }
 
 tr {
-  background-color: #fff;
+  background-color: #fff ;
 }
 
 .MuiTable-root {
-  background-color: #ffffff;
+  background-color: #ffffff ;
 }
 .MuiPaper-root.MuiPaper-elevation2.MuiPaper-rounded,
 .MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-5.MuiToolbar-gutters {
-  background-color: #ffffff00;
-  outline: none;
-  box-shadow: none;
+  background-color: #ffffff00 ;
+  outline: none !important;
+  box-shadow: none !important;
   padding-right: 0px !important;
-  padding-left: 0px;
+  padding-left: 0px !important;
 }
 
 .MTableToolbar-title-9 {
-  width: 300px;
-  background-color: none;
-  height: 64px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  color: black;
+  width: 300px !important;
+  background-color: none !important;
+  height: 64px !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  color: black !important;
 }
 
 .MTableToolbar-spacer-7 {
-  display: contents;
+  display: contents !important;
 }
 
 .MuiFormControl-root.MuiTextField-root.MTableToolbar-searchField-10 {
-  margin: auto;
+  margin: auto !important;
   padding-left: 8px !important;
 }
 
 .MuiButtonBase-root.MuiTableSortLabel-root.MuiTableSortLabel-root:hover {
-  color: whitesmoke;
+  color: whitesmoke !important;
 }
 
 .MuiCheckbox-colorSecondary.Mui-checked {
   color: black;
 }
 .MuiButtonBase-root .MuiTableSortLabel-root:hover {
-  color: white;
-  cursor: poiner;
+  color: white !important;
+  cursor: poiner !important;
 }
 
 /*CheckBoxs*/
@@ -431,11 +431,90 @@ tr {
 .MuiCheckbox-colorSecondary.Mui-checked {
   color: #4a4a4a !important;
 }
+
+/*PDF*/
+.bulletin-container{
+  background: #ffffff;
+}
+
+.bulletin{
+  margin:auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width:750px;
+}
+
+.bulletin h2, .bulletin h3, .bulletin h4{
+  letter-spacing: 0.2px;
+}
+
+.bulletin-body table{
+border-collapse: collapse;
+}
+
+.bulletin-body{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bulletin-body table thead tr:first-child th{
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+.bulletin-body table thead tr th,.bulletin-body table tbody tr th{
+  background:#f7f7f7;
+  border:1px solid black;
+  padding: 10px;
+}
+
+.bulletin-body table thead tr th,.bulletin-body table thead tr td{
+  color:black;
+}
+
+.bulletin-body .student-general{
+    width: 100%;
+    margin: auto;
+    margin-top: 40px;
+}
+
+.bulletin-body section table{
+  margin:auto;
+  width:100%;
+}
+
+.bulletin-body section{
+  border-bottom: 2px solid black;
+  padding-bottom: 20px;
+}
+
+.bulletin-body .comment{
+    width:735px;
+    margin:20px auto;
+    padding: 2px 10px;
+    background: #191919;
+    border-radius: 5px;
+    color: white;
+}
+
+.bulletin-footer{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.bulletin-footer div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 /*general styles*/
 select {
   outline: 0;
 }
-
 
 @media (max-width: 768px) {
   .sidebar {

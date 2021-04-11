@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import jsPDF from "jspdf";
 import FormAcademic from "../components/FormAcademic";
 import { Navbar } from "../components/Navbar";
 import { InfoBasic } from "../components/InfoBasic";
 import { InfoAcademic } from "../components/InfoAcademic";
 import { HistoryStudent } from "../components/HistoryStudent";
 import { Comments } from "../components/Comments";
+import {AcademicBulletin} from "../components/AcademicBulletin"
 import {
   studentInformation,
   gradeStudent,
@@ -19,6 +21,7 @@ import trash from "../static/icons/trash-solid.svg";
 import pencil from "../static/icons/pencil.svg";
 import book from "../static/icons/book.svg";
 import arrow from "../static/icons/arrow.svg";
+import download from "../static/icons/download.svg";
 
 const StudentInfo = (props) => {
   const [student, setStudent] = useState({subjects:[],record:[]});
@@ -35,6 +38,7 @@ const StudentInfo = (props) => {
     if (res.status === 200) {
       setStudent(res.data.student)
       setComments(res.data.comments)
+      console.log(res.data)
     }
 
     if (res.status >= 400) {
@@ -43,7 +47,7 @@ const StudentInfo = (props) => {
     }
 
     if (res.status >= 500) {
-      setPopup({ text: "Ocurrio un error al requerir informacion!", type: "error" });
+      setPopup({ text: "Ocurrió un error al requerir información!", type: "error" });
       displayPopup("error", ".popupStudentInfo");
     }
   }
@@ -137,6 +141,20 @@ const StudentInfo = (props) => {
     }
   }
 
+  const generatePDF = () => {
+    let doc = new jsPDF("p", "mm",[1000, 1210]);
+    doc.html(document.getElementById("to-pdf"), {
+      callback: function (doc) {
+        doc.save(`${student.ci}-${student.firstName}-${student.lastName}-${student.school_year}.pdf`);
+      },
+      x: 130,
+      y: 0,
+  
+    }); 
+  };
+
+
+
   //Borra al estudiante
   async function deleteStudent(value) {
     if (value === true) {
@@ -174,6 +192,15 @@ const StudentInfo = (props) => {
           <p>Eliminar</p>
         </div>
 
+           <div
+          onClick={(e) => {
+            generatePDF();
+          }}
+        >
+          <img src={download} alt="download" />
+          <p>Generar PDF</p>
+        </div>
+
       </div>
       
         <div
@@ -188,6 +215,10 @@ const StudentInfo = (props) => {
             gradue={student.school_year}
           />
         </div>
+
+         <div style={{display:'none'}}>
+        <AcademicBulletin student={student} comments={comments}/>
+      </div>
       </React.Fragment>
     );
   }
@@ -221,6 +252,17 @@ const StudentInfo = (props) => {
           <img src={book} alt="book" />
           <p>Historial</p>
         </div>
+
+        <div
+          onClick={(e) => {
+            generatePDF();
+          }}
+        >
+          <img src={download} alt="download" />
+          <p>Generar PDF</p>
+        </div>
+
+
         <div
           onClick={(e) => {
             questionAction(false, "upgradeAndDegrade");
@@ -328,6 +370,10 @@ const StudentInfo = (props) => {
         comments={comments}
         gradue={student.school_year}
       />
+
+      <div style={{display:'none'}}>
+        <AcademicBulletin student={student} comments={comments}/>
+      </div>
     </React.Fragment>
   );
 };

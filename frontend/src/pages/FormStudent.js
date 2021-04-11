@@ -17,7 +17,7 @@ const FormStudent = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     displayPopup();
-    setPopup({ text: "Enviando informacion", type: "request" });
+    setPopup({ text: "Enviando información", type: "request" });
     const student = { ci, firstName, lastName, school_year };
     const result = await registerStudent(student);
 

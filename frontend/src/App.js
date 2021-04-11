@@ -6,7 +6,7 @@ import Students from './pages/Students'
 import StudentInfo from './pages/StudentInfo'
 import ControlUsers from './pages/ControlUsers'
 import {BrowserRouter as Router,Route,Switch} from 'react-router-dom'
-//import PrivateRoute from './components/PrivateRoute'
+
 
 const App = ()=>( 
   <Router>

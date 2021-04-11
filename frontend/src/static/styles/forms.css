@@ -323,6 +323,7 @@ td {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding:2px 10px;
   border-radius: 10px;
   background-color: whitesmoke;
   margin: 10px 5px;

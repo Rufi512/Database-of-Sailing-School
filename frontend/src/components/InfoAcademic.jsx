@@ -23,7 +23,7 @@ export const InfoAcademic = (props) =>{
 <table className="student-notes">
           <thead>
             <tr>
-              <th colSpan="5">Informacion Academica</th>
+              <th colSpan="5" style={{color:'black'}}>Información Académica</th>
             </tr>
             <tr>
               <th>Materias</th>

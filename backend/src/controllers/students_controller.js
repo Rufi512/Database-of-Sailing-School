@@ -89,7 +89,7 @@ export const createStudent = async (req, res) => {
   const studentFind = await student.findOne({ ci: ci });
 
   if (studentFind)
-    return res.status(400).json("El estudiate ha sido registrado anteriormente en el sistema!");
+    return res.status(400).json("El estudiante ha sido registrado anteriormente en el sistema!");
 
   const newStudent = new student({
     ci,
@@ -155,7 +155,7 @@ export const createStudents = (req, res) => {
       ) {
         headerError.exist = true;
         headerError.description =
-          "las cabeceras no cumplen con el formato solicitado: Cedula | Nombre | Apellido | Curso";
+          "Las cabeceras no cumplen con el formato solicitado: Cedula | Nombre | Apellido | Curso";
       }
     })
     .on("error", (err) => {
@@ -169,16 +169,16 @@ export const createStudents = (req, res) => {
       }
 
       if (!Number(row.Cedula)) {
-        return rowErrors.push("La cedula contiene letras en la fila: " + rows);
+        return rowErrors.push("La cédula contiene letras en la fila: " + rows);
       }
 
       if (!/^[A-Za-záéíóúñ'´ ]+$/.test(row.Nombre)) {
-        return rowErrors.push("El nombre contiene letras en la fila: " + rows);
+        return rowErrors.push("El nombre contiene números en la fila: " + rows);
       }
 
       if (!/^[A-Za-záéíóúñ'´ ]+$/.test(row.Apellido)) {
         return rowErrors.push(
-          "El apellido contiene numeros en la fila: " + rows
+          "El apellido contiene números en la fila: " + rows
         );
       }
 
@@ -267,20 +267,27 @@ export const createStudents = (req, res) => {
 //Actualiza al estudiante (Solo Cedula,Nombre,apellido,sus notas de las materias y estado)
 
 export const updateStudent = async (req, res) => {
-  const { ci, firstName, lastName, subjects, status } = await student.findById(
+  const { _id, ci, firstName, lastName, subjects, status } = await student.findById(
     req.params.id
   );
 
+   const studentFind = await student.findOne({ ci: req.body.ci });
+
   if (!Number(req.body.ci)) {
-    return res.status(400).json("Parametros en Cedula invalidos!");
+    return res.status(400).json("Parámetros en Cédula inválidos!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.firstName)) {
-    return res.status(400).json("Parametros en Nombre invalidos!");
+    return res.status(400).json("Parámetros en Nombre inválidos!");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.lastName)) {
-    return res.status(400).json("Parametros en Apellido invalidos!");
+    return res.status(400).json("Parámetros en Apellido inválidos!");
+  }
+
+ 
+  if(studentFind && studentFind.ci !== ci ){ 
+    return res.status(400).json("Cambio de Cédula rechazado,la cédula la posee otro estudiante!");
   }
 
   await student.updateOne(

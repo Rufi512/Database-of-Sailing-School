@@ -16,7 +16,7 @@ export const InfoBasic = (props) => {
       <table className="student-general">
         <thead>
           <tr>
-            <th colSpan="5">Informacion Basica</th>
+            <th colSpan="5" style={{color:'black'}}>Información Basica</th>
           </tr>
           <tr>
             <th>Cedula</th><th>Nombre</th><th>Apellido</th><th>Curso</th><th>Estado</th>
@@ -37,7 +37,7 @@ export const InfoBasic = (props) => {
       style={{ display: props.gradue === "Graduado" ? "none" : "" }}
     >
       <thead>
-        <tr><th colSpan="5">Informacion Basica</th></tr>
+        <tr><th colSpan="5" style={{color:'black'}}>Información Basica</th></tr>
         <tr><th>Cedula</th><th>Nombre</th><th>Apellido</th><th>Curso</th><th>Estado</th></tr>
       </thead>
       <tbody>
