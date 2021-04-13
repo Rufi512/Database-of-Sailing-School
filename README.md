@@ -1,8 +1,6 @@
 # Database of Sailing School
 
-## En desarrollo
-
-Aplicación Stack MERN para registrar, consultar, modificar las calificaciones de los estudiantes
+Aplicación Stack MERN para registrar, consultar, modificar y eliminar las calificaciones de los estudiantes
 
 <img src="https://github.com/Rufi512/Database-of-Sailing-School/blob/master/Capture.png" />
 
@@ -52,3 +50,6 @@ npm run dev
 ```
 npm run start
 ```
+### Nota
+Para iniciar sesión dentro de la aplicación el usuario y la contraseña del usuario administrador es: <b>12345</b>
+
