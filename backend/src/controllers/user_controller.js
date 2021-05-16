@@ -70,6 +70,8 @@ export const createUser = async (req, res) => {
   res.json("Usuario Registrado");
 };
 
+//Actualiza la información de usuario
+
 export const updateUser = async (req, res) => {
 
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
@@ -145,6 +147,7 @@ export const updateUser = async (req, res) => {
   res.json("Usuario Actualizado!");
 };
 
+//Borrar Usuario
 export const deleteUser = async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!validId) return res.status(404).json("ID invalido");
@@ -158,3 +161,26 @@ export const deleteUser = async (req, res) => {
   }
   res.json("Usuario Eliminado");
 };
+
+//Recupera la contraseña
+export const changePassword = async  (req,res)=>{
+  if(!req.body.email  || !req.body.ci || !req.body.password){
+    res.status(400).json("Llene los campos necesarios!")
+  }
+
+  const userFind = await user.findOne({ email: req.body.email }, { ci: req.body.ci })
+  if (!userFind) return res.status(404).json("Usuario no encontrado");
+
+  await user.updateOne(
+      { _id: userFind._id },
+      {
+        $set: {
+          password: await user.encryptPassword(req.body.password),
+        },
+      }
+    );
+
+  res.json("Cambio de contraseña satisfatorio!")
+
+
+}

@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { studentsList, gradeStudent, deleteStudents } from "../API";
+import React,{useState,useEffect} from 'react'
+import { studentsSection, gradeStudent, deleteStudents } from "../API";
 import arrow from "../static/icons/arrow.svg";
 import { Navbar } from "../components/Navbar";
 import { Popup, displayPopup } from "../components/Alerts";
 import { Pagination } from "../components/MaterialTablet";
 import { Alert, displayAlert } from "../components/Alerts";
 
-const Students = (props) => {
-  const [students, setStudents] = useState([]);
-  const [selectStudents, setSelectStudents] = useState([]);
+const StudentsSections = (props) =>{
+
+	const [students, setStudents] = useState([]);
+	const [selectStudents, setSelectStudents] = useState([]);
   const [alert, setAlert] = useState("");
   const [error, setError] = useState("");
   const [popup, setPopup] = useState({});
@@ -16,11 +17,11 @@ const Students = (props) => {
   const [action, setAction] = useState("upgradeAndDegrade");
   const [confirm, setConfirm] = useState(false);
   const [active, setActive] = useState(false);
-
-  async function request(value) {
+      
+    async function request(value) {
     setError("Cargando...");
     setActive(false);
-    const result = await studentsList(value);
+    const result = await studentsSection(value);
 
     if (result.status >= 400 && result.status <= 499) {
       setError(result.data);
@@ -36,12 +37,13 @@ const Students = (props) => {
   }
 
   useEffect(() => {
-    function loadStudentsActive() {
-      request("studentsActive");
-      setListStudent("studentsActive");
+    function loadSection() {
+      request(props.match.params.section);
+      setListStudent(props.match.params.section);
     }
-    loadStudentsActive();
-  }, []);
+    console.log(props)
+    loadSection();
+  }, [props]);
 
   const handleInfo = (id) => {
     props.history.push("/student/info/" + id);
@@ -185,9 +187,10 @@ const Students = (props) => {
     }
   }
 
-  return (
+
+   return (
     <div>
-      <Navbar active={2} />
+      <Navbar />
       <Popup popup={popup} />
       <Alert
         alert={alert}
@@ -245,22 +248,6 @@ const Students = (props) => {
         </button>
       </div>
 
-      <div className="options-student">
-        <p>Estudiantes actualmente </p>
-        <select
-          style={{ marginLeft: "5px" }}
-          name="students"
-          onChange={(e) => {
-            request(e.target.value);
-            showHiddenSelect(false);
-            setListStudent(e.target.value);
-          }}
-        >
-          <option value="studentsActive">Activos</option>
-          <option value="studentsInactive">Inactivos</option>
-          <option value="studentsGradues">Graduados</option>
-        </select>
-      </div>
       <section className="tableMaterial">
         <Pagination
           students={students}
@@ -271,6 +258,10 @@ const Students = (props) => {
       </section>
     </div>
   );
-};
 
-export default Students;
+}
+
+
+
+
+export default StudentsSections

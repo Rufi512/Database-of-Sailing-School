@@ -151,7 +151,7 @@ const ControlUsers = () => {
         />
         <Navbar active={3} />
         <div className="control-users">
-          <h2>Administracion de Usuarios</h2>
+          <h2>Administracion</h2>
           <p>No eres Administrador,por lo tanto no podras ver los usuarios</p>
         </div>
       </React.Fragment>
@@ -169,7 +169,7 @@ const ControlUsers = () => {
       />
       <Navbar active={3} />
       <div className="control-users">
-        <h2>Administracion de Usuarios</h2>
+        <h2>Administracion</h2>
 
         <div className="users-container" style={{ marginBottom: "10px" }}>
           {users.map((el, i) => {
@@ -201,8 +201,8 @@ const ControlUsers = () => {
                         <KeyIcon style={{ height: "20px" }} />
                         <p>
                           {el.rol.name === "Admin" ? "Administrador/a" : ""}
-                          {el.rol.name === "Moderator" ? "Moderador/a" : ""}
-                          {el.rol.name === "Teacher" ? "Maestro/a" : ""}
+                          {el.rol.name === "Moderator" ? "Operador/a" : ""}
+                          {el.rol.name === "Teacher" ? "Docente" : ""}
                         </p>
                       </div>
                     </div>
@@ -368,8 +368,8 @@ const ControlUsers = () => {
                   setChangeUser({ ...user, rol: e.target.value });
                 }}
               >
-                <option value="Teacher">Maestro/a</option>
-                <option value="Moderator">Moderador/a</option>
+                <option value="Teacher">Docente</option>
+                <option value="Moderator">Operador</option>
                 <option value="Admin">Administrador/a</option>
               </select>
             </div>

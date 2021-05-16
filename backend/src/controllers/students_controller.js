@@ -66,6 +66,69 @@ export const gradues = async (req, res) => {
   }
 };
 
+//Lista de estudiantes por curso
+export const section = async (req, res) => {
+  const studentsSection = await student
+    .find(
+      { status: true, school_year: req.body.school_year },
+      { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
+    )
+    .sort({ _id: -1 });
+  const sections = studentsSection.length;
+  if (!sections) {
+    return res.status(404).json(`Estudiantes del curso ${req.body.school_year} no encontrados`);
+  } else {
+    return res.json(studentsSection);
+  }
+};
+
+//Lista de estudiantes de cada curso (indicador)
+
+export const sectionMax = async (req, res) => {
+
+  const studentsSectionMax = await student
+    .find(
+      { status: true,},
+      { annual_comments: 0, subjects: 0, record: 0, comments: 0,ci:0,firstName:0,lastName:0,last_modify:0,_id:0 }
+    )
+    .sort({ _id: -1 });
+
+  let maxA = [] 
+  let maxB = [] 
+ 
+  for(var i = 0; i<5; i++){
+    maxA[i] = studentsSectionMax.filter((el)=>{return el.school_year === `${i+1}-A`}).length
+    maxB[i] = studentsSectionMax.filter((el)=>{return el.school_year === `${i+1}-B`}).length
+  }
+
+    return res.json({
+      section1:{
+      studentsTotalA:maxA[0],
+      studentsTotalB:maxB[0]
+       },
+       section2:{
+      studentsTotalA:maxA[1],
+      studentsTotalB:maxB[1]
+       },
+       section3:{
+      studentsTotalA:maxA[2],
+      studentsTotalB:maxB[2]
+       },
+       section4:{
+      studentsTotalA:maxA[3],
+      studentsTotalB:maxB[3]
+       },
+       section5:{
+      studentsTotalA:maxA[4],
+      studentsTotalB:maxB[4]
+       },
+
+     })
+     
+
+    
+};
+
 //Consulta Estudiante individual
 export const showStudent = async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
@@ -310,14 +373,27 @@ export const updateStudent = async (req, res) => {
 
 export const graduateStudent = async (req, res) => {
   const ids = req.body;
+  let gradues = []
   for (const id of ids) {
-    await graduate(id);
+    const res = await graduate(id);
+    gradues.push(res)
   }
 
-  if (ids.length === 1) {
+  if (ids.length === 1 && gradues[0] === true) {
     res.json("Estudiante graduado");
-  } else {
-    res.json("Estudiantes graduados");
+  }
+
+  if(ids.length === 1 && gradues[0] === false){
+    res.status(400).json("El estudiante no se puede graduar por no cumplir el minimo en la asignaturas (10 o mas en su promedio) o por estar inactivo")
+  }
+
+  if(ids.length > 1){
+    const notGradues = gradues.filter((el)=>{return el === false})
+    if(notGradues.length > 0){
+      res.status(400).json('Algunos estudiantes no pudieron ser graduados por no cumplir el minimo en las asignaturas')
+    }else{
+      res.json("Estudiantes graduados");
+    }
   }
 };
 
@@ -325,15 +401,30 @@ export const graduateStudent = async (req, res) => {
 
 export const demoteStudent = async (req, res) => {
   const ids = req.body;
+  let demotes = []
   for (const id of ids) {
-    await demote(id);
+   const res = await demote(id);
+   demotes.push(res)
   }
 
-  if (ids.length === 1) {
-    res.json("Estudiante graduado");
-  } else {
-    res.json("Estudiantes graduados");
+  if (ids.length === 1 && demotes[0] === true) {
+    res.json("Estudiante reprobrado");
   }
+
+  if(ids.length === 1 && demotes[0] === false){
+    res.status(400).json("El estudiante no se puede reprobar por estar inactivo o ha alcanzado el minimo!")
+  }
+
+  if(ids.length > 1){
+    const notDemotes = demotes.filter((el)=>{return el === false})
+    if(notDemotes.length > 0){
+      res.status(400).json('Algunos estudiantes no pudieron ser reprobrados por estar inactivos o han alcanzado el minimo!')
+    }else{
+      res.json("Estudiantes reprobrados");
+    }
+  } 
+
+
 };
 
 //Borrar estudiante/s

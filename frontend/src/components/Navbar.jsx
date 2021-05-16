@@ -77,6 +77,13 @@ export const Navbar = (props) => {
                 Lista de estudiantes
               </li>{" "}
             </Link>
+            
+            <Link className="a" to="/sections" onClick={(e)=>{document.getElementsByTagName("body")[0].style.overflowY = "unset";}}>
+            <li className={`${props.active === 5 ? "sidebar-tag-active" : ""}`}>
+              Secciones
+            </li>
+            </Link>
+
             <Link className="a" to="/control" onClick={(e)=>{document.getElementsByTagName("body")[0].style.overflowY = "unset";}}>
             <li className={`${props.active === 3 ? "sidebar-tag-active" : ""}`}>
               Administración

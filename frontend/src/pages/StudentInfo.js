@@ -85,13 +85,13 @@ const StudentInfo = (props) => {
     displayAlert(true);
     changeView("general", student.school_year);
     if (value === true && action === "upgradeAndDegrade") {
-      setAlert("Estas seguro de graduar a al estudiante?");
+      setAlert("Estas seguro de aprobar a al estudiante?");
       setAction("upgradeAndDegrade");
       setConfirm(true);
     }
 
     if (value === false && action === "upgradeAndDegrade") {
-      setAlert("Estas seguro de degradar a al estudiante?");
+      setAlert("Estas seguro de reprobar a al estudiante?");
       setAction("upgradeAndDegrade");
       setConfirm(false);
     }
@@ -129,13 +129,13 @@ const StudentInfo = (props) => {
     }
 
     if (res.status === 200 && gradue === true) {
-      setPopup({ text: "Estudiante Graduado", type: "pass" });
+      setPopup({ text: "Estudiante Aprobado", type: "pass" });
       displayPopup("received", ".popupStudentInfo");
       request(student._id);
     }
 
     if (res.status === 200 && gradue === false) {
-      setPopup({ text: "Estudiante Degradado", type: "error" });
+      setPopup({ text: "Estudiante Reprobrado", type: "error" });
       displayPopup("received", ".popupStudentInfo");
       request(student._id);
     }
@@ -236,13 +236,14 @@ const StudentInfo = (props) => {
           <p>Editar</p>
         </div>
         <div
+        style={{display: student.status ? 'block' : 'none'}}
           onClick={(e) => {
             questionAction(true, "upgradeAndDegrade");
             setAction("upgradeAndDegrade");
           }}
         >
           <img src={arrow} style={{ transform: "rotate(-90deg)" }} alt="arrow" />
-          <p>Graduar</p>{" "}
+          <p>Aprobar</p>{" "}
         </div>
         <div
           onClick={(e) => {
@@ -264,13 +265,14 @@ const StudentInfo = (props) => {
 
 
         <div
+         style={{display: student.status ? 'block' : 'none'}}
           onClick={(e) => {
             questionAction(false, "upgradeAndDegrade");
             setAction("upgradeAndDegrade");
           }}
         >
           <img src={arrow} style={{ transform: "rotate(90deg)" }} alt="arrow" />
-          <p>Degradar</p>
+          <p>Reprobrar</p>
         </div>
         <div
           onClick={(e) => {

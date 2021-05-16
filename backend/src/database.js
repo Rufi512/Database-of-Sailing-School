@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 var URI = process.env.MONGOCLOUD ? process.env.MONGOCLOUD : 'mongodb://localhost/schooldb' 
 
-mongoose.connect((URI), { //Pasamos la direccion de la base de datos a conectar
+mongoose.connect((URI), { 
    useNewUrlParser: true,
    useUnifiedTopology: true,
    useFindAndModify:true,

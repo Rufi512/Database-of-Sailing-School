@@ -34,7 +34,7 @@ export const initialSetup = async () =>{
         ci: "12345",
         firstName: "Chente",
         lastName: "Director",
-        email: "email@gmail.com",
+        email: "chente@mail.com",
         password: await user.encryptPassword("12345"),
         rol: rolFind,
       });

@@ -115,7 +115,7 @@ const FormStudent = () => {
                 required
               />
               <label id="label-firstName" className="label-name">
-                Nombre del Estudiante
+                Nombres del Estudiante
               </label>
             </div>
 
@@ -134,7 +134,7 @@ const FormStudent = () => {
                 required
               />
               <label id="label-lastName" className="label-name">
-                Apellido del Estudiante
+                Apellidos del Estudiante
               </label>
             </div>
 

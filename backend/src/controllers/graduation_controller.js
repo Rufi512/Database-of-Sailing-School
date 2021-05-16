@@ -17,6 +17,22 @@ export const graduate = async (id) => {
     school_year: studentFind.school_year,
     subjects: studentFind.subjects,
   };
+ 
+ /*Verificamos si el estudiante es apto para ser graduado*/
+  const pass_information = academic_information.subjects.map((el)=>{
+    if(Math.round((el.score[0] + el.score[1] + el.score[2]) / 3) >= 10  ){
+      return true
+    }else{
+      return false
+    }
+  })
+
+  const validGradue = pass_information.filter((el)=>{return el === false})
+
+  if(validGradue.length > 0 || studentFind.status === false){
+    return false
+  }
+
 
   switch (studentFind.school_year) {
     case "1-A": {
@@ -154,14 +170,15 @@ export const graduate = async (id) => {
       },
     }
   );
+   
+  return true
+  
 };
 
 export const demote = async (id) => {
   const studentFind = await student.findById(id);
-  if (studentFind.school_year === "1-A" || studentFind.school_year === "1-B") {
-    return console.log(
-      "No se puede degradar mas al estudiante:" + student.firstName
-    );
+  if (studentFind.school_year === "1-A" || studentFind.school_year === "1-B" || studentFind.status === false) {
+    return false
   }
   switch (studentFind.school_year) {
     case "2-A": {
@@ -282,4 +299,6 @@ export const demote = async (id) => {
       },
     }
   );
+
+  return true
 };

@@ -356,6 +356,34 @@ body {
   margin-right: 10px;
 }
 
+/*Seccions*/
+.container-sections{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container-sections-card{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-flow: wrap;
+    max-width:1300px;
+}
+
+.container-sections-card .card{
+  margin:10px;
+  background:aliceblue;
+  padding: 5px;
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
+
+.container-sections-card .card:hover{
+  background: #1679ce;
+  color:white
+}
+
 /*Tabla de Estudiantes*/
 
 .tableMaterial {
@@ -516,7 +544,7 @@ select {
   outline: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
   .sidebar {
     position: fixed;
     top: 0;

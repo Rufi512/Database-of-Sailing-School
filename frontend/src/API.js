@@ -79,6 +79,24 @@ export const studentInformation = async (id) => {
   return res
 }
 
+export const getSectionMax = async () => {
+  const res = await axios.get("/api/students/sections/max", {
+      headers: { "x-access-token": Cookies.get("token") },
+    }).catch((err) => {
+      console.log(err)
+      return err.response
+    })
+  
+  if (res.status === 401) {
+    alert("Token vencido o perdido")
+    Cookies.remove("token")
+    Cookies.remove("rol")
+    window.location.href = "/"
+    return
+  }
+  return res
+}
+
 export const getUsersList = async () => {
   const res = await axios.get("/api/user/list", {
       headers: { "x-access-token": Cookies.get("token") },
@@ -111,6 +129,14 @@ export const loginUser = async (user) => {
   }
   return res
 }
+
+export const resetPassword = async (changePass) =>{
+   const res = await axios.post("/api/user/change/password", changePass).catch((err) => {
+      console.log(err)
+      return err.response
+    })
+  return res
+} 
 
 export const registerUser = async (user) => {
   const res = await axios.post("/api/user/register", user, {
@@ -168,6 +194,46 @@ export const registerStudents = async (archive) => {
   return res
 }
 
+export const studentsSection = async (section) =>{
+     const res = await axios.post("/api/students/section", {school_year:section},{
+      headers: { "x-access-token": Cookies.get("token") },
+    }).catch((err) => {
+      console.log(err)
+      return err.response
+    })
+
+    if (res.status === 401) {
+    alert("Token vencido o perdido")
+    Cookies.remove("token")
+    Cookies.remove("rol")
+    window.location.href = "/"
+    return
+  }
+
+  return res
+}
+
+export const commentStudent = async (id, comment) => {
+  const res = await axios.post(
+      "/api/students/comment/" + id,
+      { comment },
+      { headers: { "x-access-token": Cookies.get("token") } }).catch((err) => {
+      console.log(err)
+      return err.response
+    })
+  
+  if (res.status === 401) {
+    alert("Token vencido o perdido")
+    Cookies.remove("token")
+    Cookies.remove("rol")
+    window.location.href = "/"
+    return
+  }
+  return res
+}
+
+//PUT
+
 export const gradeStudent = async (value, ids) => {
   if (value === "upgrade") {
     const res = await axios.put("/api/students/graduate", ids, {
@@ -205,27 +271,6 @@ export const gradeStudent = async (value, ids) => {
     return res
   }
 }
-
-export const commentStudent = async (id, comment) => {
-  const res = await axios.post(
-      "/api/students/comment/" + id,
-      { comment },
-      { headers: { "x-access-token": Cookies.get("token") } }).catch((err) => {
-      console.log(err)
-      return err.response
-    })
-  
-  if (res.status === 401) {
-    alert("Token vencido o perdido")
-    Cookies.remove("token")
-    Cookies.remove("rol")
-    window.location.href = "/"
-    return
-  }
-  return res
-}
-
-//PUT
 
 export const academicInformation = async (id, values) => {
   const res = await axios.put("/api/students/info/" + id, values, {

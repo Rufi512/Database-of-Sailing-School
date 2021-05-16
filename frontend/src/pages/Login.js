@@ -89,7 +89,7 @@ const Login = (props) => {
             </div>
           </div>
           <p
-          onClick={(e)=>{alert('Estoy de adorno :p')}}
+          onClick={(e)=>{props.history.push("/reset/password")}}
             style={{
               textAlign: "end",
               color: "#2d2d2d",
