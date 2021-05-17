@@ -148,6 +148,10 @@ export const showStudent = async (req, res) => {
 
 export const createStudent = async (req, res) => {
   const { ci, firstName, lastName, school_year } = req.body;
+ 
+  if(!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0){
+    return res.status(400).json("Parámetros en Cédula inválidos,solo números!")
+  }
 
   if (Number(ci) > 9999999999) {
     return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
@@ -364,8 +368,12 @@ export const updateStudent = async (req, res) => {
 
    const studentFind = await student.findOne({ ci: req.body.ci });
 
-  if (!Number(req.body.ci)) {
-    return res.status(400).json("Parámetros en Cédula inválidos!");
+   if(!Number(req.body.ci) || !Number.isInteger(Number(req.body.ci)) || Number(req.body.ci) < 0){
+    return res.status(400).json("Parámetros en Cédula inválidos,solo números!")
+  }
+
+  if (Number(req.body.ci) > 9999999999) {
+    return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.firstName)) {

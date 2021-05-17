@@ -31,7 +31,7 @@ export const createUser = async (req, res) => {
   if (!ci || !firstName || !lastName || !email || !password || !rol)
     return res.status(401).json("Petición no valida,rellene los campos correctamente");
 
-  if (!Number(ci)) {
+  if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
   }
 
@@ -117,8 +117,8 @@ export const updateUser = async (req, res) => {
 
   if (!req.body.ci || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.rol)
     return res.status(400).json("Petición no valida");
-
-  if (!Number(ci)) {
+  
+  if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0 ) {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
   }
 
