@@ -114,7 +114,8 @@ import {resetPassword} from '../API'
           </div>
 
       
-
+          <div style={{width:'100%',display:'flex',flexFlow:'wrap'}}>
+          
           <button
             style={{ marginTop: "10px" , width:'180px'}}
             type="submit"
@@ -123,6 +124,15 @@ import {resetPassword} from '../API'
             {" "}
             Cambiar contraseña{" "}
           </button>
+
+            <button style={{marginTop:"10px", width:"180px"}}
+            type="button"
+            className="btn btn-login"
+            onClick={(e)=>{props.history.push("/")}}
+            >
+              Regresar al inicio
+            </button>
+          </div>
         </form>
       </div>
     </React.Fragment>

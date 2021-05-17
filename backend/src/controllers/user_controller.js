@@ -23,12 +23,20 @@ export const getUsers = async (req, res) => {
 
 export const createUser = async (req, res) => {
   console.log("Secret:", secret);
+  
   const { ci, firstName, lastName, email, password, rol } = req.body;
+  
+  const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
   if (!ci || !firstName || !lastName || !email || !password || !rol)
     return res.status(401).json("Petición no valida,rellene los campos correctamente");
 
   if (!Number(ci)) {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
+  }
+
+  if (Number(ci) > 9999999999) {
+    return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
@@ -37,6 +45,22 @@ export const createUser = async (req, res) => {
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
     return res.status(400).json("Parámetros en Apellido inválidos,solo caracteres!");
+  }
+
+  if(firstName.length > 30){
+    return res.status(400).json("Nombres muy largo maximo 30 caracteres!");
+  }
+
+  if(lastName.length > 30){
+    return res.status(400).json("Apellidos muy largo maximo 30 caracteres!");
+  }
+
+  if(!emailValidator.test(email)){
+    return res.status(400).json("Email invalido")
+  }
+
+   if(email.length > 40){
+    return res.status(400).json("Email muy largo maximo 40 caracteres!");
   }
 
   const userFind = await user.findOne({ $or: [{ email: email }, { ci: ci }] });
@@ -89,11 +113,17 @@ export const updateUser = async (req, res) => {
 
   const userFind = await user.findOne({ $or: [{ email: req.body.email }, { ci: req.body.ci }] });
 
+  const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
   if (!req.body.ci || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.rol)
     return res.status(400).json("Petición no valida");
 
   if (!Number(ci)) {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
+  }
+
+  if (Number(ci) > 9999999999) {
+    return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
 
   if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
@@ -104,9 +134,27 @@ export const updateUser = async (req, res) => {
     return res.status(400).json("Parámetros en Apellido inválidos,solo caracteres!");
   }
 
+  if(firstName.length > 30){
+    return res.status(400).json("Nombres muy largo maximo 30 caracteres!");
+  }
+
+  if(lastName.length > 30){
+    return res.status(400).json("Apellidos muy largo maximo 30 caracteres!");
+  }
+
+
   if(userFind && userFind.ci !== ci ){ 
     return res.status(400).json("Cambio de cédula rechazado,la cédula la posee otro usuario!");
   }
+
+  if(!emailValidator.test(String(email).toLowerCase())){
+    return res.status(400).json("Email invalido")
+  }
+
+  if(email.length > 40){
+    return res.status(400).json("Email muy largo maximo 40 caracteres!");
+  }
+
 
   if(userFind && userFind.email !== email ){ 
     return res.status(400).json("Cambio de email rechazado,el email esta en uso!");
@@ -164,12 +212,16 @@ export const deleteUser = async (req, res) => {
 
 //Recupera la contraseña
 export const changePassword = async  (req,res)=>{
-  if(!req.body.email  || !req.body.ci || !req.body.password){
+  if(!req.body.email  || !req.body.ci || !req.body.password || !req.body.passwordConfirm){
     res.status(400).json("Llene los campos necesarios!")
   }
 
   const userFind = await user.findOne({ email: req.body.email }, { ci: req.body.ci })
   if (!userFind) return res.status(404).json("Usuario no encontrado");
+
+  if(req.body.password !== req.body.passwordConfirm){
+    res.status(400).json("Las contraseñas no coinciden!")
+  }
 
   await user.updateOne(
       { _id: userFind._id },

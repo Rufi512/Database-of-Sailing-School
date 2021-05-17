@@ -76,6 +76,7 @@ const ControlUsers = () => {
         screenEdit.style.zIndex = "-1";
         screenEdit.style.opacity = "0";
         screenEdit.style.visibility = "hidden";
+        setChangeUser({ rol: "Teacher" });
       }
       if (res.status >= 400) {
         setPopup({ text: res.data, type: "error" });
@@ -97,6 +98,7 @@ const ControlUsers = () => {
         screenEdit.style.zIndex = "-1";
         screenEdit.style.opacity = "0";
         screenEdit.style.visibility = "hidden";
+        setChangeUser({ rol: "Teacher" });
       }
 
       if (res.status >= 400) {

@@ -149,6 +149,26 @@ export const showStudent = async (req, res) => {
 export const createStudent = async (req, res) => {
   const { ci, firstName, lastName, school_year } = req.body;
 
+  if (Number(ci) > 9999999999) {
+    return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
+  }
+
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
+    return res.status(400).json("Parámetros en Nombre inválidos");
+  }
+
+  if(firstName.length > 30){
+    return res.status(400).json("Nombres muy largos maximo 30 caracteres");
+  }
+
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
+    return res.status(400).json("Parámetros en Apellido inválidos");
+  }
+
+   if(lastName.length > 30){
+    return res.status(400).json("Apellidos muy largos maximo 30 caracteres");
+  }
+
   const studentFind = await student.findOne({ ci: ci });
 
   if (studentFind)
@@ -231,13 +251,21 @@ export const createStudents = (req, res) => {
         return;
       }
 
-      if (!Number(row.Cedula)) {
-        return rowErrors.push("La cédula contiene letras en la fila: " + rows);
+      if (!Number(row.Cedula) || Number(row.Cedula) > 9999999999) {
+        return rowErrors.push("La cédula es invalida en la fila: " + rows);
       }
 
       if (!/^[A-Za-záéíóúñ'´ ]+$/.test(row.Nombre)) {
         return rowErrors.push("El nombre contiene números en la fila: " + rows);
       }
+      
+      if(firstName.length > 28){
+      return res.status(400).json("El nombre es muy largo en la fila: " + rows);
+     }
+
+      if(lastName.length > 28){
+      return res.status(400).json("El apellido es muy largo en la fila: " + rows);
+     }
 
       if (!/^[A-Za-záéíóúñ'´ ]+$/.test(row.Apellido)) {
         return rowErrors.push(

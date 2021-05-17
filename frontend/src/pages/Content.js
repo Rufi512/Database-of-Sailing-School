@@ -6,8 +6,7 @@ import notesSvg from '../static/icons/archive-solid.svg'
 import dvrSvg from '../static/icons/dvr-24px.svg'
 import doorSvg from '../static/icons/door.svg'
 import courseSvg from '../static/icons/student-course.svg'
-export default class Content extends React.Component {
-  render() {
+const Content = (props) => {
     return (
       <div>
         <h1 className="title">Unidad Educativa Colegio Juan Bosco</h1>
@@ -46,12 +45,12 @@ export default class Content extends React.Component {
               </div>
             </Link>
 
-            <Link className="a" to="/" onClick={(e)=>{Cookies.remove('token');Cookies.remove('rol')}}>
-              <div className="box">
+          
+              <div className="box" onClick={(e)=>{Cookies.remove('token');Cookies.remove('rol'); props.history.push("/") }}>
                 <h3>Abandonar la Sesión</h3>
                 <img src={doorSvg} alt="notes" />
               </div>
-            </Link>
+          
 
           </section>
 
@@ -60,4 +59,5 @@ export default class Content extends React.Component {
       </div>
     )
   }
-}
+
+export default Content
