@@ -53,3 +53,6 @@ npm run start
 ### Nota
 Para iniciar sesión dentro de la aplicación el usuario y la contraseña del usuario administrador es: <b>12345</b>
 
+<b>El sistema se encuentra bajo la licencia Creative Commons</b> <br/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/CC-logo.svg/320px-CC-logo.svg.png"/>
+
