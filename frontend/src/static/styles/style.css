@@ -129,6 +129,24 @@ body {
   border-radius: 100%;
 }
 
+.footer-commons{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background: #f8f5f4d6;
+}
+
+.footer-commons div{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.footer-commons p{
+  margin:0;
+}
+
 /*alerts,popups and errors*/
 .alert {
   position: fixed;

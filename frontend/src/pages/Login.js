@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import eye from "../static/icons/eye.svg";
 import eyeClose from "../static/icons/eyeClose.svg";
 import boscoImg from '../static/logos/jb.jpg';
+import CCImg from '../static/icons/cc-logo.svg'
 import Cookies from 'js-cookie'
 import { Popup, displayPopup } from "../components/Alerts";
 import {loginUser} from '../API'
@@ -111,7 +112,16 @@ const Login = (props) => {
             Ingresar{" "}
           </button>
         </form>
+
+          <footer className="footer-commons">
+       <div>
+         <p>La pagina a sido creada bajo la licencia Creatives Commons</p>
+         <img style={{width:'150px'}} src={CCImg} alt="cc"/>
+       </div>
+      </footer>
       </div>
+
+    
     </React.Fragment>
   );
 };

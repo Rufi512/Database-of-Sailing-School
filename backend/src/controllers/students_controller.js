@@ -153,6 +153,10 @@ export const createStudent = async (req, res) => {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!")
   }
 
+  if(ci.length < 4){
+    return res.status(400).json("Cedula del estudiante invalida")
+  }
+
   if (Number(ci) > 9999999999) {
     return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
@@ -263,11 +267,11 @@ export const createStudents = (req, res) => {
         return rowErrors.push("El nombre contiene números en la fila: " + rows);
       }
       
-      if(firstName.length > 28){
+      if(row.Nombre.length > 28){
       return res.status(400).json("El nombre es muy largo en la fila: " + rows);
      }
 
-      if(lastName.length > 28){
+      if(row.Apellido.length > 28){
       return res.status(400).json("El apellido es muy largo en la fila: " + rows);
      }
 

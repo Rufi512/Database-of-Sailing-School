@@ -35,6 +35,10 @@ export const createUser = async (req, res) => {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
   }
 
+  if(ci.length < 4){
+    return res.status(400).json("Cedula del estudiante invalida")
+  }
+
   if (Number(ci) > 9999999999) {
     return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
@@ -120,6 +124,10 @@ export const updateUser = async (req, res) => {
   
   if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0 ) {
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!");
+  }
+
+  if(ci.length < 4){
+    return res.status(400).json("Cedula del estudiante invalida")
   }
 
   if (Number(ci) > 9999999999) {
