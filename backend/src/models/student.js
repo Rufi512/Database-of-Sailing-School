@@ -1,16 +1,19 @@
 import {Schema, model} from 'mongoose';
-
+import mongoosePaginate  from 'mongoose-paginate-v2'
 const studentSchema = new Schema({
   ci: {type: Number,unique:true},
-  firstName: {type: String,required:true},
-  lastName: {type: String,required:true},
-  school_year: {type: String,required:true},
-  subjects: {type: Array},
+  firstname: {type: String,required:true},
+  lastname: {type: String,required:true},
+  section:{ref:"section",type:Schema.Types.ObjectId,required:false,default:''},
+  subjects: [{ref:"subject",type:Schema.Types.ObjectId, required:false,default:[]}],
   last_modify: {type: String},
   status: {type: Boolean, "default": true},
-  record: {type: Array, "default": [null, null, null, null, null]}
+  record: {ref:"chest",type: Schema.Types.ObjectId}
 },{
   versionKey:false
 })
+
+studentSchema.index({firstname: "text", lastname: "text"})
+studentSchema.plugin(mongoosePaginate)
 
 export default model('student', studentSchema)

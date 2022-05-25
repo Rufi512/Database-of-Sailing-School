@@ -139,8 +139,10 @@ body {
 
 .footer-commons div{
     display: flex;
+    flex-flow: wrap;
     align-items: center;
     justify-content: space-around;
+    height: 60px;
 }
 
 .footer-commons p{
@@ -402,72 +404,6 @@ body {
   color:white
 }
 
-/*Tabla de Estudiantes*/
-
-.tableMaterial {
-  width: 90% ;
-  position: relative !important;
-  height: auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  margin: auto !important;
-}
-
-.tableMaterial table {
-  border: none !important;
-}
-
-.tableMaterial select {
-  width: 200px !important;
-  margin: auto !important;
-}
-
-tr {
-  background-color: #fff ;
-}
-
-.MuiTable-root {
-  background-color: #ffffff ;
-}
-.MuiPaper-root.MuiPaper-elevation2.MuiPaper-rounded,
-.MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-5.MuiToolbar-gutters {
-  background-color: #ffffff00 ;
-  outline: none !important;
-  box-shadow: none !important;
-  padding-right: 0px !important;
-  padding-left: 0px !important;
-}
-
-.MTableToolbar-title-9 {
-  width: 300px !important;
-  background-color: none !important;
-  height: 64px !important;
-  text-align: center !important;
-  display: flex !important;
-  align-items: center !important;
-  color: black !important;
-}
-
-.MTableToolbar-spacer-7 {
-  display: contents !important;
-}
-
-.MuiFormControl-root.MuiTextField-root.MTableToolbar-searchField-10 {
-  margin: auto !important;
-  padding-left: 8px !important;
-}
-
-.MuiButtonBase-root.MuiTableSortLabel-root.MuiTableSortLabel-root:hover {
-  color: whitesmoke !important;
-}
-
-.MuiCheckbox-colorSecondary.Mui-checked {
-  color: black;
-}
-.MuiButtonBase-root .MuiTableSortLabel-root:hover {
-  color: white !important;
-  cursor: poiner !important;
-}
 
 /*CheckBoxs*/
 .MuiSvgIcon-root {

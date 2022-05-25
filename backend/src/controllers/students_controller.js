@@ -20,50 +20,123 @@ let now = new Date();
 dateFormat.i18n = date;
 
 //Lista de estudiantes
-export const active = async (req, res) => {
-  const studentsActive = await student
-    .find(
-      { status: true, school_year: { $ne: "Graduado" } },
-      { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
-    )
-    .sort({ _id: -1 });
-  const actives = studentsActive.length;
+export const list = async (req, res) => {
+   if(req.query){
+        const {limit, page, students} = req.query 
+        if (limit && isNaN(limit)) return res.status(400).json({message:'El limite de elementos no es un numero!'})
+        if (page && isNaN(page)) return res.status(400).json({message:'El limite de paginas no es un numero!'})
+        if (Number(students)) return res.status(400).json({message:'La busqueda no es una cadena!'}) 
+    }
 
-  if (!actives) {
-    return res.status(404).json("Estudiantes activos no encontrados");
-  } else {
-    return res.json(studentsActive);
+  console.log(req.query)
+
+
+  let optionsPagination = {
+      lean: false,
+      limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+      page: req.query && Number(req.query.page)  ? req.query.page : 1,
+      select:{subjects:0, record:0}
+    };
+
+  let students 
+  if(req.query.students === "graduados"){
+  students = await student.paginate({school_year:"graduado"},optionsPagination) 
+  }else{
+    console.log('pass', req.query.students)
+    students = await student.paginate({status: req.query.students === "activos" ? true : false, school_year: req.query.students === "graduados" ? "graduado" : { $ne: "graduado" }},optionsPagination)
   }
+
+
+  if (students.totalDocs < 0) {
+    return res.status(404).json({message:"Estudiantes no encontrados"});
+  } 
+
+  return res.json(students)
 };
 
+export const search = async (req, res)=>{
+  if(req.query){
+       const {limit, page, students} = req.query 
+       if (limit && isNaN(limit)) return res.status(400).json({message:'El limite de elementos no es un numero!'})
+       if (page && isNaN(page)) return res.status(400).json({message:'El limite de paginas no es un numero!'})
+       if (Number(students)) return res.status(400).json({message:'La busqueda no es una cadena!'}) 
+    }
+
+  let optionsPagination = {
+      lean: false,
+      limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+      page: req.query && Number(req.query.page)  ? req.query.page : 1,
+      select:{subjects:0, record:0}
+    };
+
+  const {search} = req.body
+
+  const students = await student.paginate({ $text: { $search: new RegExp('^' + search) },status: req.query.students === "activos" ? true : false, school_year: req.query.students === "graduados" ? "graduado" : { $ne: "graduado" } },optionsPagination)
+
+  res.json(students)
+}
+
 export const inactive = async (req, res) => {
+
+  if(req.query){
+        const {limit, page} = req.query 
+        if (limit && isNaN(limit)) return res.status(400).json({message:'query limit is not Number!'})
+        if (page && isNaN(page)) return res.status(400).json({message:'query page is not Number!'})
+    }
+
+  let optionsPagination = {
+      lean: false,
+      limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+      page: req.query && Number(req.query.page)  ? req.query.page : 1 
+    };
+
   const studentsInactive = await student
     .find(
       { status: false, school_year: { $ne: "Graduado" } },
       { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
     )
     .sort({ _id: -1 });
+  
   const inactive = studentsInactive.length;
+
   if (!inactive) {
-    return res.status(404).json("Estudiantes inactivos no encontrados");
-  } else {
-    return res.json(studentsInactive);
-  }
+    return res.status(404).json({message:"Estudiantes inactivos no encontrados"});
+  } 
+
+  const list = await student.paginate({status: false, school_year: { $ne: "Graduado" }},optionsPagination)
+
+  return res.json(list)
 };
 
 export const gradues = async (req, res) => {
-  const studentsGradues = await student
-    .find(
+  const studentsGradues = await student.find(
       { school_year: "Graduado" },
       { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
     )
     .sort({ _id: -1 });
+
+  if(req.query){
+        const {limit, page} = req.query 
+        if (limit && isNaN(limit)) return res.status(400).json({message:'query limit is not Number!'})
+        if (page && isNaN(page)) return res.status(400).json({message:'query page is not Number!'})
+    }
+
+  let optionsPagination = {
+      lean: false,
+      limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+      page: req.query && Number(req.query.page)  ? req.query.page : 1 
+    };
+
   const gradues = studentsGradues.length;
+
   if (!gradues) {
-    return res.status(404).json("Estudiantes graduados no encontrados");
-  } else {
-    return res.json(studentsGradues);
-  }
+    return res.status(404).json({message:"Estudiantes graduados no encontrados"});
+  } 
+
+  const list = await student.paginate({school_year: "Graduado"},optionsPagination)
+
+  return res.json(list)
+
 };
 
 //Lista de estudiantes por curso
@@ -76,20 +149,35 @@ export const section = async (req, res) => {
     .sort({ _id: -1 });
   const sections = studentsSection.length;
   if (!sections) {
-    return res.status(404).json(`Estudiantes del curso ${req.body.school_year} no encontrados`);
-  } else {
-    return res.json(studentsSection);
+    return res.status(404).json({message:`Estudiantes del curso ${req.body.school_year} no encontrados`});
   }
+
+  if(req.query){
+        const {limit, page} = req.query 
+        if (limit && isNaN(limit)) return res.status(400).json({message:'query limit is not Number!'})
+        if (page && isNaN(page)) return res.status(400).json({message:'query page is not Number!'})
+    }
+
+  let optionsPagination = {
+      lean: false,
+      limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+      page: req.query && Number(req.query.page)  ? req.query.page : 1 
+    }; 
+
+  const list = await student.paginate({status: true, school_year: req.body.school_year},optionsPagination)
+
+  return res.json(list)
+
 };
 
 //Lista de estudiantes de cada curso (indicador)
-
+/*
 export const sectionMax = async (req, res) => {
 
   const studentsSectionMax = await student
     .find(
       { status: true,},
-      { annual_comments: 0, subjects: 0, record: 0, comments: 0,ci:0,firstName:0,lastName:0,last_modify:0,_id:0 }
+      { annual_comments: 0, subjects: 0, record: 0, comments: 0,ci:0,firstname:0,lastname:0,last_modify:0,_id:0 }
     )
     .sort({ _id: -1 });
 
@@ -128,13 +216,13 @@ export const sectionMax = async (req, res) => {
 
     
 };
-
+*/
 //Consulta Estudiante individual
 export const showStudent = async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   if (!validId) return res.status(402).json("Identificador no valido");
 
-  const studentFind = await student.findById(req.params.id);
+  const studentFind = await student.findById(req.params.id).populate("section",{students:0,_id:0,subjects:0}).populate("subjects",{fromYears:0});
   const comments = await getComments(req.params.id);
 
   if (studentFind) {
@@ -147,7 +235,7 @@ export const showStudent = async (req, res) => {
 //Crear Estudiante Individual
 
 export const createStudent = async (req, res) => {
-  const { ci, firstName, lastName, school_year } = req.body;
+  const { ci, firstname, lastname, school_year } = req.body;
  
   if(!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0){
     return res.status(400).json("Parámetros en Cédula inválidos,solo números!")
@@ -161,19 +249,19 @@ export const createStudent = async (req, res) => {
     return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
 
-  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstname)) {
     return res.status(400).json("Parámetros en Nombre inválidos");
   }
 
-  if(firstName.length > 30){
+  if(firstname.length > 30){
     return res.status(400).json("Nombres muy largos maximo 30 caracteres");
   }
 
-  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastname)) {
     return res.status(400).json("Parámetros en Apellido inválidos");
   }
 
-   if(lastName.length > 30){
+   if(lastname.length > 30){
     return res.status(400).json("Apellidos muy largos maximo 30 caracteres");
   }
 
@@ -184,43 +272,10 @@ export const createStudent = async (req, res) => {
 
   const newStudent = new student({
     ci,
-    firstName,
-    lastName,
-    school_year,
+    firstname,
+    lastname,
     last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
   });
-
-  //Se le asigna la materias al estudiante correspondiente al año
-  switch (school_year) {
-    case "1-A":
-    case "1-B": {
-      newStudent.subjects = materias1;
-      break;
-    }
-
-    case "2-A":
-    case "2-B": {
-      newStudent.subjects = materias2;
-      break;
-    }
-
-    case "3-A":
-    case "3-B": {
-      newStudent.subjects = materias3;
-      break;
-    }
-
-    case "4-A":
-    case "4-B":
-    case "5-A":
-    case "5-B": {
-      newStudent.subjects = materias4;
-      break;
-    }
-
-    default:
-      return res.status(400).json("Año escolar invalido");
-  }
 
   const saveStudent = await newStudent.save();
 
@@ -241,12 +296,11 @@ export const createStudents = (req, res) => {
       if (
         header[0] !== "Cedula" ||
         header[1] !== "Nombre" ||
-        header[2] !== "Apellido" ||
-        header[3] !== "Curso"
+        header[2] !== "Apellido"
       ) {
         headerError.exist = true;
         headerError.description =
-          "Las cabeceras no cumplen con el formato solicitado: Cedula | Nombre | Apellido | Curso";
+          "Las cabeceras no cumplen con el formato solicitado: Cedula | Nombre | Apellido";
       }
     })
     .on("error", (err) => {
@@ -297,45 +351,10 @@ export const createStudents = (req, res) => {
 
       const newStudent = new student({
         ci: row.Cedula,
-        firstName: row.Nombre,
-        lastName: row.Apellido,
-        school_year: row.Curso,
+        firstname: row.Nombre,
+        lastname: row.Apellido,
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
       });
-
-      switch (row.Curso) {
-        case "1-A":
-        case "1-B": {
-          newStudent.subjects = materias1;
-          break;
-        }
-
-        case "2-A":
-        case "2-B": {
-          newStudent.subjects = materias2;
-          break;
-        }
-
-        case "3-A":
-        case "3-B": {
-          newStudent.subjects = materias3;
-          break;
-        }
-
-        case "4-A":
-        case "4-B":
-        case "5-A":
-        case "5-B": {
-          newStudent.subjects = materias4;
-          break;
-        }
-
-        default: {
-          newStudent.school_year = "1-A";
-          newStudent.subjects = materias1;
-          break;
-        }
-      }
 
       await newStudent.save();
     })
@@ -366,7 +385,7 @@ export const createStudents = (req, res) => {
 //Actualiza al estudiante (Solo Cedula,Nombre,apellido,sus notas de las materias y estado)
 
 export const updateStudent = async (req, res) => {
-  const { _id, ci, firstName, lastName, subjects, status } = await student.findById(
+  const { _id, ci, firstname, lastname, subjects, status } = await student.findById(
     req.params.id
   );
 
@@ -380,11 +399,11 @@ export const updateStudent = async (req, res) => {
     return res.status(400).json("Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)");
   }
 
-  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.firstName)) {
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.firstname)) {
     return res.status(400).json("Parámetros en Nombre inválidos!");
   }
 
-  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.lastName)) {
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.lastname)) {
     return res.status(400).json("Parámetros en Apellido inválidos!");
   }
 
@@ -398,8 +417,8 @@ export const updateStudent = async (req, res) => {
     {
       $set: {
         ci: req.body.ci ? req.body.ci : ci,
-        firstName: req.body.firstName ? req.body.firstName : firstName,
-        lastName: req.body.lastName ? req.body.lastName : lastName,
+        firstname: req.body.firstname ? req.body.firstname : firstname,
+        lastname: req.body.lastname ? req.body.lastname : lastname,
         subjects: req.body.subjects ? req.body.subjects : subjects,
         status: req.body.status,
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),

@@ -6,6 +6,8 @@ import multer  from 'multer';
 import students from './routes/students'
 import auth from './routes/auth'
 import user from './routes/user'
+import section from './routes/sections'
+import subjects from './routes/subjects'
 import {initialSetup} from './libs/initialSetup'
 const app = express();
 
@@ -41,6 +43,8 @@ app.use(multer({fileFilter: function (req, file, cb) {
 app.use('/api/students',students)
 app.use('/api/auth',auth)
 app.use('/api/user',user)
+app.use('/api/section',section)
+app.use('/api/subject',subjects)
 app.use(express.static(path.join(__dirname, 'public')))
 
 

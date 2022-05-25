@@ -4,24 +4,48 @@ import {resetPassword} from '../API'
 
  const ResetPassword = (props) =>{
 
- const [changePass, setChangePass] = useState({});
+ const [changePass, setChangePass] = useState({ci:'', email:''});
  const [popup, setPopup] = useState({});
+
+  const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  
+  const validateFields = (name,value) =>{
+    console.log(name,value)
+    
+
+    if (name === 'ci'){
+      if(!Number(value) || !Number.isInteger(Number(value)) || Number(value) < 0) return false
+    }
+
+    return true
+  }
+
+  const onChangeField = (e) =>{
+
+    const { name, value } = e.target;
+    if(value !== ''){
+      if(!validateFields(name,value)) return
+    }
+
+    setChangePass({...changePass,[name]:value})
+  }
 
  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(changePass)
 
-    if(!changePass.ci || !changePass.email || !changePass.password || !changePass.passwordConfirm){
+    if(!changePass.ci || !changePass.email){
       setPopup({ text: 'Rellene todo los campos!', type: "error" });
       displayPopup("error", ".ResetPassword");
       return
     }
 
-    if(changePass.password !== changePass.passwordConfirm){
-      setPopup({ text: 'Las contraseñas no coinciden!', type: "error" });
+    if (!emailValidator.test(changePass.email)){
+      setPopup({ text: 'Email invalido', type: "error" });
       displayPopup("error", ".ResetPassword");
       return
-    }
+    } 
+    
 
     const res = await resetPassword(changePass)
     if (res.status === 200) {
@@ -41,12 +65,10 @@ import {resetPassword} from '../API'
 	return (
     <React.Fragment>
     <Popup popup={popup} zone={"ResetPassword"} />
-    
-      <div className="container-login">
-     
         <form
           onSubmit={handleSubmit}
-          style={{ width: "95%", display: "flex", flexDirection: "column", overflow:'auto' }}
+          className="form-reset-password"
+          style={{ width: "95%", display:props.visible ? 'flex' : 'none', flexDirection: "column", overflow:'auto' }}
         >
         <h2 style={{textAlign:'center'}}>Recuperacion de contraseña</h2>
           <div className="form-input">
@@ -55,12 +77,13 @@ import {resetPassword} from '../API'
             </label>
             <input
               type="text"
-              id="ci"
+              id="ci-send"
               name="ci"
               autoComplete="off"
               onChange={(e) => {
-                setChangePass({ ...changePass, ci: e.target.value });
+                onChangeField(e);
               }}
+              value={changePass.ci ? changePass.ci : ''}
               required
             />
           </div>
@@ -71,50 +94,26 @@ import {resetPassword} from '../API'
             </label>
             <input
               type="email"
-              id="email"
+              id="email-send"
               name="email"
               autoComplete="off"
               onChange={(e) => {
-                setChangePass({ ...changePass, email: e.target.value });
+                onChangeField(e);
               }}
-              required
-            />
-          </div>
-
-          <div className="form-input">
-            <label id="label-email" style={{ marginBottom: "10px" }}>
-             Introduzca su nueva contraseña
-            </label>
-            <input
-              type="text"
-              id="password"
-              name="password"
-              autoComplete="off"
-              onChange={(e) => {
-                setChangePass({ ...changePass, password: e.target.value });
-              }}
-              required
-            />
-          </div>
-
-          <div className="form-input">
-            <label id="label-email" style={{ marginBottom: "10px" }}>
-             Confirme su nueva contraseña
-            </label>
-            <input
-              type="password"
-              id="password-confirm"
-              name="password-confirm"
-              autoComplete="off"
-              onChange={(e) => {
-                setChangePass({ ...changePass, passwordConfirm: e.target.value });
-              }}
+              value={changePass.email ? changePass.email : ''}
               required
             />
           </div>
 
       
           <div style={{width:'100%',display:'flex',flexFlow:'wrap'}}>
+           <button style={{marginTop:"10px", width:"180px"}}
+            type="button"
+            className="btn btn-login"
+            onClick={(e)=>{props.changeVisibility()}}
+            >
+              Regresar al inicio
+            </button>
           
           <button
             style={{ marginTop: "10px" , width:'180px'}}
@@ -122,19 +121,12 @@ import {resetPassword} from '../API'
             className="btn btn-login"
           >
             {" "}
-            Cambiar contraseña{" "}
+            Recuperar contraseñar{" "}
           </button>
 
-            <button style={{marginTop:"10px", width:"180px"}}
-            type="button"
-            className="btn btn-login"
-            onClick={(e)=>{props.history.push("/")}}
-            >
-              Regresar al inicio
-            </button>
+           
           </div>
         </form>
-      </div>
     </React.Fragment>
   );
 

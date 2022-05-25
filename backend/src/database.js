@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
-var URI = process.env.MONGOCLOUD ? process.env.MONGOCLOUD : 'mongodb://localhost/schooldb' 
+var URI = process.env.MONGOCLOUD ? process.env.MONGOCLOUD : 'mongodb://127.0.0.1/schooldb' 
 
 mongoose.connect((URI), { 
    useNewUrlParser: true,

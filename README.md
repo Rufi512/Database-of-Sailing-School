@@ -1,36 +1,28 @@
-# Database of Sailing School
+# Database of Sailing School (Dev Version!)
 
-Aplicación Stack MERN para registrar, consultar, modificar y eliminar las calificaciones de los estudiantes
+Stack MERN application to register, consult, modify and delete student grades
 
 <img src="https://github.com/Rufi512/Database-of-Sailing-School/blob/master/Capture.png" />
 
-### Objetivos
+## Note
 
-* Registrar a los estudiantes y ver sus calificaciones
- 
-* Mostrar toda la información académica de los estudiantes 
+This version is very very very very very very very, and if it is not clear to you, it is very unstable and it is expected that it will not even work, this version will be updated until its new features and fixing the old ones are ready
 
-* Poder modificar las notas y guardar las notas anteriores con la posibilidad de modificarlas en el futuro
+### How to run
 
-* Exportar las calificaciones de cada alumno en PDF
-
-* Aspectos mínimos de seguridad
-
-### Como ejecutar
-
-1.Instala las dependencias:
+1.Install the dependencies:
 ```
 cd backend
 npm i
 ```
 
-y las del frontend
+and those of the frontend
 ```
 cd frontend
 npm i
 ```
 
-2.Ejecutar:
+2.Run:
 
 * Mongodb
 
@@ -50,9 +42,7 @@ npm run dev
 ```
 npm run start
 ```
-### Nota
-Para iniciar sesión dentro de la aplicación el usuario y la contraseña del usuario administrador es: <b>12345</b>
 
-<b>El sistema se encuentra bajo la licencia Creative Commons</b> <br/>
+<b>The system is under the Creative Commons license</b> <br/>
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/CC-logo.svg/320px-CC-logo.svg.png"/>
 

@@ -3,9 +3,11 @@ import Cookies from "js-cookie";
 
 //GET
 
-export const studentsList = async (students) => {
+export const studentsList = async (students,params) => {
+    console.log(params)
+
   if (students === "studentsActive") {
-    const res = await axios.get("/api/students/actives", {
+    const res = await axios.get(`/api/students/actives${params.limit ? `/?limit=${params.limit ? params.limit : 10}&page=${params.page ? params.page : 1}` : `/${params}`}`, {
         headers: { "x-access-token": Cookies.get("token") },
       }).catch((err) => {
         console.log(err)
@@ -24,7 +26,7 @@ export const studentsList = async (students) => {
   }
 
   if (students === "studentsInactive") {
-    const res = await axios.get("/api/students/inactives", {
+    const res = await axios.get(`/api/students/inactives${params.limit ? `/${params}` : `/${params}`}`, {
         headers: { "x-access-token": Cookies.get("token") },
       }).catch((err) => {
         console.log(err)
@@ -43,7 +45,7 @@ export const studentsList = async (students) => {
   }
 
   if (students === "studentsGradues") {
-    const res = await axios.get("/api/students/gradues", {
+    const res = await axios.get(`/api/students/gradues${params.limit ? `/${params}` : `/${params}`}`, {
         headers: { "x-access-token": Cookies.get("token") },
       }).catch((err) => {
         console.log(err)

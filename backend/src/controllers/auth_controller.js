@@ -6,6 +6,7 @@ dotenv.config();
 const secret = process.env.SECRET ? process.env.SECRET : "secretWord";
 
 export const signIn = async (req, res) => {
+  console.log(req.body)
   //Confirmamos si existe el usuario por medio de email o cedula
 
   const userFound = await user.findOne({ $or: [{ email: req.body.user }, { ci: req.body.user }] })

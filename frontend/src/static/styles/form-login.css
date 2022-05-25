@@ -1,0 +1,116 @@
+.container-login .form-reset-password{
+	width: 95%;
+	display: none; 
+	flex-direction: column; 
+	overflow:auto;
+  margin-top: 25px;
+}
+
+.container-login{
+  padding: 15px 10px;
+  position: relative;
+  background: rgb(252,252,252);
+  background: linear-gradient(140deg, rgba(252,252,252,0.97) 0%, rgba(255,255,255,0.92) 100%);
+  border-radius: 10px;
+  color: black;
+  width: 100%;
+  max-width: 510px;
+  margin: 0 30px;
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+.container-login .form-login{
+	width: 95%;
+	display: flex; 
+	flex-direction: column;
+  margin-top: 35px;
+}
+
+.container-login .form-login .btn{
+  width: 140px;
+  height: 40px;
+  font-size: 16px;
+}
+
+/*Login*/
+
+.container-login {
+  position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    align-content: center;
+    justify-content: center;
+    margin: auto;
+    margin-top: 50px;
+    align-items: center;
+}
+
+.container-login img:first-child {
+  width: 68px;
+  height: 70px;
+  position: absolute;
+  border-radius: 100%;
+  box-shadow: 0px 4px 8px 2px #98958c;
+  top: -35px;
+  left:0;
+  right: 0;
+  margin:auto;
+}
+
+.container-login form {
+
+}
+
+.container-login .form-input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 25px 0;
+}
+
+.container-login .form-input div {
+  display: flex;
+  align-items: center;
+  margin: 25px 0;
+}
+
+.container-login .form-input div img {
+  position: absolute;
+  right: 0;
+}
+
+.container-login .form-input div input {
+  width: 91%;
+  padding-right: 9%;
+}
+
+.container-login .form-input label {
+  font-weight: 700;
+}
+
+.container-login .form-input input {
+  border: none;
+  background: none;
+  outline: 0;
+  padding-top: 5px;
+  height: 25px;
+  font-size: 16px;
+  border-bottom: 2px solid #8e8e8e;
+  transition: all 0.3s;
+}
+
+.container-login .form-input input:focus {
+  border-bottom-color: #2171b5;
+}
+
+.container-login .container-captcha{
+  height: 100px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+	margin-top: -25px;
+}

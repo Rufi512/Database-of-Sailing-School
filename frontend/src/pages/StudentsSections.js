@@ -5,6 +5,7 @@ import { Navbar } from "../components/Navbar";
 import { Popup, displayPopup } from "../components/Alerts";
 import { Pagination } from "../components/MaterialTablet";
 import { Alert, displayAlert } from "../components/Alerts";
+import { useNavigate } from "react-router-dom";
 
 const StudentsSections = (props) =>{
 
@@ -17,6 +18,7 @@ const StudentsSections = (props) =>{
   const [action, setAction] = useState("upgradeAndDegrade");
   const [confirm, setConfirm] = useState(false);
   const [active, setActive] = useState(false);
+  let history = useNavigate()
       
     async function request(value) {
     setError("Cargando...");
@@ -38,15 +40,14 @@ const StudentsSections = (props) =>{
 
   useEffect(() => {
     function loadSection() {
-      request(props.match.params.section);
-      setListStudent(props.match.params.section);
+      //request(props.match.params.section);
+      //setListStudent(props.match.params.section);
     }
-    console.log(props)
     loadSection();
   }, [props]);
 
   const handleInfo = (id) => {
-    props.history.push("/student/info/" + id);
+    history.push("/student/info/" + id);
   };
 
   const showHiddenSelect = (value) => {
@@ -248,14 +249,6 @@ const StudentsSections = (props) =>{
         </button>
       </div>
 
-      <section className="tableMaterial">
-        <Pagination
-          students={students}
-          errors={error}
-          selectedStudent={selectedStudent}
-          view={handleInfo}
-        />
-      </section>
     </div>
   );
 

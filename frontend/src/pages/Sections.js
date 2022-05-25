@@ -1,14 +1,14 @@
 import React,{useState,useEffect} from "react";
 import {getSectionMax} from '../API'
 import { Navbar } from "../components/Navbar";
-
+import { useNavigate } from "react-router-dom";
 
 const Sections = (props) => {
   const [students,setStudents] = useState(null)
+  let navigate = useNavigate()
 
   const viewSection = (section) => {
-    console.log(section);
-    props.history.push("/sections/list/" + section);
+    navigate("/sections/list/" + section);
   };
 
   useEffect(() => {

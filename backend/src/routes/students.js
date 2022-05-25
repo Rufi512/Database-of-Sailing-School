@@ -8,7 +8,9 @@ const router = Router()
 
 //GET
 
-router.get('/actives', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.active) //Lista de estudiantes activos
+router.get('/list', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.list) //Lista de estudiantes activos
+
+router.get('/search/', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.search) //Buscador de estudiantes
 
 router.get('/inactives', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.inactive) //Lista de estudiantes inactivos
 
@@ -16,7 +18,7 @@ router.get('/gradues', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.grad
 
 router.get('/info/:id', [authJwt.verifyToken,authJwt.isTeacher],  studentCtrl.showStudent) //Muestra informacion del estudiante
 
-router.get('/sections/max', [authJwt.verifyToken,authJwt.isTeacher],  studentCtrl.sectionMax) //Muestra informacion del estudiante
+//router.get('/sections/max', [authJwt.verifyToken,authJwt.isTeacher],  studentCtrl.sectionMax) //Muestra informacion del estudiante
 
 
 //POST

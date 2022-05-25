@@ -3,33 +3,40 @@ import { studentsList, gradeStudent, deleteStudents } from "../API";
 import arrow from "../static/icons/arrow.svg";
 import { Navbar } from "../components/Navbar";
 import { Popup, displayPopup } from "../components/Alerts";
-import { Pagination } from "../components/MaterialTablet";
 import { Alert, displayAlert } from "../components/Alerts";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import '../static/styles/table.css'
 const Students = (props) => {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState({docs:[],totalPages:0});
   const [selectStudents, setSelectStudents] = useState([]);
   const [alert, setAlert] = useState("");
   const [error, setError] = useState("");
   const [popup, setPopup] = useState({});
+  const [searchParams,setSearchParams] = useState({})
   const [listStudent, setListStudent] = useState("");
   const [action, setAction] = useState("upgradeAndDegrade");
   const [confirm, setConfirm] = useState(false);
   const [active, setActive] = useState(false);
+  const [pageActual,setPageActual] = useState(1)
+  let historyeNavigate()
+  let params = useLocation()
 
   async function request(value) {
     setError("Cargando...");
     setActive(false);
-    const result = await studentsList(value);
-
+    console.log(params)
+    console.log(searchParams)
+    //const page = params.search.slice(0,params.search.length - 1) += pageActual
+    const result = await studentsList(value,searchParams.limit || searchParams.page ? searchParams : params.search);
+    console.log(result)
     if (result.status >= 400 && result.status <= 499) {
       setError(result.data);
-      return setStudents();
+      return setStudents({docs:[],hasNextPage:false,hasPrevPage:false})
     }
 
     if (result.status >= 500) {
       setError("No se pudo establecer la conexión al servidor :(");
-      return setStudents();
+      setStudents({docs:[],hasNextPage:false,hasPrevPage:false})
     }
 
     setStudents(result.data);
@@ -41,11 +48,21 @@ const Students = (props) => {
       setListStudent("studentsActive");
     }
     loadStudentsActive();
-  }, []);
+  }, [searchParams]);
 
   const handleInfo = (id) => {
-    props.history.push("/student/info/" + id);
+    history("/student/info/" + id);
   };
+
+  const requestPage = (page) =>{
+    if (page){
+      setSearchParams({...searchParams, page:pageActual + 1})
+      setPageActual(pageActual + 1)
+    }else{
+      setSearchParams({...searchParams, page:pageActual - 1})
+      setPageActual(pageActual - 1)
+    }
+  }
 
   const showHiddenSelect = (value) => {
     const select = document.querySelector(".buttons-upgrade-degrade");
@@ -58,7 +75,7 @@ const Students = (props) => {
     }, 800);
   };
 
-  const upgradeAndDegrade = async (upgrade) => {
+  /*const upgradeAndDegrade = async (upgrade) => {
     showHiddenSelect(false);
     displayAlert(false);
     displayPopup();
@@ -119,7 +136,7 @@ const Students = (props) => {
         displayPopup("received");
       
     }
-  };
+  };*/
 
   async function deleteStudent(value) {
     let ids = [];
@@ -191,7 +208,6 @@ const Students = (props) => {
       <Popup popup={popup} />
       <Alert
         alert={alert}
-        upgradeAndDegrade={upgradeAndDegrade}
         deleteStudent={deleteStudent}
         nameActions={action}
         confirm={confirm}
@@ -260,14 +276,59 @@ const Students = (props) => {
           <option value="studentsInactive">Inactivos</option>
           <option value="studentsGradues">Graduados</option>
         </select>
+
       </div>
-      <section className="tableMaterial">
-        <Pagination
-          students={students}
-          errors={error}
-          selectedStudent={selectedStudent}
-          view={handleInfo}
-        />
+      <div className="search">
+        <input type="text" placeholder="Buscar a estudiante por nombre o cedula"/>
+      </div>
+      <section className={students.docs.length > 0 ? 'table show' : 'table hidden'}>
+      {students.docs.length < 1 ? <div className="warning"><p>No hay estudiantes que mostrar</p></div> : ''}
+      <div className="header">
+        <p><span>Total de estudiantes:</span> {students.totalDocs}</p> 
+        <p><span>Fecha de ultima actualizacion:</span> 22 de enero del 2022</p>
+        <div>
+        <label htmlFor="elements">Elementos a mostrar:</label>
+        <select id="elements" onChange={(e)=>{setSearchParams({...searchParams,limit:e.target.value})}}>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="25">25</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select></div>
+        <div>
+        <label htmlFor="page">Ir a pagina:</label>
+        <select id="page" onChange={(e)=>{setSearchParams({...searchParams,page:e.target.value})}}>
+      
+             {Array.from(Array(students.totalPages),(i)=>{
+               return <option value={i}>{i}</option>
+             })}
+           
+        </select></div>
+      </div>
+      <div className="labels">
+        <p>Nombre y Apellidos</p>
+        <p>Seccion</p>
+        <p>Año</p>
+        <p>Estado</p>
+      </div>
+      {students.docs.map((el)=>{
+        return(
+            <div className="container-list" onClick={(e)=>{history.push(`/student/info/${el._id}`)}} key={el._id}>
+              <div className="names">
+              <div><span>Nombre y apellido:</span> <p>{el.firstname} {el.lastname}</p></div>
+              </div>
+              <div className="data"><p><span>Seccion:</span>dfgdfg</p> <p><span>Año:</span>{el.school_year}</p> <p><span>Estado:</span>{el.status ? 'Activo' : 'Inactivo'}</p></div>
+               
+            </div>
+          )
+      })}
+           <div className="pagination-info">
+             <button onClick={(e)=>{ if(students.hasPrevPage) requestPage(false)}} className={`button ${students.hasPrevPage ? 'active' : ''}`}>Pagina Anterior</button>
+             <p><span>Pagina:</span> {students.page} {students.totalPages > 1 ? `de ${students.totalPages}` : ''}</p>
+              <button onClick={(e)=>{ if(students.hasNextPage) requestPage(true)}}className={`button ${students.hasNextPage ? 'active' : ''}`}>Pagina Siguiente</button> 
+           </div> 
       </section>
     </div>
   );

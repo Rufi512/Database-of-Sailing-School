@@ -5,11 +5,11 @@ const router = Router()
 
 router.get('/list',[authJwt.verifyToken,authJwt.isAdmin],usersCtrl.getUsers)
 
-router.post('/register',[authJwt.verifyToken,authJwt.isAdmin,verifySignup.checkUser,verifySignup.checkRolesExisted],usersCtrl.createUser)
+router.post('/register',[authJwt.verifyToken,verifySignup.validateInputUsers,authJwt.isAdmin,verifySignup.checkUser,verifySignup.checkRolesExisted],usersCtrl.createUser)
 
 router.post('/change/password',usersCtrl.changePassword)
 
-router.put('/update/:id',[authJwt.verifyToken,authJwt.isAdmin],usersCtrl.updateUser)
+router.put('/update/:id',[authJwt.verifyToken,verifySignup.validateInputUsers,authJwt.isAdmin],usersCtrl.updateUser)
 
 router.delete('/delete/:id',[authJwt.verifyToken,authJwt.isAdmin],usersCtrl.deleteUser)
 

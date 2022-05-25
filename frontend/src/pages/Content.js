@@ -21,7 +21,7 @@ const Content = (props) => {
               </div>
             </Link>
 
-            <Link className="a" to="/students">
+            <Link className="a" to="/students/?limit=10&page=1">
               <div className="box">
                 <h3>Lista de Estudiantes</h3>
                 <img src={notesSvg} alt="notes" />

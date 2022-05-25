@@ -26,6 +26,31 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
+export const checkAdminPassword = async (req,res,next)=>{
+  try {
+    const token = req.headers["x-access-token"];
+
+    if (!token) return res.status(403).json("No se ha obtenido el token");
+    //Verificamos el token con el secret
+    const decoded = jwt.verify(token, secret);
+    
+    //Buscamos el usuario que se refiere el token
+    const userFound = await user.findById(decoded.id, { password: 0 });
+
+    const matchPassword = await user.comparePassword(req.body.password,userFound.password);
+    
+    if (!userFound) return res.status(404).json("Usuario no encontrado");
+
+    const rol = await roles.findOne({_id:userFound.rol})
+    if(rol && rol.name === "Admin"){
+      next()
+    }
+
+    return res.status(401).json({message:'No tienes permiso para realizar la accion'})
+  } catch (err) {
+    return res.status(401).json("Token perdido o no autorizado");
+  }
+} 
 
 export const isTeacher = async (req, res, next) => {
   //Requerimos el id del usuario y buscamos los roles en la base de datos

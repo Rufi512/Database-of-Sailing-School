@@ -1,10 +1,24 @@
 import roles from '../models/roles'
 import user from "../models/user";
-
+import subject from '../models/subject'
+import {subjectsInitials} from '../libs/subjects'
 export const initialSetup = async () =>{
   try{
 
-  //Creamos los roles
+   const foundSubjects = await subject.find()
+   if(foundSubjects.length <= 0){
+     for(const subjectInf of subjectsInitials ){
+       const newSubject = new subject({
+           name:subjectInf.name.toLowerCase(),
+           fromYears:subjectInf.fromYears
+       })
+       await newSubject.save()
+     }
+     console.log('Materias Creadas!')
+   }
+
+
+  //Create rols
   const count = await roles.estimatedDocumentCount()
 
   if (count > 0 ) return;
@@ -17,7 +31,7 @@ export const initialSetup = async () =>{
 
   console.log('Roles creados')
 
-  //Creamos el usuario admin inicial
+  //Create user Admin
   const findUser = await user.findOne({ ci: 12345 });
     const foundRoles = await roles.find({ name: { $in: "Admin" } });
     if (!findUser) {
@@ -42,6 +56,8 @@ export const initialSetup = async () =>{
       console.log("Administrador creado!");
 
     }
+
+  
 
  
  

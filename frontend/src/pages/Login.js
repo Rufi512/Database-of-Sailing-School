@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
+import {useNavigate} from 'react-router-dom'
+import ReCAPTCHA from "react-google-recaptcha";
 import eye from "../static/icons/eye.svg";
 import eyeClose from "../static/icons/eyeClose.svg";
-import boscoImg from '../static/logos/jb.jpg';
-import CCImg from '../static/icons/cc-logo.svg'
-import Cookies from 'js-cookie'
+import boscoImg from "../static/logos/jb.jpg";
+//import CCImg from "../static/icons/cc-logo.svg";
+/* <ReCAPTCHA
+              sitekey="6Lf0i_seAAAAADa-22kcxr_u8f2AXw3zIP_vf-aa"
+              onChange={onCaptcha}
+            />*/
+import Cookies from "js-cookie";
 import { Popup, displayPopup } from "../components/Alerts";
-import {loginUser} from '../API'
-
+import { loginUser } from "../API";
+import ResetPassword from "../components/ResetPassword";
+import "../static/styles/form-login.css";
 const Login = (props) => {
+  let navigate = useNavigate()
   const [user, setUser] = useState({});
   const [show, setShow] = useState(false);
+  const [resetPassword, setResetPassword] = useState(false);
   const [popup, setPopup] = useState({});
-
 
   const hiddenPass = () => {
     if (show === true) {
@@ -21,35 +29,50 @@ const Login = (props) => {
     }
   };
 
+  const onCaptcha = async (value) => {
+    if (value) {
+      console.log("No es el xocas");
+      setUser({...user,recaptcha:value})
+    }else{
+      setUser({...user,recaptcha:''})
+    }
+  };
+
+  const showResetPassword = () => {
+    if (resetPassword) {
+      setResetPassword(false);
+      return;
+    }
+    setResetPassword(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await loginUser(user)
+    const res = await loginUser(user);
     if (res.status === 200) {
-       Cookies.set('token', res.data.token);
-       Cookies.set('rol', res.data.rol);
-       props.history.push("/home")
+    console.log(res)
+      Cookies.set("token", res.data.token);
+      Cookies.set("rol", res.data.rol);
+      navigate("/home");
     }
-     if (res.status >= 400){
+    if (res.status >= 400) {
       setPopup({ text: res.data, type: "error" });
       displayPopup("error", ".Login");
     }
-     if (res.status >= 500){
-      setPopup({ text: 'Error al conectar con el servidor', type: "error" });
+    if (res.status >= 500) {
+      setPopup({ text: "Error al conectar con el servidor", type: "error" });
       displayPopup("error", ".Login");
     }
   };
 
   return (
     <React.Fragment>
-    <Popup popup={popup} zone={"Login"} />
-    
+      <Popup popup={popup} zone={"Login"} />
+
       <div className="container-login">
-     
-        <form
-          onSubmit={handleSubmit}
-          style={{ width: "95%", display: "flex", flexDirection: "column" }}
-        >
-         <img src={boscoImg} alt="bosco"/>
+        <img src={boscoImg} alt="bosco" />
+        <form onSubmit={handleSubmit} className="form-login" style={{display:resetPassword ? 'none' : 'flex'}}>
+
           <div className="form-input">
             <label id="label-ci" style={{ marginBottom: "10px" }}>
               Cedula o Correo Electronico
@@ -89,20 +112,22 @@ const Login = (props) => {
               />
             </div>
           </div>
-          <p
-          onClick={(e)=>{props.history.push("/reset/password")}}
-            style={{
-              textAlign: "end",
-              color: "#2d2d2d",
-              cursor: "pointer",
-              marginTop: "0",
-              marginLeft:"auto",
-              width:"fit-content"
-            }}
-          >
-            Olvido su contraseña?
-          </p>
-
+          <div className="container-captcha">
+           
+          </div>
+           <p
+              onClick={(e) => {
+                showResetPassword();
+              }}
+              style={{
+                color: "#2d2d2d",
+                cursor: "pointer",
+                width: "fit-content",
+                margin:"15px auto"
+              }}
+            >
+              Olvido su contraseña?
+            </p>
           <button
             style={{ marginTop: "10px" }}
             type="submit"
@@ -113,15 +138,11 @@ const Login = (props) => {
           </button>
         </form>
 
-          <footer className="footer-commons">
-       <div>
-         <p>La pagina a sido creada bajo la licencia Creatives Commons</p>
-         <img style={{width:'150px'}} src={CCImg} alt="cc"/>
-       </div>
-      </footer>
+        <ResetPassword
+          visible={resetPassword}
+          changeVisibility={showResetPassword}
+        />
       </div>
-
-    
     </React.Fragment>
   );
 };

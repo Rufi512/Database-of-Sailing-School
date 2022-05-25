@@ -1,11 +1,11 @@
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../static/logos/logo.jpg";
 import Cookies from 'js-cookie'
 import { ReactComponent as CloseIcon } from "../static/icons/close.svg";
 import { ReactComponent as BarsIcon } from "../static/icons/bars-solid.svg";
 export const Navbar = (props) => {
-  let history = useHistory()
+  let history = useNavigate()
   const openBar = (value) => {
     const sidebar = document.querySelector(".sidebar");
     const backgroundSidebar = document.querySelector(".background-sidebar");
@@ -73,7 +73,7 @@ export const Navbar = (props) => {
                 Registrar
               </li>{" "}
             </Link>
-            <Link className="a" to="/students" onClick={(e)=>{document.getElementsByTagName("body")[0].style.overflowY = "unset";}}>
+            <Link className="a" to="/students/?limit=10&page=1" onClick={(e)=>{document.getElementsByTagName("body")[0].style.overflowY = "unset";}}>
               <li className={`${props.active === 2 ? "sidebar-tag-active" : ""}`}>
                 Lista de estudiantes
               </li>{" "}
@@ -95,7 +95,7 @@ export const Navbar = (props) => {
               document.getElementsByTagName("body")[0].style.overflowY = "unset";
               Cookies.remove('token'); 
               Cookies.remove('rol');
-              history.push("/");
+              history("/");
            }}>
               Salir de la sesión
             </li>

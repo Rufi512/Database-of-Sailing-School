@@ -1,5 +1,30 @@
 import user from "../models/roles";
 import roles from "../models/roles";
+import reCAPTCHA from 'recaptcha2';
+import dotenv from 'dotenv'
+dotenv.config()
+
+export const validateCaptcha = async (req,res,next) =>{
+  const recaptcha = new reCAPTCHA({
+  siteKey: process.env.SITE_KEY_CAPTCHA, // retrieved during setup
+  secretKey: process.env.SERVER_KEY_CAPTCHA, // retrieved during setup
+  ssl: true // optional, defaults to true.
+             // Disable if you don't want to access
+             // the Google API via a secure connection
+  });
+  recaptcha.validate(req.body.recaptcha)
+  .then(function(){
+    console.log('No es el xokas xd')
+    next()
+  })
+  .catch(function(err,errorCodes){
+    // invalid
+    console.log(err)
+    console.log(recaptcha.translateErrors(errorCodes)); // translate error codes to human readable text
+    return res.status(401).json({message:"Captcha Invalido!"})
+  });
+
+}
 
 export const checkUser = async (req, res, next) => {
   // Si el usuario ya existe
@@ -7,10 +32,10 @@ export const checkUser = async (req, res, next) => {
     $or: [{ email: req.body.email }, { ci: req.body.ci }],
   });
 
-  if (userFind)
-    return res.status(400).json("El usuario ya esta registrado en el sistema!");
+  if (userFind) return res.status(400).json({message:"El usuario ya esta registrado en el sistema!"});
   next();
 };
+
 
 export const checkRolesExisted = async (req, res, next) => {
   //Verficamos si existen los roles
@@ -20,6 +45,51 @@ export const checkRolesExisted = async (req, res, next) => {
   if (rol || rols === "") {
     next();
   } else {
-    return res.status(400).json("El rol no existe!");
+    return res.status(400).json({message:"El rol no existe!"});
   }
 };
+
+export const validateInputUsers = (req,res,next) =>{
+  const { ci, firstName, lastName, email, password, rol } = req.body;
+  const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  if (!ci || !firstName || !lastName || !email || !password || !rol)
+    return res.status(401).json({message:"Petición no valida,rellene los campos correctamente"});
+
+  if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
+    return res.status(400).json({message:"Parámetros en Cédula inválidos,solo números!"});
+  }
+
+  if(ci.length < 4){
+    return res.status(400).json({message:"Cedula del estudiante invalida"})
+  }
+
+  if (Number(ci) > 9999999999) {
+    return res.status(400).json({message:"Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)"});
+  }
+
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
+    return res.status(400).json({message:"Parámetros en Nombre inválidos,solo caracteres!"});
+  }
+
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
+    return res.status(400).json({message:"Parámetros en Apellido inválidos,solo caracteres!"});
+  }
+
+  if(firstName.length > 30){
+    return res.status(400).json({message:"Nombres muy largo maximo 30 caracteres!"});
+  }
+
+  if(lastName.length > 30){
+    return res.status(400).json({message:"Apellidos muy largo maximo 30 caracteres!"});
+  }
+
+  if(!emailValidator.test(email)){
+    return res.status(400).json({message:"Email invalido"})
+  }
+
+   if(email.length > 40){
+    return res.status(400).json({message:"Email muy largo maximo 40 caracteres!"});
+  }
+  next()
+}

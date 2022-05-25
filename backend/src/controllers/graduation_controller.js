@@ -154,7 +154,7 @@ export const graduate = async (id) => {
           },
         }
       );
-      newSchoolYear = "Graduado";
+      newSchoolYear = "graduado";
       subjectsUpgrade = null;
       break;
     }

@@ -1,3 +1,15 @@
+export const subjectsInitials = [
+    {"name":"matematicas",fromYears:[1,2,3,4]},
+    {"name":"ingles",fromYears:[1,2,3,4]},
+    {"name":"geografia",fromYears:[1,2,3,4]},
+    {"name":"historia",fromYears:[1,2,3,4]},
+    {"name":"biologia",fromYears:[1,2,3,4]},
+    {"name":"historia universal",fromYears:[2,3,4]},
+    {"name":"quimica",fromYears:[2,3,4]},
+    {"name":"fisica",fromYears:[3,4]},
+    {"name":"pre-militar",fromYears:[4]},
+]
+/*
 export const materias1 = [
     { "name":"Matemáticas", "score":[ 16, 16, 16 ] },
     { "name":"Ingles", "score":[ 17, 17, 17 ] },
@@ -39,3 +51,4 @@ export const materias4 = [
     { "name":"Física", "score":[ 20, 15, 20 ] },
     { "name":"Pre-Militar", "score":[ 20, 11, 20 ] }
 ]
+*/

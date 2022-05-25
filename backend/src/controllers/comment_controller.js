@@ -31,8 +31,8 @@ export const getComments = async (id) =>{
   {
     $project: {
       _id: "$comment._id",
-      firstName: "$author.firstName",
-      lastName: "$author.lastName",
+      firstName: "$author.firstname",
+      lastName: "$author.lastname",
       school_year: "$comment.school_year",
       comment: "$comment.comment",
       create_at: "$comment.create_at",
@@ -50,7 +50,7 @@ export const commentStudent = async (req, res) => {
   now = new Date();
   const studentFind = await student.findById(req.params.id);
 
-  if(!studentFind) return res.status(404).json('Estudiante no encontrado')
+  if(!studentFind) return res.status(404).json({message:'Estudiante no encontrado'})
 
   const newComment = new comment({
     user:req.userId,
@@ -61,12 +61,12 @@ export const commentStudent = async (req, res) => {
   });
   
   newComment.save()
-  res.json('Comentario añadido')
+  res.json({message:'Comentario añadido'})
 };
 
 //Borra comentario
 
 export const uncomment = async (req, res) => {
   await comment.findByIdAndDelete(req.params.id)
-  res.json("Comentario eliminado");
+  res.json({message:"Comentario eliminado"});
 };

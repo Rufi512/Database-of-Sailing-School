@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import FormAcademic from "../components/FormAcademic";
 import { Navbar } from "../components/Navbar";
@@ -23,6 +24,7 @@ import book from "../static/icons/book.svg";
 import arrow from "../static/icons/arrow.svg";
 import download from "../static/icons/download.svg";
 
+
 const StudentInfo = (props) => {
   const [student, setStudent] = useState({subjects:[],record:[]});
   const [comments, setComments] = useState([]);
@@ -31,7 +33,8 @@ const StudentInfo = (props) => {
   const [action, setAction] = useState("upgradeAndDegrade");
   const [confirm, setConfirm] = useState(false);
   const [popup, setPopup] = useState({});
-
+  let history = useNavigate()
+  
   async function request(id) {
     const res = await studentInformation(id);
 
@@ -161,7 +164,7 @@ const StudentInfo = (props) => {
       const res = await deleteStudents([student._id]);
       if (res.status === 200) {
         displayAlert(false);
-        props.history.push("/students/");
+        history.push("/students/");
       }
 
       if (res.status >= 400) {

@@ -7,8 +7,8 @@ import "../static/styles/forms.css";
 
 const FormStudent = () => {
   const [ci, setCi] = useState(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [school_year, setSchool_year] = useState("1-A");
   const [csv, setCsv] = useState("");
   const [popup, setPopup] = useState({});
@@ -18,12 +18,13 @@ const FormStudent = () => {
     e.preventDefault();
     displayPopup();
     setPopup({ text: "Enviando información", type: "request" });
-    const student = { ci, firstName, lastName, school_year };
+    const student = { ci, firstname, lastname, school_year };
     const result = await registerStudent(student);
 
     if (result.status === 200) {
       setPopup({ text: result.data, type: "pass" });
       displayPopup("received");
+      e.reset()
     }
 
     if (result.status >= 400) {
@@ -103,18 +104,18 @@ const FormStudent = () => {
             <div className="form-input">
               <input
                 type="text"
-                id="firstName"
-                name="firstName"
+                id="firstname"
+                name="firstname"
                 pattern="[A-Za-záéíóúñ'´ ]{1,900}"
                 autoComplete="off"
                 title="Solo Caracteres Alfabéticos!"
                 onChange={(e) => {
-                  setFirstName(e.target.value);
+                  setFirstname(e.target.value);
                   checkInputs(e.target.id, e.target.value);
                 }}
                 required
               />
-              <label id="label-firstName" className="label-name">
+              <label id="label-firstname" className="label-name">
                 Nombres del Estudiante
               </label>
             </div>
@@ -122,18 +123,18 @@ const FormStudent = () => {
             <div className="form-input">
               <input
                 type="text"
-                id="lastName"
-                name="lastName"
+                id="lastname"
+                name="lastname"
                 autoComplete="off"
                 pattern="[A-Za-záéíóúñ'´ ]{1,900}"
                 title="Solo Caracteres Alfabéticos!"
                 onChange={(e) => {
-                  setLastName(e.target.value);
+                  setLastname(e.target.value);
                   checkInputs(e.target.id, e.target.value);
                 }}
                 required
               />
-              <label id="label-lastName" className="label-name">
+              <label id="label-lastname" className="label-name">
                 Apellidos del Estudiante
               </label>
             </div>
