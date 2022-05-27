@@ -8,6 +8,7 @@ import auth from './routes/auth'
 import user from './routes/user'
 import section from './routes/sections'
 import subjects from './routes/subjects'
+import representative from './routes/representative'
 import {initialSetup} from './libs/initialSetup'
 const app = express();
 
@@ -30,8 +31,8 @@ const storage = multer.diskStorage({
 
 
 app.use(multer({fileFilter: function (req, file, cb) {
-    if (!file.originalname.match(/\.(csv)$/)) {
-        return cb('Only csv files!');
+    if (!file.originalname.match(/\.(csv|xlsx)$/)) {
+        return cb('Only csv and xlsx file!');
     }
     cb(null, true);
   },
@@ -45,6 +46,7 @@ app.use('/api/auth',auth)
 app.use('/api/user',user)
 app.use('/api/section',section)
 app.use('/api/subject',subjects)
+app.use('/api/rep',representative)
 app.use(express.static(path.join(__dirname, 'public')))
 
 

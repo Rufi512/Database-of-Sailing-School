@@ -5,9 +5,7 @@ var URI = process.env.MONGOCLOUD ? process.env.MONGOCLOUD : 'mongodb://127.0.0.1
 
 mongoose.connect((URI), { 
    useNewUrlParser: true,
-   useUnifiedTopology: true,
-   useFindAndModify:true,
-   useCreateIndex:true
+   useUnifiedTopology: true
 })
 
 

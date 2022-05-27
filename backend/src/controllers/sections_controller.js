@@ -164,8 +164,10 @@ export const addSubjectSection = async (req,res)=>{
         const sectionFound = section.findOne({_id:section_id})
         for(const verifySubject of subjects ){
            const foundSubject = subject.findOne({_id:section_id})
-           if(!foundSubject) return res.status(404).json({message:'Alguna seccion no ha sido encontrada'})
+           if(!foundSubject) return res.status(404).json({message:'Alguna materia no ha sido encontrada'})
         }
+
+    let listSubjects = subjects.map((el)=>{return {subject:el.id,scores:[]}})
         if(!sectionFound) return res.status(404).json({message:'Seccion no encontrada!'})
         await section.updateOne({_id:section_id},{$addToSet:{subjects:{$each: subjects}}})
         return res.json({message:'Materias a seccion añadida'})

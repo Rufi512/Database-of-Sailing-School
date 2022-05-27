@@ -96,10 +96,11 @@ export const assign = async (req, res) => {
 
 export const addSubjectsBySection = async (req,res) =>{
 	try{
-		const listSubject = await section.findOne({ _id: req.body.section_id })
+		let listSubject = await section.findOne({ _id: req.body.section_id })
+        listSubject = listSubject.subjects.map((el)=>{return {subject:el.id, scores:[]}})
 		if(!listSubject) return res.status(400).json({message:'Seccion no encontrada'})
-		await student.updateMany({"section": { "$in": req.body.section_id }},{$addToSet:{subjects:{$each: listSubject.subjects}}})
-		return res.json({message:'Materias Agregadas a estudiantes del curso actual', materias:listSubject.subjects})
+		await student.updateMany({"section": { "$in": req.body.section_id }},{$addToSet:{subjects:{$each: listSubject}}})
+		return res.json({message:'Materias Agregadas a estudiantes del curso actual', materias:listSubject})
 	}catch(err){
 		console.log(err)
 		res.status(500).json({message:'Error fatal'})
