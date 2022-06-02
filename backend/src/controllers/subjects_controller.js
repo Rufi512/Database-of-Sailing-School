@@ -67,10 +67,8 @@ export const assign = async (req, res) => {
 
         const sectionAssign = await section.findOne({ _id: req.body.section_id })
         let subjects = await subject.find({ 'fromYears': { $in: sectionAssign.year } }, { _id: 1 })
-        console.log(sectionAssign)
-        subjects = subjects.map((el) => mongoose.Types.ObjectId(el.id))
-
-        console.log(subjects)
+        const listIdSubjects = subjects.map((el)=> mongoose.Types.ObjectId(el))
+        subjects = subjects.map((el)=>{return{subject:mongoose.Types.ObjectId(el),scores:[]}})
 
         //Obtain students for the sections
 
@@ -78,13 +76,18 @@ export const assign = async (req, res) => {
             const studentFind = await student.findOne({ _id: studentRegister })
             // Verify if subject is already exists
             for(const oldSubjects of studentFind.subjects){
-            	subjects = subjects.filter((el)=> el != oldSubjects)
+            	subjects = subjects.filter((el)=> el.id != oldSubjects.id)
+                subjects = subjects.filter((el)=> el.id != oldSubjects)
             }
-            console.log(subjects)
-            await section.updateOne({_id:sectionAssign.id},{$set:{subjects: subjects}},{upsert:true})
-            // Add if not subjects is register and push to saved
-            await student.updateOne({ _id: studentFind.id },{$set:{subjects: subjects}},{upsert:true})
+            
+
         }
+
+            console.log(subjects)
+            console.log(listIdSubjects)
+            await section.updateOne({_id:sectionAssign.id},{$set:{subjects:listIdSubjects}},{upsert:true})
+            // Add if not subjects is register and push to saved
+            await student.updateMany({"section": { "$in": req.body.section_id }},{$addToSet:{subjects:{$each:subjects}}})
         res.json(subjects)
     } catch (err) {
         console.log(err)

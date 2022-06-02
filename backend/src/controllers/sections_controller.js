@@ -61,8 +61,8 @@ export const create = async (req, res) => {
 
     const newSection = new section({
         name: name.toLowerCase(),
-        year,
-        arrayStudentsIds
+        year:year,
+        students:arrayStudentsIds
     })
 
     const savedSection = await newSection.save()

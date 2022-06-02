@@ -216,7 +216,7 @@ export const showStudent = async (req, res) => {
     const validId = mongoose.Types.ObjectId.isValid(req.params.id);
     if (!validId) return res.status(402).json("Identificador no valido");
 
-    const studentFind = await student.findById(req.params.id).populate("section", { students: 0, _id: 0, subjects: 0 }).populate("subjects", { fromYears: 0 }).populate("representative");
+    const studentFind = await student.findById(req.params.id).populate("section", { students: 0, _id: 0, subjects: 0 }).populate("subjects.subject", { fromYears: 0 }).populate("representative");
     const comments = await getComments(req.params.id);
 
     if (studentFind) {

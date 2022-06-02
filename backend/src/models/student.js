@@ -5,7 +5,7 @@ const studentSchema = new Schema({
   firstname: {type: String,required:true},
   lastname: {type: String,required:true},
   section:{ref:"section",type:Schema.Types.ObjectId,required:false},
-  subjects: [{ref:"subject",type:Schema.Types.ObjectId, required:false,default:[]}],
+  subjects: [{ref:"subject",type:Object, required:false,default:[]}],
   last_modify: {type: String},
   status: {type: Boolean, "default": true},
   record: {ref:"chest",type: Schema.Types.ObjectId,required:false},
