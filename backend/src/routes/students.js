@@ -37,7 +37,10 @@ router.put('/info/:id', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.upd
 
 router.put('/graduate', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.graduateStudent) //Gradua las estudiantes
 
+router.put('/scores/:id', studentCtrl.saveScore) // Points 
+
 router.put('/demote', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.demoteStudent) //Gradua las estudiantes
+
 
 //DELETE
 

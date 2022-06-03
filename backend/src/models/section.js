@@ -7,7 +7,7 @@ dateFormat.i18n = date;
 const sectionSchema = new Schema({
   name: {type: String,required:true},
   year: {type: Number,required:true},
-  students: [{type: Schema.Types.ObjectId,required:false,default:[], ref:'student'}],
+  students: [{ref:'student',type: Schema.Types.ObjectId,required:false,default:[]}],
   created_at:{type: String,default:dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")},
   last_modify:{type: String,default:dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")},
   period_inital:{type:Number,default:`${dateFormat(now, "yyyy")}`},

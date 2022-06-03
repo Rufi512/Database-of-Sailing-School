@@ -1,4 +1,5 @@
 import {Schema, model} from 'mongoose';
+import dateFormat from "dateformat";
 import { date } from "../libs/dateformat";
 let now = new Date();
 dateFormat.i18n = date;

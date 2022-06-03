@@ -164,6 +164,30 @@ export const section = async (req, res) => {
 
 };
 
+//Saved score from subjects for student
+export const saveScore = async (req, res) => {
+    try {
+        const id = req.params.id
+        const scores = req.body.scores
+        const studentFind = await student.findById(id)
+        if (!studentFind) return res.status(404).json({ message: 'Student No Found' })
+        if (studentFind.subjects.length !== scores.length) return res.status(400).json({ message: 'Scores length is not the same' })
+        const invalidScores = scores.filter((el) => el.length !== 3)
+
+        if (invalidScores.length > 0) return res.status(400).json({ message: 'The Array element in scores not is valid' })
+
+        const scoreUpdate = studentFind.subjects.map((el,i)=>{return {subject:el.subject,scores:scores[i]}})
+
+        await student.updateOne({_id:id},{$set:{subjects:scoreUpdate}})
+        
+        res.json(scores)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Error fatal a ocurrido' })
+    }
+
+}
+
 //Lista de estudiantes de cada curso (indicador)
 /*
 export const sectionMax = async (req, res) => {
@@ -338,10 +362,10 @@ export const createStudents = async (req, res) => {
                 }
 
                 const newStudent = new student({
-                  ci: row[Object.keys(row)[0]],
-                  firstname: row[Object.keys(row)[1]],
-                  lastname: row[Object.keys(row)[2]],
-                  last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
+                    ci: row[Object.keys(row)[0]],
+                    firstname: row[Object.keys(row)[1]],
+                    lastname: row[Object.keys(row)[2]],
+                    last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
                 });
 
                 await newStudent.save();

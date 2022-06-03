@@ -47,11 +47,21 @@ export const create = async (req, res) => {
     const { name, year, students } = req.body
     const sectionCheck = await section.find({ name: name.toLowerCase() })
     if (sectionCheck.length > 0) return res.status(400).json({ message: 'Seccion con el mismo nombre ya existe!' })
+
+    //Create the section
+    
+    const newSection = new section({
+        name: name.toLowerCase(),
+        year:year
+    })
+
+    const savedSection = await newSection.save()
+    //Saved students for the section
     let arrayStudentsIds = []
     let arrayStudentsInvalid = []
 
     for (const id of students) {
-        const res = await requestIds(id, false, false);
+        const res = await requestIds(id, savedSection.id, false);
         if (res === true) {
             arrayStudentsIds.push(id)
         } else {
@@ -59,13 +69,11 @@ export const create = async (req, res) => {
         }
     }
 
-    const newSection = new section({
-        name: name.toLowerCase(),
-        year:year,
+    await section.updateOne({_id:savedSection.id,$set:{
         students:arrayStudentsIds
-    })
+    }})
 
-    const savedSection = await newSection.save()
+    
     if (arrayStudentsInvalid) {
         return res.json({ section: savedSection, invalids: arrayStudentsInvalid })
     }
