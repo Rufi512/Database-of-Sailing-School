@@ -1,304 +1,107 @@
 import student from "../models/student";
-import { materias1, materias2, materias3, materias4 } from "../libs/subjects.js";
-import date from "../libs/dateformat";
+import section from "../models/section"
+import chest from "../models/chest"
+import { date } from "../libs/dateformat";
 import dateFormat from "dateformat";
 
 let now = new Date();
-var newSchoolYear = "1-A";
-var subjectsUpgrade = materias1;
-
 dateFormat.i18n = date;
 
-//Actualiza la información del estudiante (Notas y Grado)
-export const graduate = async (id) => {
-  const studentFind = await student.findById(id);
-  
-  const academic_information = {
-    school_year: studentFind.school_year,
-    subjects: studentFind.subjects,
-  };
- 
- /*Verificamos si el estudiante es apto para ser graduado*/
-  const pass_information = academic_information.subjects.map((el)=>{
-    if(Math.round((el.score[0] + el.score[1] + el.score[2]) / 3) >= 10  ){
-      return true
-    }else{
-      return false
-    }
-  })
+//return the info from students gradues
+export const graduate = async (req, res) => {
+    try {
+        let studentsApproves = []
+        let studentsRejects = []
+        const id = req.body.id
+        const sectionFound = await section.findById(id)
+        if (!sectionFound) return res.status(404).json({ message: 'Seccion no encontrada' })
+        for (const el of sectionFound.students) {
+            let scoresSubjects = []
+            const studentFind = await student.findById(el).populate('subjects.subject', 'name')
+            if (!studentFind) return
+            //Check the subjects for student
+            for (const subject of studentFind.subjects) {
+                let sumScore = subject.scores.reduce((accumulator, value) => {
+                    return accumulator + value;
+                }, 0)
 
-  const validGradue = pass_information.filter((el)=>{return el === false})
+                if (sumScore > 0) {
+                    scoresSubjects.push(sumScore / subject.scores.length)
+                } else {
+                    scoresSubjects.push(0)
+                }
 
-  if(validGradue.length > 0 || studentFind.status === false){
-    return false
-  }
+            }
+
+            //Convert and sum scores
+            scoresSubjects = scoresSubjects.reduce((accumulator, value) => {
+                return accumulator + value;
+            }, 0)
+
+            //Check if the sum total and the division of the numbers is greater than 10
+
+            if (scoresSubjects / studentFind.subjects.length < 10) {
+                studentsRejects.push({ firstname: studentFind.firstname, lastname: studentFind.lastname, ci: studentFind.ci })
+            } else {
+                studentsApproves.push({ id:studentFind.id, firstname: studentFind.firstname, lastname: studentFind.lastname, ci: studentFind.ci })
+            }
+
+            if (req.body.is_test && req.body.is_test === false) {
+                
+                // FInd the archive from student
+                
+                let archiveFound = await chest.findOne({ student: studentFind.id })
+                
+                if (!archiveFound) {
+                    const createChest = await new chest({
+                        student: studentFind.id,
+                        data:[],
+                        last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")
+                    })
+
+                    const savedChest = await createChest.save()
+                    archiveFound = await chest.findOne({ student: studentFind.id })
+                } else {
+                    archiveFound = await chest.findOne({ student: studentFind.id })
+                }
+
+                // Set data actual to save
+                
+                const dataNew = {section: {id:sectionFound.id, name:sectionFound.name, year:sectionFound.year}, subjects: studentFind.subjects,period_initial: sectionFound.period_initial, completion_period: sectionFound.completion_period}
+
+                const findIndexData = archiveFound.data.findIndex((el)=> el.section.id === dataNew.section.id) || false
+                
+                //Set new data in same position index
+
+                if(findIndexData){
+                  archiveFound.data[findIndexData] = dataNew
+                }else{
+                  archiveFound.data.push(dataNew)
+                }
+
+                //Saved the data actual for the student (section/subjects)
+
+                await chest.updateOne({ student: studentFind.id }, {$set:{data:dataNew}},{upsert:true})
+
+                //Delete data subjects in student
+
+                await student.updateOne({_id:student.id},{$set:{subjects:[]}})
+
+            }
 
 
-  switch (studentFind.school_year) {
-    case "1-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.0": academic_information,
-          },
-        }
-      );
-      subjectsUpgrade = materias2;
-      newSchoolYear = "2-A";
-      break;
-    }
-    case "1-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.0": academic_information,
-          },
-        }
-      );
 
-      subjectsUpgrade = materias2;
-      newSchoolYear = "2-B";
-      break;
-    }
+        }
 
-    case "2-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.1": academic_information,
-          },
+        if(req.body.is_test && req.body.is_test === false){
+          //If every is ok delete the section actual
+          await chest.deleteOne({_id:sectionFound.id})
         }
-      );
-      subjectsUpgrade = materias3;
-      newSchoolYear = "3-A";
-      break;
-    }
-    case "2-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.1": academic_information,
-          },
-        }
-      );
-      subjectsUpgrade = materias3;
-      newSchoolYear = "3-B";
-      break;
-    }
 
-    case "3-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.2": academic_information,
-          },
-        }
-      );
-      subjectsUpgrade = materias4;
-      newSchoolYear = "4-A";
-      break;
+        res.json({ message: 'Preview students gradues and rejects', studentsApproves, studentsRejects })
+        
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Error fatal en el servidor' })
     }
-    case "3-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.2": academic_information,
-          },
-        }
-      );
-      subjectsUpgrade = materias4;
-      newSchoolYear = "4-B";
-      break;
-    }
-
-    case "4-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.3": academic_information,
-          },
-        }
-      );
-      subjectsUpgrade = materias4;
-      newSchoolYear = "5-A";
-      break;
-    }
-    case "4-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.3": academic_information,
-          },
-        }
-      );
-      newSchoolYear = "5-B";
-      subjectsUpgrade = materias4;
-      break;
-    }
-    case "5-A":
-    case "5-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            status: false,
-            "record.4": academic_information,
-          },
-        }
-      );
-      newSchoolYear = "graduado";
-      subjectsUpgrade = null;
-      break;
-    }
-  }
-
-  await student.updateOne(
-    { _id: id },
-    {
-      $set: {
-        school_year: newSchoolYear,
-        subjects: subjectsUpgrade,
-        last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
-      },
-    }
-  );
-   
-  return true
-  
-};
-
-export const demote = async (id) => {
-  const studentFind = await student.findById(id);
-  if (studentFind.school_year === "1-A" || studentFind.school_year === "1-B" || studentFind.status === false) {
-    return false
-  }
-  switch (studentFind.school_year) {
-    case "2-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.0": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias1;
-      newSchoolYear = "1-A";
-      break;
-    }
-    case "2-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.0": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias1;
-      newSchoolYear = "1-B";
-      break;
-    }
-
-    case "3-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.1": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias2;
-      newSchoolYear = "2-A";
-      break;
-    }
-    case "3-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.1": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias2;
-      newSchoolYear = "2-B";
-      break;
-    }
-
-    case "4-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.2": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias3;
-      newSchoolYear = "3-A";
-      break;
-    }
-    case "4-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.2": null,
-          },
-        }
-      );
-      newSchoolYear = "3-B";
-      subjectsUpgrade = materias3;
-      break;
-    }
-    case "5-A": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.3": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias4;
-      newSchoolYear = "4-A";
-      break;
-    }
-    case "5-B": {
-      await student.updateOne(
-        { _id: id },
-        {
-          $set: {
-            "record.3": null,
-          },
-        }
-      );
-      subjectsUpgrade = materias4;
-      newSchoolYear = "4-B";
-      break;
-    }
-  }
-
-  await student.updateOne(
-    { _id: id },
-    {
-      $set: {
-        school_year: newSchoolYear,
-        subjects: subjectsUpgrade,
-        last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
-      },
-    }
-  );
-
-  return true
-};
+}

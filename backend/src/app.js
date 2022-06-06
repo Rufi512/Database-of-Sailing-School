@@ -9,6 +9,7 @@ import user from './routes/user'
 import section from './routes/sections'
 import subjects from './routes/subjects'
 import representative from './routes/representative'
+import chest from './routes/chest'
 import {initialSetup} from './libs/initialSetup'
 const app = express();
 
@@ -47,6 +48,7 @@ app.use('/api/user',user)
 app.use('/api/section',section)
 app.use('/api/subject',subjects)
 app.use('/api/rep',representative)
+app.use('/api/chest',chest)
 app.use(express.static(path.join(__dirname, 'public')))
 
 

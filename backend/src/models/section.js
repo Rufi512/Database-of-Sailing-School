@@ -10,7 +10,7 @@ const sectionSchema = new Schema({
   students: [{ref:'student',type: Schema.Types.ObjectId,required:false,default:[]}],
   created_at:{type: String,default:dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")},
   last_modify:{type: String,default:dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT")},
-  period_inital:{type:Number,default:`${dateFormat(now, "yyyy")}`},
+  period_initial:{type:Number,default:`${dateFormat(now, "yyyy")}`},
   completion_period:{type:Number,default:`${dateFormat(now.setFullYear(now.getFullYear() + 1),"yyyy")}`},
   subjects:[{ref:"subject",type:Schema.Types.ObjectId,default:[],required:false}]
 },{
