@@ -101,7 +101,7 @@ export const forgotPassword = async (req, res) => {
 
         if (!userFound) return res.status(404).json({ message: 'Usuario no registrado en el sistema, verifique los datos' })
 
-        const token = jwt.sign({ id: userFound.id }, secret, {
+        const token = jwt.sign({ id: userFound.id }, secret + userFound.password, {
             expiresIn: '15m'
         });
 
@@ -117,12 +117,10 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     try {
         const { id, token } = req.params
-
-        const decoded = jwt.verify(token, secret);
-
-        const userFind = await user.findById(decoded.id, { password: 0 });
-
+        const userFind = await user.findById(id);
         if(!userFind) res.status(404).json({message:'Usuario no encontrado'})
+
+        const decoded = jwt.verify(token, secret + userFind.password);
 
         if (id !== userFind.id) return res.status(400).json({ message: 'Informacion invalidas' })
 
@@ -135,7 +133,7 @@ export const resetPassword = async (req, res) => {
         res.json({ message: 'Contraseña restablecida! ' })
 
     } catch (err) {
-        res.status(500).json({ message: 'Error fatal a ocurrido' })
+        res.status(400).json({ message: 'Ticket de cambio de contraseña invalido' })
         console.log(err)
     }
 }
