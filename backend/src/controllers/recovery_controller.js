@@ -4,6 +4,7 @@ import quest from '../models/quest'
 import { validateEmail } from '../middlewares/verifyForms'
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import transporter from '../mailer'
 dotenv.config();
 const secret = process.env.SECRET
 // Set security questions
@@ -105,7 +106,19 @@ export const forgotPassword = async (req, res) => {
             expiresIn: '15m'
         });
 
-        res.json({ id: userFound.id, token })
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+        from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
+        to: [req.body.email], // list of receivers
+        subject: "Reset the fucking password", // Subject line
+        text: "Recuperar contraseña", // plain text body
+        html: `<b>Su enlace de recuperacion es el siguiente:</b> <br/> <a href="https://localhost:8080/reset-password/${userFound.id}/${token}">Click aqui!</a> <br/> <b>O copie y pegue el siguiente link!</b> <br/> <p>https://localhost:8080/reset-password/${userFound.id}/${token}<p/>`, // html body
+    });
+
+        console.log(info)
+
+
+        res.json({message:'Email enviado!'})
     } catch (err) {
         res.status(500).json({ message: 'Error fatal en servidor' })
         console.log(err)
