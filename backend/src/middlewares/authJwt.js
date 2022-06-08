@@ -3,7 +3,7 @@ import user from "../models/user";
 import dotenv from "dotenv";
 import roles from "../models/roles";
 dotenv.config();
-const secret = process.env.SECRET ? process.env.SECRET : "secretWord";
+const secret = process.env.SECRET
 
 export const verifyToken = async (req, res, next) => {
   try {

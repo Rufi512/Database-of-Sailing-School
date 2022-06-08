@@ -6,35 +6,36 @@ dotenv.config();
 const secret = process.env.SECRET ? process.env.SECRET : "secretWord";
 
 export const signIn = async (req, res) => {
-  console.log(req.body)
-  //Confirmamos si existe el usuario por medio de email o cedula
+    console.log(req.body)
+    //Confirmamos si existe el usuario por medio de email o cedula
 
-  const userFound = await user.findOne({ $or: [{ email: req.body.user }, { ci: req.body.user }] })
+    const userFound = await user.findOne({ $or: [{ email: req.body.user }, { ci: req.body.user }] })
 
 
-  if (!userFound) {
-    return res.status(400).json("Usuario no encontrado");
-  }
+    if (!userFound) {
+        return res.status(400).json("Usuario no encontrado");
+    }
 
-  //Comparamos contraseñas
-  const matchPassword = await user.comparePassword(
-    req.body.password,
-    userFound.password
-  );
+    //Comparamos contraseñas
+    const matchPassword = await user.comparePassword(
+        req.body.password,
+        userFound.password
+    );
 
-  if (!matchPassword) {
-    return res.status(401).json("Contraseña invalida");
-  }
+    if (!matchPassword) {
+        return res.status(401).json("Contraseña invalida");
+    }
 
-  //Generamos el token
-  const token = jwt.sign({ id: userFound.id }, secret, {
-    expiresIn: 86400, //24 hours
-  });
+    //Generamos el token
+    const token = jwt.sign({ id: userFound.id }, secret, {
+        expiresIn: 86400, //24 hours
+    });
 
-  const rolFind = await roles.findOne({_id: { $in: userFound.rol } })
+    const rolFind = await roles.findOne({ _id: { $in: userFound.rol } })
 
-  res.json({
-    token,
-    rol:rolFind.name
-  });
+    res.json({
+        token,
+        rol: rolFind.name
+    });
 };
+

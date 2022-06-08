@@ -22,18 +22,13 @@ export const getUsers = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-    const { ci, firstName, lastName, email, password, rol } = req.body;
-
-    const userFind = await user.findOne({ $or: [{ email: email }, { ci: ci }] });
-
-    if (userFind)
-        return res.status(400).json({ message: "Ya hay un usuario con la misma cédula o email registrado!" });
+    const { ci, firstname, lastname, email, password, rol } = req.body;
 
     //Creamos el usuario
     const newUser = new user({
         ci,
-        firstName,
-        lastName,
+        firstname,
+        lastname,
         email,
         password: await user.encryptPassword(password),
         rol,
@@ -67,8 +62,8 @@ export const updateUser = async (req, res) => {
 
     const {
         ci,
-        firstName,
-        lastName,
+        firstname,
+        lastname,
         email
     } = await user.findById(req.params.id);
 

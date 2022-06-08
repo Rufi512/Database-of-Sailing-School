@@ -1,4 +1,4 @@
-import user from "../models/roles";
+import user from "../models/user";
 import roles from "../models/roles";
 import reCAPTCHA from 'recaptcha2';
 import dotenv from 'dotenv'
@@ -32,7 +32,9 @@ export const checkUser = async (req, res, next) => {
     $or: [{ email: req.body.email }, { ci: req.body.ci }],
   });
 
-  if (userFind) return res.status(400).json({message:"El usuario ya esta registrado en el sistema!"});
+
+  if (userFind) return res.status(400).json({message:"Ya hay un mismo email o cedula registrada en el sistema "});
+
   next();
 };
 
@@ -50,10 +52,10 @@ export const checkRolesExisted = async (req, res, next) => {
 };
 
 export const validateInputUsers = (req,res,next) =>{
-  const { ci, firstName, lastName, email, password, rol } = req.body;
+  const { ci, firstname, lastname, email, password, rol } = req.body;
   const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  if (!ci || !firstName || !lastName || !email || !password || !rol)
+  if (!ci || !firstname || !lastname || !email || !password || !rol)
     return res.status(401).json({message:"Petición no valida,rellene los campos correctamente"});
 
   if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
@@ -68,19 +70,19 @@ export const validateInputUsers = (req,res,next) =>{
     return res.status(400).json({message:"Parámetros en Cédula inválidos limite numerico excedido (maximo 10 digitos)"});
   }
 
-  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstName)) {
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstname)) {
     return res.status(400).json({message:"Parámetros en Nombre inválidos,solo caracteres!"});
   }
 
-  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastName)) {
+  if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastname)) {
     return res.status(400).json({message:"Parámetros en Apellido inválidos,solo caracteres!"});
   }
 
-  if(firstName.length > 30){
+  if(firstname.length > 30){
     return res.status(400).json({message:"Nombres muy largo maximo 30 caracteres!"});
   }
 
-  if(lastName.length > 30){
+  if(lastname.length > 30){
     return res.status(400).json({message:"Apellidos muy largo maximo 30 caracteres!"});
   }
 
