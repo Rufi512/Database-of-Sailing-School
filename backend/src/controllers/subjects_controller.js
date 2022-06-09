@@ -103,7 +103,7 @@ export const addSubjectsBySection = async (req,res) =>{
 		let sectionFound = await section.findOne({ _id: req.body.section_id })
         let listSubject = sectionFound.subjects.map((el)=>{return {subject:el, scores:[]}})
 		if(!listSubject) return res.status(400).json({message:'Seccion no encontrada'})
-		for (const studentRegister of sectionAssign.students) {
+		for (const studentRegister of sectionFound.students) {
             const studentFind = await student.findOne({ _id: studentRegister })
             let subjectToStudent = listSubject
             // Verify if subject is already exists
