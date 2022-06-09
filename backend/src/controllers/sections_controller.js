@@ -1,6 +1,7 @@
 import section from "../models/section"
 import student from "../models/student";
 import user from "../models/user";
+import mongoose from 'mongoose';
 import { date } from "../libs/dateformat";
 import dateFormat from "dateformat";
 import subject from '../models/subject'
@@ -19,7 +20,7 @@ const requestIds = async (id, sectionNew, isUpdated) => {
     if(studentFound.section && !sectionNew)return { ci: studentFound.ci, firstname: studentFound.firstname, lastname: studentFound.lastname }
 
     if (!studentFound.section) {
-        const res = await student.updateOne({ _id: id }, { $set: { section: sectionNew._id, last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT") } }, { upsert: true });
+        const res = await student.updateOne({ _id: id }, { $set: { section: sectionNew.id, last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT") } }, { upsert: true });
         return true
     }
 
@@ -44,7 +45,7 @@ const requestIds = async (id, sectionNew, isUpdated) => {
 
 export const create = async (req, res) => {
     verifyFields(req, res)
-    const { name, year, students } = req.body
+    const { name, year, students,period_initial,completion_period } = req.body
     const sectionCheck = await section.find({ name: name.toLowerCase() })
     if (sectionCheck.length > 0) return res.status(400).json({ message: 'Seccion con el mismo nombre ya existe!' })
 
@@ -52,16 +53,20 @@ export const create = async (req, res) => {
     
     const newSection = new section({
         name: name.toLowerCase(),
-        year:year
+        year: year,
+        period_initial,
+        completion_period
     })
 
     const savedSection = await newSection.save()
+    console.log(savedSection)
+    console.log(savedSection.id)
     //Saved students for the section
     let arrayStudentsIds = []
     let arrayStudentsInvalid = []
 
     for (const id of students) {
-        const res = await requestIds(id, savedSection.id, false);
+        const res = await requestIds(id, savedSection, false);
         if (res === true) {
             arrayStudentsIds.push(id)
         } else {
@@ -69,7 +74,7 @@ export const create = async (req, res) => {
         }
     }
 
-    await section.updateOne({_id:savedSection.id,$set:{
+    await section.updateOne({_id:savedSection.id},{$set:{
         students:arrayStudentsIds
     }})
 
@@ -190,15 +195,16 @@ export const addSubjectSection = async (req,res)=>{
 export const deleteSubjectsSection = async (req,res)=>{
     try{
         const {id} = req.params
-        const {subjects} = req.body
+        let {subjects} = req.body
         const sectionFound = section.findOne({_id:id})
         for(const verifySubject of subjects ){
            const foundSubject = subject.findOne({_id:id})
            if(!foundSubject) return res.status(404).json({message:'Alguna seccion no ha sido encontrada'})
         }
         if(!sectionFound) return res.status(404).json({message:'Seccion no encontrada!'})
+        subjects = subjects.map((el)=> mongoose.Types.ObjectId(el))
         await section.updateOne({_id:id},{$pullAll:{subjects:subjects}})
-        await student.updateMany({section:id},{$pullAll:{subjects:subjects}})
+        await student.updateMany({section:id},{$pull:{subjects:{subject:{$in:subjects}}}})
         return res.json({message:`Materia/s a seccion y estudiantes eliminadas`})
     }catch(err){
         console.log(err)

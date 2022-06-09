@@ -15,7 +15,7 @@ const studentSchema = new Schema({
   versionKey:false
 })
 
-studentSchema.index({ci:"number",firstname: "text", lastname: "text"})
+studentSchema.index({firstname: "text", lastname: "text"})
 studentSchema.plugin(mongoosePaginate)
 
 export default model('student', studentSchema)

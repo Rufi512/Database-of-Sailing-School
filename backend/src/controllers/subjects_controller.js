@@ -127,7 +127,7 @@ export const deleteSubject = async (req,body) =>{
 		const subjectFind = subject.findOne({_id:id})
 		if(subjectFind){
 			await section.updateMany({"subjects": { "$in": [id] }},{$pull:{subjects:id}})
-			await student.updateMany({"subjects": { "$in": [id] }},{$pull:{subjects:id}})
+			await student.updateMany({"subjects": { "$in": [id] }},{$pull:{subject:id}})
 			return res.json({message:`Materia: ${subjectFind.name[0].toUpperCase() + subjectFind.name[0].substring(1)} eliminada`})
 		}
 		return res.status(400).json({message:'No se ha podido eliminar la materia especificada'})

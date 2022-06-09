@@ -95,7 +95,10 @@ export const graduate = async (req, res) => {
 
         if(req.body.is_test && req.body.is_test === false){
           //If every is ok delete the section actual
-          await chest.deleteOne({_id:sectionFound.id})
+          await section.deleteOne({_id:sectionFound.id})
+          await student.updateMany({_id:sectionFound.students,$pull:{
+                section:sectionFound.id
+          }})
         }
 
         res.json({ message: 'Preview students gradues and rejects', studentsApproves, studentsRejects })
