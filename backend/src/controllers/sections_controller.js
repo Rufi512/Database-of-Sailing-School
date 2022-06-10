@@ -211,3 +211,14 @@ export const deleteSubjectsSection = async (req,res)=>{
         return res.status(500).json({message:'No se ha podido borrar las materias a la seccion'})
     }
 }
+
+export const deleteSection = async (req,res)=>{
+    const {section_id} = req.params
+    const sectionFound = section.findOne({_id:section_id})
+    if(!sectionFound) return res.status(404).json({message:'Seccion no encontrada'})
+    await section.deleteOne({_id:mongoose.Types.ObjectId(section_id)})
+    await student.updateMany({_id:sectionFound.students,$unset:{
+                section:""
+          },$set:{subjects:[]}})
+    res.json({message:'Seccion Eliminada'})
+}
