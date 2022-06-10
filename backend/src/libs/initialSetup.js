@@ -46,8 +46,8 @@ export const initialSetup = async () =>{
 
       const newUser = new user({
         ci: "12345",
-        firstName: "Chente",
-        lastName: "Director",
+        firstname: "Chente",
+        lastname: "Director",
         email: "chente@mail.com",
         password: await user.encryptPassword("12345"),
         rol: rolFind,
