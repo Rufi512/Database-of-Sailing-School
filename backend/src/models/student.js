@@ -1,9 +1,9 @@
 import {Schema, model} from 'mongoose';
 import mongoosePaginate  from 'mongoose-paginate-v2'
 const studentSchema = new Schema({
-  ci: {type: Number,unique:true,required:true},
-  firstname: {type: String,required:true},
-  lastname: {type: String,required:true},
+  ci: {type: String,unique:true,required:true},
+  firstname: {type: String,required:true,trim: true},
+  lastname: {type: String,required:true,trim: true},
   section:{ref:"section",type:Schema.Types.ObjectId,required:false},
   subjects: [{ref:"subject",type:Object, required:false,default:[]}],
   last_modify: {type: String},
@@ -15,7 +15,8 @@ const studentSchema = new Schema({
   versionKey:false
 })
 
-studentSchema.index({firstname: "text", lastname: "text"})
+studentSchema.index({ci: "text",firstname: "text", lastname: "text"})
+
 studentSchema.plugin(mongoosePaginate)
 
 export default model('student', studentSchema)

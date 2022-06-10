@@ -69,12 +69,15 @@ export const search = async (req, res) => {
         lean: false,
         limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
         page: req.query && Number(req.query.page) ? req.query.page : 1,
-        select: { subjects: 0, record: 0 }
+        select: { subjects: 0, record: 0, contact: 0 }
     };
 
     const { search } = req.body
-
-    const students = await student.paginate({ $text: { $search: new RegExp('^' + search) }, status: req.query.students === "activos" ? true : false, school_year: req.query.students === "graduados" ? "graduado" : { $ne: "graduado" } }, optionsPagination)
+    //const students = await student.searchPartial(search)
+    const students = await student.paginate({$or: [
+                { "firstname": new RegExp(search, "gi") },
+                { "lastname": new RegExp(search, "gi") },
+            ]},optionsPagination)
 
     res.json(students)
 }
