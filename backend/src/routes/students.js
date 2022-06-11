@@ -32,14 +32,14 @@ router.post('/comment/:id', [authJwt.verifyToken,authJwt.isTeacher], commentCtrl
 
 router.put('/info/:id', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.updateStudent) //Update student information (ID, Name, Surname and Notes)
 
-router.put('/scores/:id', studentCtrl.saveScore) // save points 
+router.put('/scores/:id',[authJwt.verifyToken,authJwt.isTeacher],studentCtrl.saveScore) // save points 
 
 
 //DELETE
 
 router.delete('/comment/delete/:id',[authJwt.verifyToken,authJwt.isTeacher], commentCtrl.uncomment)  // Delete student comment
 
-router.post('/delete', [authJwt.verifyToken,authJwt.isAdmin], studentCtrl.deleteStudents) // Delete the student from the entire database
+router.post('/delete', [authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin], studentCtrl.deleteStudents) // Delete the student from the entire database
 
 
 export default router

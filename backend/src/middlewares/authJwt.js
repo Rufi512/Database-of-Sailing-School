@@ -26,7 +26,7 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
-export const checkAdminPassword = async (req,res,next)=>{
+export const checkPassword = async (req,res,next)=>{
   try {
     const token = req.headers["x-access-token"];
 
@@ -41,12 +41,12 @@ export const checkAdminPassword = async (req,res,next)=>{
     
     if (!userFound) return res.status(404).json("Usuario no encontrado");
 
-    const rol = await roles.findOne({_id:userFound.rol})
-    if(rol && rol.name === "Admin"){
+    if(matchPassword){
       next()
-    }
+    } 
 
-    return res.status(401).json({message:'No tienes permiso para realizar la accion'})
+    return res.status(401).json({message:'La contraseña es invalida'})
+
   } catch (err) {
     return res.status(401).json("Token perdido o no autorizado");
   }

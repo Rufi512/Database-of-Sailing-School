@@ -558,9 +558,17 @@ export const deleteStudents = async (req, res) => {
     for (const id of ids) {
         const validId = mongoose.Types.ObjectId.isValid(id);
         if (!validId) return res.status(400).json("ID invalido");
+        const studentFound = student.findOne({_id:id})
+        if(studentFound){
+        const chest_student = chest.findOne({student:studentFound.id})
+        if(chest_student){
+            await chest.findByIdAndDelete(chest_student.id)
+        }
         await comment.deleteMany({ user: id });
         await student.findByIdAndDelete(id);
+        await section.updateOne({_id:studentFound.section},{$pull:{students:studentFound.id}})
     }
+}
 
     res.json("Estudiante/s Eliminado/s");
 };
