@@ -1,0 +1,156 @@
+.container-forgot, .email-confirm{
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 90%;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.container-forgot{
+  transform: translateY(0px);
+}
+
+.email-confirm{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1000;
+    transform: translateY(-150px);
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+
+.container-forgot .title, .email-confirm h1{
+	font-size: 1.8em;
+}
+
+.container-forgot .title, .container-forgot .text, .email-confirm h1{
+	text-align: center;
+  color: var(--blue-color);
+}
+
+.form-forgot {
+  margin-top: 20px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 475px;
+}
+
+.form-forgot .field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-forgot .label{
+  font-weight: 600;
+}
+
+.form-forgot .label:nth-child(2){
+  margin-top: 40px;
+  margin-bottom: 0;
+}
+
+.form-forgot .field input {
+  border: none;
+  background: none;
+  width: -webkit-fill-available;
+  height:45px;
+  padding: 0;
+  outline: 0;
+  font-size: 1.05em;
+  padding-left: 30px;
+  border-bottom: 2px solid black;
+  transition: all 0.3s ease;
+}
+
+.form-forgot .field .icon {
+	position: absolute;
+    margin-left: -11px;
+    margin-top: -3px;
+}
+
+.form-forgot .field svg {
+  transform: scale(0.7);
+}
+
+.form-forgot .field input:focus {
+  border-color: #2f6efb;
+}
+
+.form-forgot .card-option{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 15px auto;
+  min-height: 90px;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: #f7f7f7;
+  box-shadow: 0px 2px 7px #c9c9c9;
+  border-radius: 5px;
+  max-width: 415px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-forgot .card-option svg{
+  width: 40px;
+  min-width: 40px;
+  margin-right: 15px;
+}
+
+.form-forgot .card-option h2{
+  font-size: 1em;
+  margin: 0;
+}
+
+.form-forgot .card-option p{
+  font-size: 0.98em;
+  margin: 10px auto;
+}
+
+.form-forgot .card-option:hover{
+  background: #e1e4ed;
+}
+
+.form-forgot .card-option-selected{
+  border: 2px solid #15b515;
+}
+
+.form-forgot .container-buttons{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.form-forgot .button-submit{
+  margin-top: 35px;
+  width: 45%;
+  max-width: 180px;
+}
+
+.fade-container-form{
+  transform: translateY(-150px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.email-confirm p{
+  width: 90%;
+  text-align: center;
+}
+
+.email-confirm-fade{
+  z-index: 1000;
+  transform: translateY(0px);
+  opacity: 1;
+}

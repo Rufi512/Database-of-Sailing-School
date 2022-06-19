@@ -1,0 +1,53 @@
+.container-student {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.container-student h2{
+    text-align: center;
+    margin: 0 auto;
+    font-weight: bold;
+}
+
+.container-student input{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.student-information,.student-record-actual{
+    border-bottom: 2px solid #6e6e6e;
+}
+
+.student-record-actual{
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.student-record-actual h4,
+.container-student .student-contact h4{
+    margin-bottom: 20px;
+}
+
+.container-student .thead{
+    background: #131b2c;
+    color: white;
+}
+
+.container-student .student-contact{
+    margin-top: 20px;
+    border-bottom: 2px solid #6e6e6e;
+}
+
+.container-student .container-chest{
+    max-height: 0px;
+    overflow: hidden;
+    border-bottom: 2px solid transparent;
+}
+
+.container-student .container-chest-active{
+    max-height: max-content;
+    border-color:#6e6e6e;
+}

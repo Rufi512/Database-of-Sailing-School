@@ -255,7 +255,7 @@ export const showStudent = async (req, res) => {
 
 //Crear Estudiante Individual
 export const createStudent = async (req, res) => {
-    const { ci, firstname, lastname, contact, rep_data } = req.body;
+    const { ci, firstname, lastname, contact, rep_data, section_id } = req.body;
     const checkRegister = await verifyForms.verifyCreate(req.body)
     let repRegister
     if (checkRegister) return res.status(400).json({ message: checkRegister.message })
@@ -291,6 +291,7 @@ export const createStudent = async (req, res) => {
         firstname,
         lastname,
         contact: contact,
+        section:section_id,
         representative: rep_data.id || repRegister,
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
     });

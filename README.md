@@ -2,8 +2,6 @@
 
 Stack MERN application to register, consult, modify and delete student grades
 
-<img src="https://github.com/Rufi512/Database-of-Sailing-School/blob/master/Capture.png" />
-
 ## Note
 
 This version is very very very very very very very, and if it is not clear to you, it is very unstable and it is expected that it will not even work, this version will be updated until its new features and fixing the old ones are ready

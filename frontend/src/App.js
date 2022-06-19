@@ -1,32 +1,32 @@
 import React from 'react'
 import Login from './pages/Login'
-import Content from './pages/Content'
-import Sections from './pages/Sections'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPasswordUser from './pages/ResetPasswordUser'
+import Questions from './pages/Questions'
+import Home from './pages/Home'
 import FormStudent from './pages/FormStudent'
-import Students from './pages/Students'
 import StudentInfo from './pages/StudentInfo'
-import StudentsSections from './pages/StudentsSections'
-import ControlUsers from './pages/ControlUsers'
+import StudentsList from './pages/StudentsList'
 import ProtectedRoute from './components/ProtectedRoute'
 import {
   BrowserRouter,
   Routes,
   Route
 } from "react-router-dom";
-
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const App = ()=>( 
   <BrowserRouter>
   <Routes>
   <Route exact path="/" element={<Login/>}/>
+  <Route exact path="/forgot-password" element={<ForgotPassword/>}/>
+  <Route exact path="/reset-password/:id/:token" element={<ResetPasswordUser/>}/>
+  <Route exact path="/reset-password/questions/" element={<Questions/>}/>
   <Route exact path="/*" element={<ProtectedRoute/>}>
-    <Route exact path="sections/list/:section" element={<StudentsSections/>}/>
-    <Route exact path="home" element={<Content/>} />
+    <Route exact path="home" element={<Home/>} />
+    <Route exact path="register/students" element={<FormStudent/>} />
     <Route exact path="student/info/:id" element={<StudentInfo/>} />
-    <Route exact path="register/student" element={<FormStudent/>} />
-    <Route exact path="students" element={<Students/>} />
-    <Route exact path="control" element={<ControlUsers/>} />
-    <Route exact path="sections" element={<Sections/>} />
+    <Route exact path="students" element={<StudentsList/>} />
    </Route>
   </Routes>
 </BrowserRouter>

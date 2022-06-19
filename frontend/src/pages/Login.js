@@ -1,9 +1,11 @@
 import React, {useState} from "react";
-import {useNavigate} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import ReCAPTCHA from "react-google-recaptcha";
-import eye from "../static/icons/eye.svg";
-import eyeClose from "../static/icons/eyeClose.svg";
 import boscoImg from "../static/logos/jb.jpg";
+import {ReactComponent as PersonIcon} from "../static/icons/person.svg";
+import {ReactComponent as EyeIcon} from "../static/icons/eye.svg";
+import {ReactComponent as EyeClose} from "../static/icons/eye.svg";
+import {ReactComponent as LockIcon} from "../static/icons/lock.svg";
 //import CCImg from "../static/icons/cc-logo.svg";
 /* <ReCAPTCHA
               sitekey="6Lf0i_seAAAAADa-22kcxr_u8f2AXw3zIP_vf-aa"
@@ -17,15 +19,15 @@ import "../static/styles/form-login.css";
 const Login = (props) => {
   let navigate = useNavigate()
   const [user, setUser] = useState({});
-  const [show, setShow] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [popup, setPopup] = useState({});
 
   const hiddenPass = () => {
-    if (show === true) {
-      setShow(false);
+    if (showPass === true) {
+      setShowPass(false);
     } else {
-      setShow(true);
+      setShowPass(true);
     }
   };
 
@@ -48,6 +50,8 @@ const Login = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(user)
+    /*
     const res = await loginUser(user);
     if (res.status === 200) {
     console.log(res)
@@ -62,86 +66,42 @@ const Login = (props) => {
     if (res.status >= 500) {
       setPopup({ text: "Error al conectar con el servidor", type: "error" });
       displayPopup("error", ".Login");
-    }
+    }*/
   };
+
 
   return (
     <React.Fragment>
-      <Popup popup={popup} zone={"Login"} />
-
       <div className="container-login">
-        <img src={boscoImg} alt="bosco" />
-        <form onSubmit={handleSubmit} className="form-login" style={{display:resetPassword ? 'none' : 'flex'}}>
-
-          <div className="form-input">
-            <label id="label-ci" style={{ marginBottom: "10px" }}>
-              Cedula o Correo Electronico
+        <h1>Unidad Educativa Colegio Juan Bosco</h1>
+        <img src={boscoImg} alt="juan-bosco"></img>
+        <form className="form" onSubmit={handleSubmit}>
+            <label className="field">
+              <p>Cedula o Correo electronico</p>
+              <div className="field-content">
+              <div className="icon">
+                <PersonIcon fill={"#19429f"}/>
+              </div>
+              <input type="text" placeholder="Introduce tu cedula o correo" onInput={(e)=>{setUser({...user,user:e.target.value})}}/>
+              </div>
             </label>
-            <input
-              type="text"
-              id="user"
-              name="user"
-              autoComplete="off"
-              onChange={(e) => {
-                setUser({ ...user, user: e.target.value });
-              }}
-              required
-            />
-          </div>
-
-          <div className="form-input">
-            <label id="label-password">Contraseña</label>
-            <div>
-              <input
-                type={show === true ? "text" : "password"}
-                id="password"
-                name="password"
-                autoComplete="off"
-                style={{ width: "100%" }}
-                onChange={(e) => {
-                  setUser({ ...user, password: e.target.value });
-                }}
-                required
-              />
-
-              <img
-                src={show === true ? eye : eyeClose}
-                alt="eye"
-                style={{ cursor: "pointer" }}
-                onClick={(e) => hiddenPass()}
-              />
-            </div>
-          </div>
-          <div className="container-captcha">
-           
-          </div>
-           <p
-              onClick={(e) => {
-                showResetPassword();
-              }}
-              style={{
-                color: "#2d2d2d",
-                cursor: "pointer",
-                width: "fit-content",
-                margin:"15px auto"
-              }}
-            >
-              Olvido su contraseña?
-            </p>
-          <button
-            style={{ marginTop: "10px" }}
-            type="submit"
-            className="btn btn-login"
-          >
-            {" "}
-            Ingresar{" "}
-          </button>
+            <label className="field">
+            <p>Contraseña</p>
+            <div className="field-content">
+              <div className="icon">
+                <LockIcon fill={"#19429f"}/>
+              </div>
+              <input type={showPass ? "text" : "password"} placeholder="Introduzca su contraseña" onInput={(e)=>{setUser({...user,password:e.target.value})}}/>
+              <div className="button" onClick={(e)=>{hiddenPass()}}>
+                {
+                showPass ? <EyeClose fill={"#19429f"}/> : <EyeIcon fill={"#19429f"}/>
+              }
+              </div>
+              </div>
+            </label>
+            <Link to="/forgot-password" className="forgot">Olvidaste tu contraseña?</Link>
+            <button type="submit" className="button-submit">Ingresar</button>
         </form>
-
-        <ResetPassword
-          visible={resetPassword}
-          changeVisibility={showResetPassword}
-        />
       </div>
     </React.Fragment>
   );

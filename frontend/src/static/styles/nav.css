@@ -1,0 +1,121 @@
+.button-nav{
+    position: absolute;
+    display: flex;
+    top: 5px;
+    padding: 10px;
+    left: 8px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.button-nav svg{
+    width: 32px;
+    height: 32px;
+    color: #111948;
+}
+
+.nav-bar{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 305px;
+    min-height: 100vh;
+    background: #2e55c7;
+    z-index: 100;
+    transform: translateX(-100%);
+    color: white;
+    overflow: auto;
+    transition: all 0.3s ease;
+}
+
+.nav-bar .links-container,
+.nav-bar .indicator-text{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.nav-bar h2{
+    margin-top: 60px;
+    padding: 0 20px;
+    text-align: center;
+    font-size: 1.45em;
+    border-bottom: 2px solid;
+    padding-bottom: 15px;
+}
+
+.nav-bar .indicator-text{
+    margin-left: 7px;
+    font-size: 1em;
+    font-weight: 600;
+    color: #d9d9d9;
+}
+
+.nav-bar .link{
+    display: flex;
+    align-items: center;
+    color: #b9caef;
+    font-size: 1.1em;
+    text-decoration: none;
+    text-transform: capitalize;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.nav-bar .link svg{
+    margin-right: 5px;
+    margin-bottom: 10px;
+    fill:#b9caef;
+    transition: all 0.3s ease;
+}
+
+.nav-bar .link:hover{
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+.nav-bar .link-active{
+    font-weight: 600;
+    color: white;
+}
+
+.nav-bar .link-active svg, .nav-bar .link:hover svg{
+    fill: white;
+}
+
+.nav-bar .links-container:last-child{
+    margin-top: 20px;
+    border-top: 2px solid white;
+}
+
+.nav-bar .button-close{
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    cursor: pointer;
+}
+
+.nav-bar .button-close svg{
+    width: 25px;
+    height: 25px;
+}
+
+.nav-bar-active{
+    transform: translateX(0%);
+}
+
+@media(min-width: 900px){
+.nav-bar h2{
+    margin-top: 30px;
+}
+
+.nav-bar{
+    transform: translateX(0px);
+}
+
+.nav-bar .button-close{
+    display: none;
+}
+
+}

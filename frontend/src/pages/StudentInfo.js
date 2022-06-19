@@ -1,385 +1,321 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import jsPDF from "jspdf";
-import FormAcademic from "../components/FormAcademic";
-import { Navbar } from "../components/Navbar";
-import { InfoBasic } from "../components/InfoBasic";
-import { InfoAcademic } from "../components/InfoAcademic";
-import { HistoryStudent } from "../components/HistoryStudent";
-import { Comments } from "../components/Comments";
-import {AcademicBulletin} from "../components/AcademicBulletin"
-import {
-  studentInformation,
-  gradeStudent,
-  commentStudent,
-  deleteStudents,
-} from "../API";
-import { Alert } from "../components/Alerts";
-import { screenComment, changeView } from "../components/SomethingFunctions";
-import { displayAlert } from "../components/Alerts";
-import { Popup, displayPopup } from "../components/Alerts";
-import trash from "../static/icons/trash-solid.svg";
-import pencil from "../static/icons/pencil.svg";
-import book from "../static/icons/book.svg";
-import arrow from "../static/icons/arrow.svg";
-import download from "../static/icons/download.svg";
-
-
-const StudentInfo = (props) => {
-  const [student, setStudent] = useState({subjects:[],record:[]});
-  const [comments, setComments] = useState([]);
-  const [comment, setComment] = useState("");
-  const [alert, setAlert] = useState("");
-  const [action, setAction] = useState("upgradeAndDegrade");
-  const [confirm, setConfirm] = useState(false);
-  const [popup, setPopup] = useState({});
-  let history = useNavigate()
-  
-  async function request(id) {
-    const res = await studentInformation(id);
-
-    if (res.status === 200) {
-      setStudent(res.data.student)
-      setComments(res.data.comments)
-      console.log(res.data)
-    }
-
-    if (res.status >= 400) {
-      setPopup({ text: res.data, type: "error" });
-      displayPopup("error", ".popupStudentInfo");
-    }
-
-    if (res.status >= 500) {
-      setPopup({ text: "Ocurrió un error al requerir información!", type: "error" });
-      displayPopup("error", ".popupStudentInfo");
-    }
-  }
-
-  useEffect(() => {
-    function loadStudent() {
-      const { id } = props.match.params;
-      request(id);
-    }
-    loadStudent();
-  }, [props]);
-
-  //Añade comentario
-  async function sendComment(e) {
-    e.preventDefault();
-    const res = await commentStudent(student._id, comment);
-    if (res.status === 200) {
-      screenComment(false);
-      setComment("");
-      request(student._id);
-    }
-
-    if (res.status >= 400) {
-      setPopup({ text: res.data, type: "error" });
-      displayPopup("received", ".popupStudentInfo");
-    }
-
-    if (res.status >= 500) {
-      setPopup({ text: "Error al conectar con el servidor :(", type: "error" });
-      displayPopup();
-    }
-  }
-
-  const questionAction = async (value, action) => {
-    displayAlert(true);
-    changeView("general", student.school_year);
-    if (value === true && action === "upgradeAndDegrade") {
-      setAlert("Estas seguro de aprobar a al estudiante?");
-      setAction("upgradeAndDegrade");
-      setConfirm(true);
-    }
-
-    if (value === false && action === "upgradeAndDegrade") {
-      setAlert("Estas seguro de reprobar a al estudiante?");
-      setAction("upgradeAndDegrade");
-      setConfirm(false);
-    }
-
-    if (value === true && action === "delete") {
-      setAlert("Estas seguro de eliminar a este estudiante?");
-      setAction("delete");
-      setConfirm(true);
-    }
-  };
-
-  //Gradua o degrada al estudiante
-  async function upgradeAndDegrade(value) {
-    displayAlert(false);
-    displayPopup("", ".popupStudentInfo");
-    setPopup({ text: "Enviando informacion", type: "request" });
-    let gradue = null;
-    let res = null;
-    if (value === true) {
-      res = await gradeStudent("upgrade", [student._id]);
-      gradue = true;
-    } else {
-      res = await gradeStudent("degrade", [student._id]);
-      gradue = false;
-    }
-
-    if (res.status >= 400) {
-      setPopup({ text: res.data, type: "error" });
-      displayPopup("received", ".popupStudentInfo");
-    }
-
-    if (res.status >= 500) {
-      setPopup({ text: "Error al conectar con servidor", type: "error" });
-      displayPopup("received", ".popupStudentInfo");
-    }
-
-    if (res.status === 200 && gradue === true) {
-      setPopup({ text: "Estudiante Aprobado", type: "pass" });
-      displayPopup("received", ".popupStudentInfo");
-      request(student._id);
-    }
-
-    if (res.status === 200 && gradue === false) {
-      setPopup({ text: "Estudiante Reprobrado", type: "error" });
-      displayPopup("received", ".popupStudentInfo");
-      request(student._id);
-    }
-  }
-
-  const generatePDF = () => {
-    let doc = new jsPDF("p", "mm",[1000, 1210]);
-    doc.html(document.getElementById("to-pdf"), {
-      callback: function (doc) {
-        doc.save(`${student.ci}-${student.firstName}-${student.lastName}-${student.school_year}.pdf`);
-      },
-      x: 130,
-      y: 0,
-  
-    }); 
-  };
-
-
-
-  //Borra al estudiante
-  async function deleteStudent(value) {
-    if (value === true) {
-      const res = await deleteStudents([student._id]);
-      if (res.status === 200) {
-        displayAlert(false);
-        history.push("/students/");
-      }
-
-      if (res.status >= 400) {
-        setPopup({ text: res.data, type: "error" });
-        displayPopup("received", ".popupStudentInfo");
-      }
-
-      if (res.status >= 500) {
-        setPopup({ text: "Error al conectar con el servidor", type: "error" });
-        displayPopup("received", ".popupStudentInfo");
-      }
-    }
-  }
-
-  if (student.school_year === "Graduado") {
-    return (
-      <React.Fragment>
-        <Navbar />
-         <div className="buttons-actions">
-       
-        <div
-          onClick={(e) => {
-            questionAction(true, "delete");
-            setAction("delete");
-          }}
-        >
-          <img src={trash} alt="trash" />
-          <p>Eliminar</p>
-        </div>
-
-           <div
-          onClick={(e) => {
-            generatePDF();
-          }}
-        >
-          <img src={download} alt="download" />
-          <p>Generar PDF</p>
-        </div>
-
-      </div>
-      
-        <div
-          className="container-student view-information"
-          style={{ margin: "0 auto" }}
-        >
-          <Popup popup={popup} zone={"popupStudentInfo"} />
-          <HistoryStudent
-            student={student}
-            record={student.record}
-            comments={comments}
-            gradue={student.school_year}
-          />
-        </div>
-
-         <div style={{display:'none'}}>
-        <AcademicBulletin student={student} comments={comments}/>
-      </div>
-      </React.Fragment>
-    );
-  }
+import { Button } from "bootstrap";
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
+import "../static/styles/form-student.css";
+import "../static/styles/student-info.css";
+const StudentInfo = () => {
+  const [activeForm, setActiveForm] = useState(false);
+  const [showChest, setShowChest] = useState(false);
+  const [student, setStudent] = useState({
+    subjects: [
+      { subject: "Matematica", score: [20, 14, 3] },
+      { subject: "Fisica", score: [20, 14, 3] },
+      { subject: "Quimica", score: [20, 14, 3] },
+    ],
+  });
 
   return (
-    <React.Fragment>
+    <>
       <Navbar />
-      <div className="buttons-actions">
-        <div
-          onClick={(e) => {
-            changeView("edit");
-          }}
-        >
-          <img src={pencil} alt="pencil" />
-          <p>Editar</p>
-        </div>
-        <div
-        style={{display: student.status ? 'block' : 'none'}}
-          onClick={(e) => {
-            questionAction(true, "upgradeAndDegrade");
-            setAction("upgradeAndDegrade");
-          }}
-        >
-          <img src={arrow} style={{ transform: "rotate(-90deg)" }} alt="arrow" />
-          <p>Aprobar</p>{" "}
-        </div>
-        <div
-          onClick={(e) => {
-            changeView("history");
-          }}
-        >
-          <img src={book} alt="book" />
-          <p>Historial</p>
-        </div>
-
-        <div
-          onClick={(e) => {
-            generatePDF();
-          }}
-        >
-          <img src={download} alt="download" />
-          <p>Generar PDF</p>
-        </div>
-
-
-        <div
-         style={{display: student.status ? 'block' : 'none'}}
-          onClick={(e) => {
-            questionAction(false, "upgradeAndDegrade");
-            setAction("upgradeAndDegrade");
-          }}
-        >
-          <img src={arrow} style={{ transform: "rotate(90deg)" }} alt="arrow" />
-          <p>Reprobrar</p>
-        </div>
-        <div
-          onClick={(e) => {
-            questionAction(true, "delete");
-            setAction("delete");
-          }}
-        >
-          <img src={trash} alt="trash" />
-          <p>Eliminar</p>
-        </div>
-      </div>
-      <div className="container-student view-information">
-        <Popup popup={popup} zone={"popupStudentInfo"} />
-        <Alert
-          alert={alert}
-          upgradeAndDegrade={upgradeAndDegrade}
-          deleteStudent={deleteStudent}
-          nameActions={action}
-          confirm={confirm}
-        />
-        <InfoBasic student={student} year={student.school_year} />
-        <InfoAcademic information={student.subjects} zone={true} />
-
-        <div className="time-edit">
-          <p>Fecha de modificacion ultima vez: {student.last_modify}</p>
-        </div>
-
-        <Comments
-          comments={comments}
-          actions={request}
-          studentInfo={true}
-          studentId={student._id}
-          school_year={student.school_year}
-        />
-
-        <div
-          className="screen-back"
-          onClick={(e) => {
-            screenComment(false);
-          }}
-        ></div>
-        <form onSubmit={sendComment}>
-          <div className="screen-comment">
-            <h3>Escribe tu comentario</h3>
-            <textarea
-              className="input-comment"
-              onChange={(e) => {
-                setComment(e.target.value);
-              }}
-              value={comment}
-            ></textarea>
-            <div>
-              <button className="button-comment" type="submit">
-                Enviar Comentario
-              </button>
-              <button
-                className="button-comment"
-                type="button"
-                style={{
-                  background:'#d4d4d4',
-                  color:'black'
+      <div className="container-body container-student">
+        <h2>Informacion del estudiante</h2>
+        <form className={`form-student-register ${!activeForm ? 'form-student-register-readOnly' : '' }`}>
+          <div className="student-information">
+            <div className="form-check form-switch">
+              <label className="label-separator" htmlFor="activator-edit" style={{ fontSize: "1em" }}>
+                {" "}
+                Editar estudiante
+              </label>{" "}
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="activator-edit"
+                onChange={(e) => {
+                  setActiveForm(e.target.checked);
                 }}
-                onClick={(e) => {
-                  screenComment(false);
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: "10px" }}>
+              <label for="ci">Cedula del estudiante</label>
+              {activeForm ? (
+                <input
+                  type="text"
+                  className="form-control"
+                  id="ci"
+                  placeholder="Introduce tu cedula"
+                />
+              ) : (
+                <p>24.666.444</p>
+              )}
+            </div>
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" for="inputEmail4">
+                  Nombre del estudiante
+                </label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="firstname"
+                    placeholder="firstname"
+                  />
+                ) : (
+                  <p>Pepe Jaramillo Matias Fernandez</p>
+                )}
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">Apellido del estudiante</label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="lastname"
+                    placeholder="lastname"
+                  />
+                ) : (
+                  <p style={{ marginBottom: "5px" }}>Matias Fernandez</p>
+                )}
+              </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" htmlFor="inputEmail4">
+                  Seccion Actual
+                </label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="firstname"
+                    placeholder="firstname"
+                  />
+                ) : (
+                  <p>Quinto-B</p>
+                )}
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">Estado del estudiante</label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="lastname"
+                    placeholder="lastname"
+                  />
+                ) : (
+                  <p>Activo</p>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="student-record-actual">
+            <h4>Informacion academica de la seccion actual</h4>
+            <table className="table">
+              <thead className="thead">
+                <tr>
+                  <th scope="col">Materia</th>
+                  <th scope="col">Lapso 1</th>
+                  <th scope="col">Lapso 2</th>
+                  <th scope="col">Lapso 3</th>
+                </tr>
+              </thead>
+              <tbody>
+                {student.subjects.map((el, i) => (
+                  <tr key={i}>
+                    <th scope="row">{el.subject}</th>
+                    <td>{el.score[0]}</td>
+                    <td>{el.score[1]}</td>
+                    <td>{el.score[2]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {activeForm ? (
+            ""
+          ) : (
+            <div className="form-check form-switch">
+              <label className="label-separator" style={{ fontSize: "1em" }}>
+                {" "}
+                Visualizar secciones cursadas
+              </label>{" "}
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                onChange={(e) => {
+                  setShowChest(e.target.checked);
                 }}
-              >
-                Regresar
-              </button>
+              />
+            </div>
+          )}
+          <div
+            className={`container-chest ${
+              showChest && activeForm === false ? "container-chest-active" : ""
+            }`}
+          >
+            <div className="container-section">
+              <h4>Seccion 5-B - periodo: 2021-2022</h4>
+              <table className="table">
+                <thead className="thead">
+                  <tr>
+                    <th scope="col">Materia</th>
+                    <th scope="col">Lapso 1</th>
+                    <th scope="col">Lapso 2</th>
+                    <th scope="col">Lapso 3</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {student.subjects.map((el, i) => (
+                    <tr key={i}>
+                      <th scope="row">{el.subject}</th>
+                      <td>{el.score[0]}</td>
+                      <td>{el.score[1]}</td>
+                      <td>{el.score[2]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="student-contact">
+            <h4>Datos de contacto de estudiante</h4>
+
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" htmlFor="inputEmail4">
+                  Direccion del estudiante
+                </label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="address"
+                    placeholder="Introduce la direccion del estudiante"
+                  />
+                ) : (
+                  <p>
+                    Avenida Ampies por la calle monzon del edificio marinubana
+                  </p>
+                )}
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">
+                  Segunda direccion del estudiante
+                </label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="email"
+                    placeholder="Introduce el correo del estudiante"
+                  />
+                ) : (
+                  <p style={{ marginBottom: "5px" }}>
+                    Edificio metro marinubana
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" for="inputEmail4">
+                  Numero telefonico del estudiante
+                </label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="phone-number"
+                    placeholder="Introduce el numero telefonico"
+                  />
+                ) : (
+                  <p>0212-4567890</p>
+                )}
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">Correo del estudiante</label>
+                {activeForm ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="email"
+                    placeholder="Introduce el correo del estudiante"
+                  />
+                ) : (
+                  <p style={{ marginBottom: "5px" }}>Email@email.com</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="student-contact">
+            <h4>Informacion del representante</h4>
+
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group" style={{ marginBottom: "10px" }}>
+                <label for="ci">Cedula del estudiante</label>
+
+                <p>24.666.444</p>
+              </div>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" htmlFor="inputEmail4">
+                  Nombre del representante
+                </label>
+
+                <p>Suoiusoiasakbndsada</p>
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">
+                  Apellido del representante
+                </label>
+
+                <p style={{ marginBottom: "5px" }}>
+                  {" "}
+                  loremsadashduiwquidhuihsdakjhskjadhjkashkjd{" "}
+                </p>
+              </div>
+            </div>
+
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" htmlFor="inputEmail4">
+                  Direccion del representante
+                </label>
+
+                <p>
+                  Avenida Ampies por la calle monzon del edificio marinubana
+                </p>
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">
+                  Segunda direccion del representante
+                </label>
+
+                <p style={{ marginBottom: "5px" }}>Edificio metro marinubana</p>
+              </div>
+            </div>
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" for="inputEmail4">
+                  Numero telefonico del representante
+                </label>
+
+                <p>0212-4567890</p>
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="inputPassword4">Correo del representante</label>
+
+                <p style={{ marginBottom: "5px" }}>Email@email.com</p>
+              </div>
             </div>
           </div>
         </form>
-        <button
-          className="button-comment"
-          type="button"
-          onClick={(e) => {
-            screenComment(true);
-          }}
-        >
-          Comentar
-        </button>
       </div>
-
-      <FormAcademic
-        id={student._id}
-        ci={student.ci}
-        firstName={student.firstName}
-        lastName={student.lastName}
-        status={student.status}
-        subjects={student.subjects}
-        school_year={student.school_year}
-        request={request}
-      />
-
-      <HistoryStudent
-        student={student}
-        record={student.record}
-        comments={comments}
-        gradue={student.school_year}
-      />
-
-      <div style={{display:'none'}}>
-        <AcademicBulletin student={student} comments={comments}/>
-      </div>
-    </React.Fragment>
+    </>
   );
 };
 

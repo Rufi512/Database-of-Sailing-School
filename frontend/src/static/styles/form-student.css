@@ -1,0 +1,166 @@
+.container-form h2 {
+    margin: 20px auto;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.8em;
+}
+
+.form-student-register .label-separator{
+    color: #212529;
+    width: auto;
+}
+
+.form-student-register {
+    margin: 10px auto;
+    width: 95%;
+}
+
+.form-student-register label {
+    font-weight: bold;
+}
+
+.form-student-register .label-indicator-section {
+    margin-top: 30px;
+    font-size: 1.4em;
+    font-weight: 600;
+}
+
+.form-student-register .label-separator {
+    margin: 20px 0;
+    font-size: 1.4em;
+    background: none;
+}
+
+.form-student-register .btn-submit {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.form-student-register .row-input-multiples {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+}
+
+.form-student-register .row-input-multiples .btn {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.form-student-register .row-input-multiples input {
+    width: 85%;
+    margin-right: 12px;
+}
+
+.form-student-register .container-rep-disabled {
+    opacity: 0.6;
+}
+
+.form-student-register .optional-fields {
+    max-height: 0px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.form-student-register .optional-fields-active {
+    max-height: max-content;
+}
+
+.form-student-register .form-check {
+    padding-left: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: right;
+}
+
+.form-student-register .form-check label {
+    padding-left: 0px;
+    margin: 20px 0;
+    font-size: 1.4em;
+    margin-right: 20px;
+}
+
+.form-student-register .form-check input {
+    display: flex;
+    margin-top: 10px;
+    margin-left: 0px;
+    float: none;
+}
+
+.form-student-register .container-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-student-register .container-actions .btn {
+    height: 35px;
+    margin-top: 30px;
+    width: 100%;
+
+}
+
+.form-student-register .container-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.phone-number-field{
+    display: flex;
+    flex-flow: nowrap;
+}
+
+.phone-number-field select{
+    width: 84px;
+    padding: 0 10px;
+    margin-right: 2px;
+    margin-left: 12px;
+}
+
+.phone-number-field input{
+    width: auto;
+}
+
+/*Apply only if is read*/
+.form-student-register-readOnly label,
+.form-student-register-readOnly p{
+    padding: 0 5px;
+}
+
+.form-student-register-readOnly label{
+    width: 100%;
+    background: #131b2c;
+    border-radius: 2px;
+    color: #efefef;
+}
+
+
+@media(min-width: 768px) {
+    .container-form {
+        margin-top: 0px;
+    }
+
+    .form-student-register .container-input-file {
+        width: 50%;
+    }
+
+    .form-student-register .container-buttons {
+        flex-flow: nowrap;
+        width: 50%;
+    }
+
+    .form-student-register .container-actions .btn {
+        margin-left: 10px;
+        margin-right: 10px;
+        width: 220px;
+
+    }
+
+}

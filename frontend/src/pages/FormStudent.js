@@ -1,208 +1,283 @@
 import React, { useState } from "react";
 import { registerStudent, registerStudents } from "../API";
-import { Navbar } from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import { Popup, displayPopup } from "../components/Alerts";
 import { checkInputs } from "../components/SomethingFunctions";
 import "../static/styles/forms.css";
+import "../static/styles/form-student.css";
 
 const FormStudent = () => {
-  const [ci, setCi] = useState(null);
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [school_year, setSchool_year] = useState("1-A");
+  const [OptStudent, setOptStudent] = useState(false);
+  const [OptRep, setOptRep] = useState(false);
   const [csv, setCsv] = useState("");
   const [popup, setPopup] = useState({});
-  const [alertCsv, setAlertCsv] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    displayPopup();
-    setPopup({ text: "Enviando información", type: "request" });
-    const student = { ci, firstname, lastname, school_year };
-    const result = await registerStudent(student);
-
-    if (result.status === 200) {
-      setPopup({ text: result.data, type: "pass" });
-      displayPopup("received");
-      e.reset()
-    }
-
-    if (result.status >= 400) {
-      setPopup({ text: result.data, type: "error" });
-      displayPopup("error");
-    }
-
-    if (result.status >= 500) {
-      setPopup({ text: "Error al conectar con servidor", type: "error" });
-      displayPopup("error");
-    }
   }
 
   /*Subida de estudiantes por CSV*/
 
   async function handleSubmitFile(e) {
     e.preventDefault();
-    displayPopup();
-    setPopup({ text: "Enviando informacion", type: "request" });
-    const file = csv;
-    let formData = new FormData();
-    formData.append("students", file);
-
-    const result = await registerStudents(formData);
-     
-     console.log(result)
-
-    if (result.status === 200) {
-      setPopup({ text: result.data.message, type: "pass" });
-      displayPopup("received");
-    }
-
-    if (result.status === 400) {
-      let text = "Error en el archivo CSV\n"
-      for(const el of result.data.errors){
-        text += el + "\n"
-      }
-      alert(text)
-      setPopup({ text: result.data.message, type: "error" });
-      displayPopup("error");
-    }
-
-    if (result.status >= 500) {
-      setPopup({ text: "Error al conectar con servidor", type: "error" });
-      displayPopup("error");
-    }
+    console.log(e);
   }
 
   return (
     <React.Fragment>
-      <Navbar active={1} />
-      <Popup popup={popup} />
+      <Navbar actualPage={"register-students"} />
 
-      <div className="container-boxs">
-        <div className="container">
-          <h2>Registro de Estudiante</h2>
+      <div className="container-body container-form">
+        <h2>Registro de estudiantes</h2>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-input">
-              <input
-                type="text"
-                id="ci"
-                name="ci"
-                pattern="[1234567890.-]{1,900}"
-                autoComplete="off"
-                onChange={(e) => {
-                  setCi(e.target.value);
-                  checkInputs(e.target.id, e.target.value);
-                }}
-                required
-              />
-              <label id="label-ci" className="label-name">
-                Cedula del Estudiante
+        <form className="form-student-register" onSubmit={handleSubmit}>
+          <div className="form-group" style={{ marginBottom: "10px" }}>
+            <label htmlFor="ci">Cedula del estudiante</label>
+            <input
+              type="text"
+              className="form-control"
+              id="ci"
+              placeholder="Introduce tu cedula"
+            />
+          </div>
+          <div className="row" style={{ marginBottom: "10px" }}>
+            <div className="form-group col-md-6">
+              <label className="font-weight-bold" htmlFor="firstname">
+                Nombre del estudiante
               </label>
-            </div>
-
-            <div className="form-input">
               <input
                 type="text"
+                className="form-control"
                 id="firstname"
-                name="firstname"
-                pattern="[A-Za-záéíóúñ'´ ]{1,900}"
-                autoComplete="off"
-                title="Solo Caracteres Alfabéticos!"
-                onChange={(e) => {
-                  setFirstname(e.target.value);
-                  checkInputs(e.target.id, e.target.value);
-                }}
-                required
+                placeholder="Introduce el nombre del estudiante"
               />
-              <label id="label-firstname" className="label-name">
-                Nombres del Estudiante
-              </label>
             </div>
-
-            <div className="form-input">
+            <div className="form-group col-md-6">
+              <label htmlFor="lastname-student">Apellido del estudiante</label>
               <input
                 type="text"
-                id="lastname"
-                name="lastname"
-                autoComplete="off"
-                pattern="[A-Za-záéíóúñ'´ ]{1,900}"
-                title="Solo Caracteres Alfabéticos!"
-                onChange={(e) => {
-                  setLastname(e.target.value);
-                  checkInputs(e.target.id, e.target.value);
-                }}
-                required
+                className="form-control"
+                id="lastname-student"
+                placeholder="Introduce el apellido del estudiante"
               />
-              <label id="label-lastname" className="label-name">
-                Apellidos del Estudiante
-              </label>
             </div>
+          </div>
+          <div className="form-group" style={{ marginBottom: "10px" }}>
+            <label htmlFor="section-student">Seccion a cursar</label>
+            <select id="section-student" className="form-control">
+              <option selected>Sin asignar</option>
+              <option>...</option>
+            </select>
+            <small id="section-help" className="form-text text-muted">
+              Se puede dejar sin asignar si desea añadirlo despues
+            </small>
+          </div>
+          <div className="form-check form-switch">
+            <label className="label-separator" htmlFor="contact-student-check">
+              {" "}
+              Datos del Estudiante (Opcional)
+            </label>{" "}
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="contact-student-check"
+              onChange={(e) => {
+                setOptStudent(e.target.checked);
+              }}
+            />
+          </div>
+          <div
+            className={`optional-fields ${
+              OptStudent ? "optional-fields-active" : ""
+            }`}
+          >
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label className="font-weight-bold" htmlFor="address-student">
+                  Direccion del estudiante
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="address-student"
+                  placeholder="Introduce la direccion domiciliaria del estudiante"
+                />
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="address2-student">
+                  Segunda direccion del estudiante
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="address2-student"
+                  placeholder="Introduce direccion de referencia del estudiante"
+                />
+              </div>
+            </div>
+            <div className="row" style={{ marginBottom: "10px" }}>
+              <div className="form-group col-md-6">
+                <label htmlFor="phone-number-student">
+                  Numero telefonico del estudiante
+                </label>
+                <div className="row phone-number-field">
+                  <select id="inputState" className="form-control">
+                    <option selected>Sin asignar</option>
+                    <option>...</option>
+                  </select>
+                  <input
+                    type="tel"
+                    className="form-control"
+                    id="phone-number-student"
+                    placeholder="Numero telefonico del estudiante"
+                  />
+                </div>
+              </div>
 
-            <div className="form-input-select">
-              <label htmlFor="anio_actual">Curso Actual:</label>
-              <select
-                name="school_year"
-                id="anio_actual"
-                onChange={(e) => setSchool_year(e.target.value)}
-                value={school_year}
-              >
-                <option value="1-A">1-A</option>
-                <option value="1-B">1-B</option>
-                <option value="2-A">2-A</option>
-                <option value="2-B">2-B</option>
-                <option value="3-A">3-A</option>
-                <option value="3-B">3-B</option>
-                <option value="4-A">4-A</option>
-                <option value="4-B">4-B</option>
-                <option value="5-A">5-A</option>
-                <option value="5-B">5-B</option>
+              <div className="form-group col-md-6">
+                <label htmlFor="email-student">
+                  Correo electronico del estudiante
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email-student"
+                  placeholder="Ejemplodedireccion@email.com"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="form-check form-switch">
+            <label className="label-separator" htmlFor="rep-check">
+              {" "}
+              Informacion del representante (Opcional)
+            </label>{" "}
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="rep-check"
+              onChange={(e) => {
+                setOptRep(e.target.checked);
+              }}
+            />
+          </div>
+          <div
+            className={`optional-fields ${
+              OptRep ? "optional-fields-active" : ""
+            }`}
+          >
+            <div className="form-group col-md-12" style={{ marginBottom: "10px" }}>
+              <label htmlFor="select-id-rep" style={{ marginBottom: "5px" }}>
+                Elegir representante previamente registrado
+              </label>
+              <select id="select-id-rep" className="form-control">
+                <option defaultValue="none" selected>
+                  Sin asignar
+                </option>
+                <option>...</option>
               </select>
             </div>
-
-            <div className="buttons-container">
-              <button type="submit" className="btn btn-confirm">
-                {" "}
-                Guardar Estudiante{" "}
+            <div className="form-row container-rep-disabled">
+              <div className="row" style={{ marginBottom: "10px" }}>
+                <div className="form-group col-md-6">
+                  <label className="font-weight-bold" htmlFor="firstname-rep">
+                    Nombre del representante
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="firstname-rep"
+                    placeholder="Introduce el nombre del representante"
+                  />
+                </div>
+                <div className="form-group col-md-6">
+                  <label htmlFor="lastanme-rep">Apellido del representante</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="lastanme-rep"
+                    placeholder="Introduce el apellido del estudiante"
+                  />
+                </div>
+              </div>
+              <div className="row" style={{ marginBottom: "10px" }}>
+                <div className="form-group col-md-6">
+                  <label className="font-weight-bold" htmlFor="ci-rep">
+                    Cedula del representante
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="ci-rep"
+                    placeholder="Introduce la cedula del representante"
+                  />
+                </div>
+                <div className="form-group col-md-6">
+                  <label htmlFor="address-rep">Direccion del representante</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="address-rep"
+                    placeholder="Introduce direccion domiciliaria del representante"
+                  />
+                </div>
+              </div>
+              <div className="row" style={{ marginBottom: "10px" }}>
+                <div className="form-group col-md-6">
+                  <label htmlFor="phone-number-rep">
+                    Numero telefonico del representante
+                  </label>
+                  <div className="row phone-number-field">
+                    <select id="inputState" className="form-control">
+                      <option selected>Sin asignar</option>
+                      <option>...</option>
+                    </select>
+                    <input
+                      type="tel"
+                      className="form-control"
+                      id="phone-number-rep"
+                      placeholder="Numero telefonico del representante"
+                    />
+                  </div>
+                </div>
+                <div className="form-group col-md-6">
+                  <label htmlFor="email-rep">
+                    Correo electronico del representante
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email-rep"
+                    placeholder="Corrreo electronico del representante"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row container-actions">
+            <div className="container-input-file">
+              <label htmlFor="formFileMultiple" className="form-label">
+                Selecciona los archivo(s) de estudiantes a subir
+              </label>
+              <input
+                className="form-control"
+                type="file"
+                id="formFileMultiple"
+                multiple
+              />
+            </div>
+            <div className="container-buttons">
+              <button type="button" className="btn btn-warning">
+                Subir archivos
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Añadir Estudiante
               </button>
             </div>
-          </form>
-        </div>
-
-        <div className="container-csv">
-          <form onSubmit={handleSubmitFile}>
-            <h2 style={{ textAlign: "center" }}>Enviar archivo CSV</h2>
-            <p style={{ textAlign: "center" }}>{alertCsv ? alertCsv : ""}</p>
-            <div className="buttons-container">
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                id="labelFile"
-                htmlFor="file"
-                className="btn btn-secondary"
-              >
-                {" "}
-                Subir CSV{" "}
-              </label>
-
-              <input
-                style={{ display: "none" }}
-                type="file"
-                id="file"
-                accept=".csv"
-                onChange={(e) => {
-                  setCsv(e.target.files[0]);
-                  setAlertCsv("Archivo cargado");
-                }}
-                name="students"
-              />
-              <button className="btn btn-confirm"> Enviar </button>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </React.Fragment>
   );
