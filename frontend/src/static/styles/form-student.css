@@ -1,7 +1,6 @@
 .container-form h2 {
     margin: 20px auto;
     text-align: center;
-    font-weight: bold;
     font-size: 1.8em;
 }
 
@@ -136,7 +135,7 @@
 
 .form-student-register-readOnly label{
     width: 100%;
-    background: #131b2c;
+    background: #284d9b;
     border-radius: 2px;
     color: #efefef;
 }

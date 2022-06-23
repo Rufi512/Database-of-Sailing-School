@@ -13,6 +13,9 @@ body{
   margin: 0;
   padding: 0;
 }
+.container-body{
+  width: 100%;
+}
 
 .form .button-submit {
   background: var(--blue-color);
@@ -31,12 +34,43 @@ body{
   background: #0c255c;
 }
 
+.container-body .card-container .card-header{
+  padding-top: 15px;
+  display: flex;
+}
+
+.container-body .card-container .card-header h2{
+  margin: 0;
+  margin-left: 40px;
+}
+
+.container-body table tr th, .container-body table tr td{
+  text-align: center;
+}
+
+.table-body-select th{
+  border: 2px solid;
+}
+
+.table-body-select tr{
+  transition: all 0.3s ease;
+  border: none;
+  border-color: transparent;
+  cursor: pointer;
+}
+.table-body-select tr:hover{
+  background: #e3e3e3;
+}
+
 @media(min-width: 900px){
 .container-body{
   display: flex;
   flex-direction: column;
   margin-left: 305px;
-  width: 100%;
+}
+
+.container-body .card-container .card-header h2{
+  margin-left: 0px;
 }
 
 }

@@ -1,0 +1,191 @@
+.container-table table {
+	margin: 0 2px;
+    margin-top: 15px;
+}
+
+.container-section .card-container .card-header {
+    flex-direction: column;
+}
+
+.container-section .card-container .card-header p,
+.container-section .card-container .card-header h2 {
+    margin: 5px 0;
+}
+
+.container-section .buttons-container {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-between;
+    padding: 7px;
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.container-section .buttons-container .form-check {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+}
+
+.container-section .buttons-container label,
+.container-section .buttons-container input,
+.container-section .buttons-container button {
+    margin: 10px;
+}
+
+.container-section .buttons-container input {
+    cursor: pointer;
+}
+
+.container-section .buttons-container .label-separator {
+    font-weight: 600;
+}
+
+.container-section .container-input-date{
+	display: flex;
+    flex-flow: wrap;
+    justify-content: space-between;
+}
+
+.container-section .container-input-date input{
+	margin-top: 5px;
+	width: 100%;
+}
+
+.container-subjects-list {
+    border-bottom: 2px solid transparent;
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+.container-subjects-list-show {
+    margin-bottom: 25px;
+    padding: 10px 15px;
+    border-color: #d8d8d8;
+    max-height: max-content;
+}
+
+.container-section .container-edit {
+    border-bottom: 1px solid transparent;
+    max-height: 0px;
+    border-bottom: 1px solid #d8d8d8;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+.container-section .container-edit-show {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    max-height: max-content;
+}
+
+.container-section .form-section,
+.container-section .form-section .form-group {
+    margin: 5px 0;
+}
+
+.container-section .form-section button {
+    margin-top: 5px;
+}
+
+.container-section .form-section {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
+}
+
+.container-section .container-subjects-list table {
+	margin: 0 2px;
+    margin-bottom: 0;
+}
+
+.container-section .container-subjects-list table tr {
+    background: transparent;
+}
+
+.container-section .container-subjects-list table tr th,
+.container-section .container-subjects-list table tr td {
+    border: 2px solid #abacb3;
+    text-align: left;
+    vertical-align: middle;
+    cursor: default;
+}
+
+.container-section .table-students {
+    padding: 10px 15px;
+}
+
+.container-section .table-students table tr th,
+.container-section .table-students table tr td,
+.container-section .table-subjects-availables tr td,
+.container-section .table-subjects-availables tr th {
+    border: 2px solid #abacb3;
+    vertical-align: middle;
+}
+
+.container-section .container-buttons-section {
+    margin: 10px 0;
+    display: flex;
+    flex-flow: column;
+}
+
+/*Modal add subjects*/
+.container-section .container-add-list{
+	position: fixed;
+	margin: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	z-index: -1000;
+	background: #0000005c;
+	transition: all 0.3s ease;
+}
+
+.container-section .container-add-list-show{
+	z-index: 1000;
+	opacity: 1;
+}
+
+.container-section .container-add-list .list-avalaibles{
+	width: 95%;
+	padding: 20px;
+	max-height: 400px;
+	overflow: auto;
+	background: #ffffff;
+	border-radius: 5px;
+    box-shadow: 0px 2px 8px 5px #4a4a4a7a;
+
+}
+
+.container-section .container-add-list .list-avalaibles h3{
+	text-align: center;
+}
+
+.container-section .container-add-list h4{
+	width: 100%;
+	text-align: center;
+}
+
+@media(min-width: 1024px) {
+    .container-section .container-buttons-section {
+        display: flex;
+        justify-content: space-between;
+        flex-flow: unset;
+    }
+
+    .container-section .container-buttons-section button {
+        margin: 0;
+        width: 49%;
+    }
+
+    .container-section .container-input-date input{
+    	width: 49%;
+    }
+
+}

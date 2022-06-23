@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import FormStudent from './pages/FormStudent'
 import StudentInfo from './pages/StudentInfo'
 import StudentsList from './pages/StudentsList'
+import Section from './pages/Section'
 import ProtectedRoute from './components/ProtectedRoute'
 import {
   BrowserRouter,
@@ -26,7 +27,7 @@ const App = ()=>(
     <Route exact path="home" element={<Home/>} />
     <Route exact path="register/students" element={<FormStudent/>} />
     <Route exact path="student/info/:id" element={<StudentInfo/>} />
-    <Route exact path="students" element={<StudentsList/>} />
+    <Route exact path="section/info/:id" element={<Section/>} />
    </Route>
   </Routes>
 </BrowserRouter>
