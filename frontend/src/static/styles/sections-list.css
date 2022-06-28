@@ -1,0 +1,24 @@
+.container-sections-list .container-buttons-header{
+	display: flex;
+	flex-flow: wrap;
+	justify-content: flex-start;
+}
+
+.container-sections-list .container-options-list{
+	display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-flow: wrap;
+}
+
+.container-sections-list .indicator-jump-page{
+	display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.container-sections-list .actions-section-list{
+	margin-top: 25px !important;
+	padding: 0 20px;
+	margin-bottom: 0 !important;
+}

@@ -12,16 +12,13 @@ import {ReactComponent as LockIcon} from "../static/icons/lock.svg";
               onChange={onCaptcha}
             />*/
 import Cookies from "js-cookie";
-import { Popup, displayPopup } from "../components/Alerts";
 import { loginUser } from "../API";
-import ResetPassword from "../components/ResetPassword";
 import "../static/styles/form-login.css";
 const Login = (props) => {
   let navigate = useNavigate()
   const [user, setUser] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
-  const [popup, setPopup] = useState({});
 
   const hiddenPass = () => {
     if (showPass === true) {

@@ -69,6 +69,12 @@
     max-height: max-content;
 }
 
+.form-student-register .container-massive-register{
+    border-top: 1px solid rgba(0,0,0,.125);
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
 .form-student-register .form-check {
     padding-left: 0px;
     display: flex;
@@ -94,15 +100,18 @@
 
 .form-student-register .container-actions {
     display: flex;
+    flex-flow: wrap;
     align-items: center;
     justify-content: space-between;
 }
 
 .form-student-register .container-actions .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 35px;
     margin-top: 30px;
     width: 100%;
-
 }
 
 .form-student-register .container-buttons {
@@ -127,6 +136,25 @@
     width: auto;
 }
 
+.form-student-register .container-rep-disabled{
+    position: relative;
+}
+
+.form-student-register .container-rep-disabled:before{
+    position: absolute;
+    content: "";
+    background: black;
+    opacity: 0;
+    display: flex;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+}
+
 /*Apply only if is read*/
 .form-student-register-readOnly label,
 .form-student-register-readOnly p{
@@ -146,6 +174,10 @@
         margin-top: 0px;
     }
 
+    .container-body .container-massive-register .container-buttons{
+        flex-flow: wrap-reverse;
+    }
+
     .form-student-register .container-input-file {
         width: 50%;
     }
@@ -162,4 +194,11 @@
 
     }
 
+}
+
+@media(min-width: 1150px){
+    .container-body .container-massive-register .container-buttons{
+            margin-top: 15px;
+            flex-flow: nowrap;
+    }
 }

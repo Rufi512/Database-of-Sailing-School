@@ -46,7 +46,7 @@
 
 .container-stats .stats h2 {
     margin-top: -2px;
-    font-size: 1.4em;
+    font-size: 1.2em;
     text-align: left;
     word-spacing: 2px;
     color: var(--blue-color);
@@ -78,7 +78,7 @@
     }
 
     .container-stats .stats h2 {
-        font-size: 1.5em;
+        font-size: 1.2em;
     }
 
     .container-stats .stats p {

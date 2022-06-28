@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import ModalActionList from "../components/ModalActionList";
+import Navbar from "../../components/Navbar";
+import ModalActionList from "../../components/ModalActionList";
 import { useNavigate } from "react-router-dom";
-import "../static/styles/section.css";
+import "../../static/styles/section.css";
+import TableList from "../../components/TableList";
 const Section = (props) => {
   const [section, setSection] = useState({
     students: [{ ci: "dsfsdf", firstname: "sfsdfs", lastname: "dsfsdfsd" }],
@@ -12,6 +13,9 @@ const Section = (props) => {
       { name: "iuowiuoirwoyh", id: "dfsfds" },
     ],
   });
+
+  const [limit,setLimit] = useState(50)
+  const [page,setPage] = useState(1)
   const [showSubjects, setShowSubjects] = useState(false);
   const [editSection, setEditSection] = useState(false);
   const [showAddSubjects, setShowAddSubjects] = useState(false);
@@ -31,9 +35,9 @@ const Section = (props) => {
 
   return (
     <>
-      <Navbar actualPage={"sections"} />
+      <Navbar actualPage={"section"} />
       <div className="container-body container-section">
-        <ModalActionList show={showAddSubjects} list={section.subjects}/>
+        <ModalActionList show={showAddSubjects} setShow={setShowAddSubjects} list={section.subjects}/>
         <div className="card card-container">
           <div className="card-header">
             <h2>Nombre de la seccion</h2>
@@ -149,24 +153,7 @@ const Section = (props) => {
             {section.subjects.length > 0 ? (
               <>
                 <h4>Materias registradas en esta seccion</h4>
-                <table className="table">
-                  <thead className="thead">
-                    <tr>
-                      <th scope="col">Materia</th>
-                      <th scope="col">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="table-body-select">
-                    {section.subjects.map((el, i) => (
-                      <tr key={i}>
-                        <td>{el.name}</td>
-                        <td>
-                          <button className="btn btn-danger">Eliminar</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <TableList/>
                 <div className="container-buttons-section">
                   <button
                     className="btn btn-primary"

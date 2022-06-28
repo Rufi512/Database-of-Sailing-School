@@ -43,7 +43,7 @@ const ModalActionList = (props) => {
 						className="btn btn-primary"
 						style={{ display: "flex", marginLeft: "auto" }}
 						onClick={(e) => {
-							setShowModal(false);
+							props.setShow(false);
 						}}
 					>
 						Cerrar ventana

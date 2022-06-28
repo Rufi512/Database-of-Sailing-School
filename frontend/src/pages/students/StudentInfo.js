@@ -1,8 +1,8 @@
 import { Button } from "bootstrap";
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import "../static/styles/form-student.css";
-import "../static/styles/student-info.css";
+import Navbar from "../../components/Navbar";
+import "../../static/styles/form-student.css";
+import "../../static/styles/student-info.css";
 const StudentInfo = () => {
   const [activeForm, setActiveForm] = useState(false);
   const [showChest, setShowChest] = useState(false);

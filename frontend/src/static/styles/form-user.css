@@ -1,0 +1,58 @@
+.container-create-user .actions-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px 20px;
+    margin-top: 20px;
+}
+
+.container-create-user .card-body form .form-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.container-create-user .card-body form label {
+    width: 100%;
+    font-weight: 600;
+}
+
+.container-create-user .card-body form .field-container {
+    margin: 5px 0;
+}
+
+.container-create-user .card-body form .container-buttons {
+    display: flex;
+    align-items: center;
+    flex-direction: column-reverse;
+    justify-content: center;
+}
+
+.container-create-user .card-body form .container-buttons button {
+    margin: 10px 0;
+}
+
+@media (min-width: 768px) {
+    .container-create-user .card-body form .container-buttons {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .container-create-user .card-body form .container-buttons button,
+    .container-create-user .card-body form .container-buttons a{
+        height: 42px;
+    }
+
+    .container-create-user .card-body form .container-buttons a{
+        margin-right: 5px;
+    }
+
+    .container-create-user .card-body form .form-row {
+        flex-direction: row;
+        flex-flow: wrap;
+    }
+
+    .container-create-user .card-body form .container-buttons .submit {
+        margin-left: 10px;
+    }
+}

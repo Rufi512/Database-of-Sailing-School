@@ -1,0 +1,25 @@
+.container-body .container-buttons{
+	    display: flex;
+    flex-direction: column-reverse;
+}
+
+.container-body .container-buttons button{
+	margin: 10px 0;
+}
+
+@media (min-width: 768px) {
+	.container-body .container-buttons {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+	}
+	.container-body .container-buttons button {
+		margin-left: 5px;
+	}
+
+	.container-body .container-buttons button,
+	.container-body .container-buttons a{
+		height: 40px;
+	}
+}
