@@ -8,7 +8,7 @@ const secret = process.env.SECRET
 export const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
-
+    console.log(token)
     if (!token) return res.status(403).json("No se ha obtenido el token");
     //Verificamos el token con el secret
     const decoded = jwt.verify(token, secret);

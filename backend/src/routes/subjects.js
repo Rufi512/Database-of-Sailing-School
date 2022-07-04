@@ -13,5 +13,5 @@ router.post('/section/assign',[authJwt.verifyToken,authJwt.isModerator],subjects
 //PUT
 router.put('/update/:id',[authJwt.verifyToken,authJwt.isModerator],subjectsCtrl.update)
 //Delete
-router.delete('/delete',[authJwt.checkAdminPassword,authJwt.isAdmin],subjectsCtrl.deleteSubject)
+router.delete('/delete',[authJwt.checkPassword,authJwt.isAdmin],subjectsCtrl.deleteSubject)
 export default router

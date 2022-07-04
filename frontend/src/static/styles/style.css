@@ -5,6 +5,7 @@
 
 :root {
     --blue-color: #113fa7;
+    --toastify-text-color-light: #000000;
 }
 
 #root {
@@ -92,6 +93,12 @@ body {
     flex-flow: wrap;
     align-items: baseline;
     justify-content: space-between;
+}
+
+.captcha_container{
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
 }
 
 @media(min-width: 768px) {

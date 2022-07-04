@@ -121,7 +121,7 @@ export const addSubjectsBySection = async (req,res) =>{
 	}
 }
 
-export const deleteSubject = async (req,body) =>{
+export const deleteSubject = async (req,res) =>{
 	try{
 		const {id} = req.body
 		const subjectFind = subject.findOne({_id:id})

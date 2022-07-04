@@ -13,7 +13,7 @@ export const signIn = async (req, res) => {
 
 
     if (!userFound) {
-        return res.status(400).json("Usuario no encontrado");
+        return res.status(400).json({message:"Usuario no encontrado"});
     }
 
     //Comparamos contraseñas
@@ -23,7 +23,7 @@ export const signIn = async (req, res) => {
     );
 
     if (!matchPassword) {
-        return res.status(401).json("Contraseña invalida");
+        return res.status(401).json({message:"Contraseña invalida"});
     }
 
     //Generamos el token

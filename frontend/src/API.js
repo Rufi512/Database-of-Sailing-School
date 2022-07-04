@@ -1,6 +1,71 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+//POST Login user
+
+export const loginUser = async (user) => {
+  const res = await axios.post("/api/auth/login", user).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+}
+
+export const forgotPasswordQuestions = async (user) => {
+  const res = await axios.post("/api/auth/questions", user).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+}
+
+export const forgotPasswordEmail = async (user) => {
+  const res = await axios.post("/api/auth/forgot-password", user).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+}
+
+export const forgotLinkQuestions = async (questions)=>{
+  const res = await axios.post("/api/auth/questions/check", questions).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+} 
+
+export const resetPassword = async ({id,token,password})=>{
+  console.log(id,token)
+  const res = await axios.post(`/api/auth/reset-password/${id}/${token}`, {password}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+} 
+
+
+
 //GET
 
 export const studentsList = async (students,params) => {
@@ -117,28 +182,6 @@ export const getUsersList = async () => {
   return res
 }
 
-//POST
-
-export const loginUser = async (user) => {
-  const res = await axios.post("/api/auth/login", user).catch((err) => {
-      console.log(err)
-      return err.response
-    })
-  
-  if(res.status === 200){
-    Cookies.set('token', res.data.token);
-    Cookies.set('rol', res.data.rol);
-  }
-  return res
-}
-
-export const resetPassword = async (changePass) =>{
-   const res = await axios.post("/api/user/change/password", changePass).catch((err) => {
-      console.log(err)
-      return err.response
-    })
-  return res
-} 
 
 export const registerUser = async (user) => {
   const res = await axios.post("/api/user/register", user, {

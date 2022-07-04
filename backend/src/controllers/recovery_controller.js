@@ -1,6 +1,8 @@
 //Recovery from security questions
 import user from '../models/user'
 import quest from '../models/quest'
+import ejs from 'ejs'
+import path from 'path'
 import { validateEmail } from '../middlewares/verifyForms'
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
@@ -72,18 +74,31 @@ export const checkQuestions = async (req, res) => {
             );
 
             if (!matchAnswer) {
-                return res.status(401).json("Respuestas invalidas");
+                return res.status(401).json({ message: "Respuestas invalidas" });
             }
             i++;
         }
 
         //If all awnser are corrects
 
-        const token = jwt.sign({ id: userFound.id }, secret, {
+        const token = jwt.sign({ id: userFound.id }, secret + userFound.password, {
             expiresIn: '15m'
         });
 
-        res.json({ id: userFound.id, token })
+        ejs.renderFile(path.join(__dirname, '../templates/forgotPassword.ejs'), { link: `http://localhost:3000/reset-password/${userFound.id}/${token}` }, async (err, data) => {
+            if (err) { console.log(err); return res.status(500).json({ message: 'Error fatal en servidor' }) }
+            // send mail with defined transport object
+            let info = await transporter.sendMail({
+                from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
+                to: [userFound.email], // list of receivers
+                subject: "Recuperación de contraseña", // Subject line
+                text: "Recuperar contraseña", // plain text body
+                html: data, // html body
+            });
+            console.log(info)
+            res.json({ message: 'Email enviado!' })
+
+        })
 
 
     } catch (err) {
@@ -96,9 +111,7 @@ export const checkQuestions = async (req, res) => {
 export const forgotPassword = async (req, res) => {
 
     try {
-        if (!validateEmail(req.body.email)) return res.status(400).json({ message: 'Email invalido' })
-
-        const userFound = await user.findOne({ email: req.body.email })
+        const userFound = await user.findOne({ $or: [{ email: req.body.user }, { ci: req.body.user }] })
 
         if (!userFound) return res.status(404).json({ message: 'Usuario no registrado en el sistema, verifique los datos' })
 
@@ -106,19 +119,20 @@ export const forgotPassword = async (req, res) => {
             expiresIn: '15m'
         });
 
-        // send mail with defined transport object
-        let info = await transporter.sendMail({
-        from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
-        to: [req.body.email], // list of receivers
-        subject: "Reset the fucking password", // Subject line
-        text: "Recuperar contraseña", // plain text body
-        html: `<b>Su enlace de recuperacion es el siguiente:</b> <br/> <a href="https://localhost:8080/reset-password/${userFound.id}/${token}">Click aqui!</a> <br/> <b>O copie y pegue el siguiente link!</b> <br/> <p>https://localhost:8080/reset-password/${userFound.id}/${token}<p/>`, // html body
-    });
+        ejs.renderFile(path.join(__dirname, '../templates/forgotPassword.ejs'), { link: `http://localhost:3000/reset-password/${userFound.id}/${token}` }, async (err, data) => {
+            if (err) { console.log(err); return res.status(500).json({ message: 'Error fatal en servidor' }) }
+            // send mail with defined transport object
+            let info = await transporter.sendMail({
+                from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
+                to: [userFound.email], // list of receivers
+                subject: "Recuperación de contraseña", // Subject line
+                text: "Recuperar contraseña", // plain text body
+                html: data, // html body
+            });
+            console.log(info)
+            res.json({ message: 'Email enviado!' })
 
-        console.log(info)
-
-
-        res.json({message:'Email enviado!'})
+        })
     } catch (err) {
         res.status(500).json({ message: 'Error fatal en servidor' })
         console.log(err)
@@ -131,12 +145,12 @@ export const resetPassword = async (req, res) => {
     try {
         const { id, token } = req.params
         const userFind = await user.findById(id);
-        if(!userFind) res.status(404).json({message:'Usuario no encontrado'})
+        if (!userFind) res.status(404).json({ message: 'Usuario no encontrado' })
 
         const decoded = jwt.verify(token, secret + userFind.password);
 
         if (id !== userFind.id) return res.status(400).json({ message: 'Informacion invalidas' })
-
+        console.log(req.body)
         await user.updateOne({ _id: id }, {
             "$set": {
                 password: await user.encryptPassword(req.body.password)

@@ -10,6 +10,7 @@
 }
 
 .container-forgot{
+  margin-top: 70px;
   transform: translateY(0px);
 }
 
@@ -110,11 +111,12 @@
 
 .form-forgot .card-option h2{
   font-size: 1em;
+  font-weight: 600;
   margin: 0;
 }
 
 .form-forgot .card-option p{
-  font-size: 0.98em;
+  font-size: 0.85em;
   margin: 10px auto;
 }
 
@@ -130,10 +132,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  margin-bottom: 40px;
 }
 
 .form-forgot .button-submit{
-  margin-top: 35px;
+  margin-top: 25px;
   width: 45%;
   max-width: 180px;
 }
