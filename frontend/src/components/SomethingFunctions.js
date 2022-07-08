@@ -1,5 +1,19 @@
 //muestra la pantalla para comentar
+export const fieldTest = (field,value) =>{
+  if(field === "string"){
+    if(!/^[A-Za-záéíóúñ'´ ]+$/.test(value)){
+      return false
+    }
+    return true
+  }
 
+  if(field === "number"){
+    if (!Number(value) || !Number.isInteger(Number(value)) || Number(value) < 0){
+      return false
+    }
+    return true
+  }
+}
 export const screenComment = (value) => {
   const container = document.querySelector('.screen-back')
   const container_commit = document.querySelector('.screen-comment')

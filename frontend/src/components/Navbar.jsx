@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { ReactComponent as HomeIcon } from "../static/icons/navbar/home.svg";
 import { ReactComponent as CloseIcon } from "../static/icons/navbar/close.svg";
 import { ReactComponent as BarsIcon } from "../static/icons/navbar/bars-solid.svg";
@@ -48,17 +48,6 @@ const Navbar = (props) => {
             Inicio
           </Link>
         </div>
-        <p className="indicator-text">Administrativo</p>
-        <div className="links-container">
-          <Link to="/users" className={`link`}>
-            <UsersIcon />
-            Gestion de usuarios
-          </Link>
-          <Link to="/reps" className={`link`}>
-            <RepIcon style={{ width: "47px" }} />
-            Gestion de representantes
-          </Link>
-        </div>
         <p className="indicator-text">Estudiantes y secciones</p>
         <div className="links-container">
           <Link
@@ -84,6 +73,18 @@ const Navbar = (props) => {
             Registrar estudiantes
           </Link>
         </div>
+        <p className="indicator-text">Administrativo</p>
+        <div className="links-container">
+          <Link to="/users" className={`link`}>
+            <UsersIcon />
+            Gestion de usuarios
+          </Link>
+          <Link to="/reps" className={`link`}>
+            <RepIcon style={{ width: "47px" }} />
+            Gestion de representantes
+          </Link>
+        </div>
+        
         <div className="links-container">
           <Link to="/logout" className={`link`}>
             <LogoutIcon />

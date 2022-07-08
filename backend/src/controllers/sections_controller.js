@@ -64,7 +64,7 @@ export const create = async (req, res) => {
     //Saved students for the section
     let arrayStudentsIds = []
     let arrayStudentsInvalid = []
-
+    if(students){
     for (const id of students) {
         const res = await requestIds(id, savedSection, false);
         if (res === true) {
@@ -78,10 +78,12 @@ export const create = async (req, res) => {
         students:arrayStudentsIds
     }})
 
+
     
     if (arrayStudentsInvalid) {
         return res.json({ section: savedSection, invalids: arrayStudentsInvalid })
     }
+}
 
     return res.json({ section: savedSection })
 }
@@ -92,6 +94,15 @@ export const sectionInfo = async (req, res) => {
     res.json(sectionFound)
 }
 
+
+export const listSelects = async (req,res)=>{
+    const sections = await section.find({},{name:1,year:1,period_initial:1,completion_period:1})
+    let newList = []
+    for(const elm of sections){
+        newList.push({value:elm.id, label:`${elm.name} - Año:${elm.year} - periodo: ${elm.period_initial}/${elm.completion_period}`})
+    }
+    res.json(newList)
+}
 
 export const list = async (req, res) => {
     if (req.query) {

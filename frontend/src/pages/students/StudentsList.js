@@ -14,7 +14,7 @@ const StudentsList = () => {
 					</div>
 					<div className="container-content p-3">
 						<div className="container-actions-body">
-							<Link to="/register/student" className="btn btn-primary">
+							<Link to="/register/students" className="btn btn-primary">
 								+ Añadir nuevo estudiante
 							</Link>
 						</div>

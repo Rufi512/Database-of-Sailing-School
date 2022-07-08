@@ -48,7 +48,7 @@ const Home = () =>{
 					<img src={studentGradueImg} alt="student"/>
 				</div>
 				<div className='stats'>
-					<h2>Estudiantes Reprobados</h2>
+					<h2>Estudiantes Congelados</h2>
 					<p>20</p>
 					<img src={studentMistakeImg} alt="student"/>
 				</div>

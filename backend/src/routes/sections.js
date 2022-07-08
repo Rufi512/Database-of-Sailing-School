@@ -5,17 +5,17 @@ import {authJwt} from '../middlewares'
 const router = Router()
 
 //GET
-router.get('/info/:id',[authJwt.verifyToken,authJwt.isTeacher],sectionsCtrl.sectionInfo)
-router.get('/list',[authJwt.verifyToken,authJwt.isTeacher],sectionsCtrl.list)
-
+router.get('/info/:id',sectionsCtrl.sectionInfo)
+router.get('/list',sectionsCtrl.list)
+router.get('/list/select',sectionsCtrl.listSelects)
 //POST
-router.post('/register',[authJwt.verifyToken,authJwt.isTeacher],sectionsCtrl.create)
-router.post('/add/subjects',[authJwt.verifyToken,authJwt.isModerator],sectionsCtrl.addSubjectSection)
-router.post('/gradue',[authJwt.verifyToken,authJwt.isModerator],graduationCtrl.graduate)
+router.post('/register',sectionsCtrl.create)
+router.post('/add/subjects',sectionsCtrl.addSubjectSection)
+router.post('/gradue',graduationCtrl.graduate)
 //PUT
-router.put('/update/:id',[authJwt.verifyToken,authJwt.isTeacher],sectionsCtrl.update)
+router.put('/update/:id',sectionsCtrl.update)
 //Delete (required password for user admin to process)
-router.delete('/delete/subjects/:id',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin],sectionsCtrl.deleteSubjectsSection)
-router.delete('/delete/:section_id',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin],sectionsCtrl.deleteSection)
+router.delete('/delete/subjects/:id',sectionsCtrl.deleteSubjectsSection)
+router.delete('/delete/:section_id',sectionsCtrl.deleteSection)
 
 export default router

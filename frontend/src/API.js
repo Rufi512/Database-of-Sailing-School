@@ -15,6 +15,7 @@ export const loginUser = async (user) => {
   return res
 }
 
+// POST reset password methods
 export const forgotPasswordQuestions = async (user) => {
   const res = await axios.post("/api/auth/questions", user).catch((err) => {
       if(err.response.status <= 500){
@@ -64,7 +65,51 @@ export const resetPassword = async ({id,token,password})=>{
   return res
 } 
 
+// List
+export const sectionList = async ()=>{
+  const res = await axios.get("/api/section/list/select",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res.data
+}
 
+export const codesPhones = async () =>{
+  const res = await axios.get("/api/auth/codes/phones",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res.data
+}
+
+export const repsList = async () =>{
+  const res = await axios.get("/api/rep/list/select",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res.data
+}
+
+//POST Students
+export const registerStudent = async (data) =>{
+  const res = await axios.post("/api/students/register",data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
 
 //GET
 
@@ -190,25 +235,6 @@ export const registerUser = async (user) => {
       console.log(err)
       return err.response
     })
-  
-  if (res.status === 401) {
-    alert("Token vencido o perdido")
-    Cookies.remove("token")
-    Cookies.remove("rol")
-    window.location.href = "/"
-    return
-  }
-  return res
-}
-
-export const registerStudent = async (values) => {
-  const res = await axios.post("/api/students/register", values, {
-      headers: { "x-access-token": Cookies.get("token") },
-    }).catch((err) => {
-      console.log(err)
-      return err.response
-    })
-
   
   if (res.status === 401) {
     alert("Token vencido o perdido")

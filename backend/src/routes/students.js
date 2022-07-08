@@ -8,36 +8,36 @@ const router = Router()
 
 //GET
 
-router.get('/list', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.list) //Active Student List
+router.get('/list',  studentCtrl.list) //Active Student List
 
-router.get('/search/', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.search) //Student Finder
+router.get('/search/',  studentCtrl.search) //Student Finder
 
-router.get('/inactives', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.inactive) //Inactive Student List
+router.get('/inactives',  studentCtrl.inactive) //Inactive Student List
 
-router.get('/gradues', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.gradues) // List of graduating students
+router.get('/gradues',  studentCtrl.gradues) // List of graduating students
 
-router.get('/info/:id', [authJwt.verifyToken,authJwt.isTeacher],  studentCtrl.showStudent) //Show student information
+router.get('/info/:id',   studentCtrl.showStudent) //Show student information
 
 //POST
 
-router.post('/section', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.section) // List of students by sections
+router.post('/section',  studentCtrl.section) // List of students by sections
 
-router.post('/register', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.createStudent) //Receive form
+router.post('/register',  studentCtrl.createStudent) //Receive form
 
-router.post('/register/file', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.createStudents) //Receive files
+router.post('/register/file',  studentCtrl.createStudents) //Receive files
 
-router.post('/comment/:id', [authJwt.verifyToken,authJwt.isTeacher], commentCtrl.commentStudent)  //Add comment to student
+router.post('/comment/:id',  commentCtrl.commentStudent)  //Add comment to student
 
 //PUT
 
-router.put('/info/:id', [authJwt.verifyToken,authJwt.isTeacher], studentCtrl.updateStudent) //Update student information (ID, Name, Surname and Notes)
+router.put('/info/:id',  studentCtrl.updateStudent) //Update student information (ID, Name, Surname and Notes)
 
-router.put('/scores/:id',[authJwt.verifyToken,authJwt.isTeacher],studentCtrl.saveScore) // save points 
+router.put('/scores/:id',studentCtrl.saveScore) // save points 
 
 
 //DELETE
 
-router.delete('/comment/delete/:id',[authJwt.verifyToken,authJwt.isTeacher], commentCtrl.uncomment)  // Delete student comment
+router.delete('/comment/delete/:id', commentCtrl.uncomment)  // Delete student comment
 
 router.post('/delete', [authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin], studentCtrl.deleteStudents) // Delete the student from the entire database
 

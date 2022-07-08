@@ -67,6 +67,7 @@
 
 .form-student-register .optional-fields-active {
     max-height: max-content;
+    overflow: unset;
 }
 
 .form-student-register .container-massive-register{
@@ -93,7 +94,7 @@
 
 .form-student-register .form-check input {
     display: flex;
-    margin-top: 10px;
+    margin-top: 0px;
     margin-left: 0px;
     float: none;
 }
@@ -126,18 +127,15 @@
 }
 
 .phone-number-field select{
-    width: 84px;
+    width: 80%;
     padding: 0 10px;
     margin-right: 2px;
     margin-left: 12px;
 }
 
-.phone-number-field input{
-    width: auto;
-}
-
 .form-student-register .container-rep-disabled{
     position: relative;
+    overflow: hidden;
 }
 
 .form-student-register .container-rep-disabled:before{
@@ -168,6 +166,39 @@
     color: #efefef;
 }
 
+.form-student-register .container-select-auto{
+    width: 85%;
+    max-width: 130px;
+}
+
+.container-detail .container-chest{
+    height: 0px;
+    overflow: hidden;
+} 
+
+.container-detail .container-chest-active{
+    height: unset;
+    overflow: unset;
+}
+
+.container-detail .container-input-active{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 37px;
+    align-content: center;
+}
+
+.container-detail .student-contact-hidden{
+    height: 0px;
+    overflow: hidden;
+}
+
+.container-detail .student-record-actual input{
+    width: 60px;
+    padding: 0;
+    text-align: center;
+}
 
 @media(min-width: 768px) {
     .container-form {

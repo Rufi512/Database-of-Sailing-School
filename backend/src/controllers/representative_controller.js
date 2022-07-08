@@ -24,6 +24,17 @@ try{
   }
 }
 
+export const listSelect = async (req,res)=>{
+	const representatives = await representative.find({},{ci:1,firstname:1,lastname:1})
+	if((await representatives).length <= 0){
+		return res.status(404).json({message:'No hay representantes disponibles'})
+	}
+	let newList = []
+	for(const rep of representatives){
+		newList.push({label:`${rep.ci} - ${rep.firstname} - ${rep.lastname}`, value:rep.id})
+	}
+	res.json(newList)
+}
 
 export const update = async (req,res)=>{	
 try{

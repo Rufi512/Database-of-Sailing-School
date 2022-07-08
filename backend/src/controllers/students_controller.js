@@ -258,12 +258,22 @@ export const createStudent = async (req, res) => {
     const { ci, firstname, lastname, contact, rep_data, section_id } = req.body;
     const checkRegister = await verifyForms.verifyCreate(req.body)
     let repRegister
+    let newStudentRegister 
     if (checkRegister) return res.status(400).json({ message: checkRegister.message })
     console.log('pass checked student')
+    newStudentRegister = {
+        ci,
+        firstname,
+        lastname,
+        contact: contact,
+        section:section_id,
+        last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
+    }
     // If exists id verify and register representative on student
-    if (rep_data.id) {
+    if (rep_data && rep_data.id) {
         const repFound = await representative.findOne({ _id: rep_data.id })
         if (!repFound) return res.status(400).json({ message: 'Representante no encontrado' })
+        newStudentRegister.representative = repFound.id
     }
     if (rep_data && !rep_data.id) {
         console.log(rep_data)
@@ -279,22 +289,16 @@ export const createStudent = async (req, res) => {
             })
             const savedRep = await newRep.save()
             console.log(savedRep)
-            repRegister = savedRep.id
+            newStudentRegister.representative = savedRep.id
         } else {
             return res.status(400).json({ message: checkRep.message })
         }
     }
 
+    
 
-    const newStudent = new student({
-        ci,
-        firstname,
-        lastname,
-        contact: contact,
-        section:section_id,
-        representative: rep_data.id || repRegister,
-        last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
-    });
+
+    const newStudent = new student(newStudentRegister);
 
     const saveStudent = await newStudent.save();
     console.log(saveStudent)
