@@ -111,7 +111,44 @@ export const registerStudent = async (data) =>{
   return res
 }
 
-//GET
+
+//POST Reps
+export const registerRep = async (data) =>{
+  const res = await axios.post("/api/rep/register",data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//PUT Rep 
+
+export const updateRep = async ({data,id}) =>{
+  const res = await axios.put(`/api/rep/update/${id}`,data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//GET Reps
+
+export const repDetail= async (id) =>{
+  const res = await axios.get(`/api/rep/detail/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
 
 export const studentsList = async (students,params) => {
     console.log(params)

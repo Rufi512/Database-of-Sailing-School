@@ -1,11 +1,19 @@
 import representative from '../models/representative'
 import {verifyForms} from '../middlewares'
+import { parsePhoneNumber } from 'awesome-phonenumber'
 
 export const register = async(req,res) =>{
 try{
 	const rep_data = req.body;
 	const checkRep = await verifyForms.verifyRep(rep_data)
 	if(checkRep === true){
+			const listPhone = rep_data.contact.phone_numbers
+			rep_data.contact.phone_numbers = listPhone.map((el)=>{
+				return {
+					countryCode:el.countryCode,
+					number:el.number,
+					formatted:parsePhoneNumber(el.number,el.countryCode).getNumber()}
+			})
       //Register rep
       const newRep = new representative({
         ci:rep_data.ci,
@@ -14,6 +22,7 @@ try{
         contact:rep_data.contact
       })
       const savedRep = await newRep.save()
+      console.log(savedRep)
       res.json({message:'Representante registrado', rep_id:savedRep.id})
     }else{
       return res.status(400).json({message:checkRep.message})
@@ -36,6 +45,18 @@ export const listSelect = async (req,res)=>{
 	res.json(newList)
 }
 
+export const detail = async (req,res) =>{
+	try{
+		const {id} = req.params
+		const foundRep = await representative.findOne({_id:id})
+		if(!foundRep) return res.status(404).json({message:'Representante no encontrado'})
+		return res.json(foundRep)
+	}catch(e){
+		console.log(e)
+		res.status(500).json({message:'Ocurrio un error fatal al requerir informacion'})
+	}
+}
+
 export const update = async (req,res)=>{	
 try{
 	const {id} = req.params
@@ -44,14 +65,22 @@ try{
 	const rep_data = req.body;
 	const checkRep = await verifyForms.verifyRep(rep_data,id)
 	if(checkRep !== true) return res.status(400).json({message: checkRep.message})
+	const listPhone = rep_data.contact.phone_numbers
+	rep_data.contact.phone_numbers = listPhone.map((el)=>{
+				return {
+					countryCode:el.countryCode,
+					number:el.number,
+					formatted:parsePhoneNumber(el.number,el.countryCode).getNumber()}
+			})
+
 	const {ci,firstname,lastname,contact} = rep_data
-	await representative.updateOne({_id:foundRep.id},{$set:{
+	const updatedRep = await representative.updateOne({_id:foundRep.id},{$set:{
 		ci:ci,
 		firstname:firstname,
 		lastname:lastname,
 		contact:contact
 	}},{upsert:true})
-
+	console.log(updatedRep)
 	res.json({message:'Información del representante actualizada'})
 }catch(err){
 	console.log(err)

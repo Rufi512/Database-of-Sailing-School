@@ -85,13 +85,22 @@ const FormStudent = () => {
     if (isSubmit) return;
     setIsSubmit(true);
     const { ci, firstname, lastname } = student;
-    if (!ci) return toast.error("El campo cedula no puede quedar vacio!");
-    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0)
+    if (!ci){
+      setIsSubmit(false);
+      return toast.error("El campo cedula no puede quedar vacio!");
+    } 
+    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0){
+      setIsSubmit(false);
       return toast.error("Parámetros en Cédula inválidos,solo números!");
-    if (!firstname)
+    }
+    if (!firstname){
+      setIsSubmit(false);
       return toast.error("El campo nombre no puede quedar vacio!");
-    if (!lastname)
+    }
+    if (!lastname){
+      setIsSubmit(false);
       return toast.error("El campo apellido no puede quedar vacio!");
+    }
     const data = Object.assign({}, student);
     if (!OptStudent) delete data.contact
     if (!OptRep) delete data.rep_data

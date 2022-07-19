@@ -13,7 +13,6 @@ const TableList = (props) => {
 	useEffect(() => {
 		window.addEventListener("resize", () => {
 			setScreenSize({ current: window.innerWidth });
-			console.log(screenSize.current);
 		});
 		window.addEventListener("load", () => {
 			setScreenSize({ current: window.innerWidth });
@@ -36,7 +35,6 @@ const TableList = (props) => {
 						if (!labels[i - 1] && el.nameField) {
 							return (
 								<p key={i} scope="col">
-									{" "}
 									{el.nameField}
 								</p>
 							);
@@ -50,7 +48,6 @@ const TableList = (props) => {
 						) {
 							return (
 								<p key={i} scope="col">
-									{" "}
 									{el.nameField}
 								</p>
 							);
@@ -59,8 +56,7 @@ const TableList = (props) => {
 						if (el.linked && el.nameField) {
 							return (
 								<p key={i} scope="col">
-									{" "}
-									{el.nameField} y {labels[i + 1].nameField}{" "}
+									{el.nameField} y {labels[i + 1].nameField}
 								</p>
 							);
 						}
@@ -87,7 +83,7 @@ const TableList = (props) => {
 												</span>
 											) : (
 												""
-											)}{" "}
+											)}
 											{el[label.field]}
 										</p>
 									);
@@ -110,7 +106,7 @@ const TableList = (props) => {
 												</span>
 											) : (
 												""
-											)}{" "}
+											)}
 											{el[label.field]}
 										</p>
 									);

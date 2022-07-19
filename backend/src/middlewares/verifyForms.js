@@ -3,7 +3,7 @@ import representative from '../models/representative'
 import { parsePhoneNumber } from 'awesome-phonenumber'
 
 export const validateEmail = (mail) => {
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) || mail === "") {
         return (true)
     }
     return (false)
@@ -23,7 +23,7 @@ export const verifyCreate = async (data) => {
     }
 
     if (ci.length < 4) {
-        return { message: "Cedula del estudiante invalida" }
+        return { message: "Cedula invalida" }
     }
 
     if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstname)) {

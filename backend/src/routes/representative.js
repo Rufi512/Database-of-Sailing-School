@@ -4,8 +4,9 @@ import {authJwt} from '../middlewares'
 const router = Router()
 //GET
 router.get('/list/select',repCtrl.listSelect)
+router.get('/detail/:id',[authJwt.verifyToken,authJwt.isTeacher],repCtrl.detail)
 //POST
-router.get('/register',[authJwt.verifyToken,authJwt.isTeacher],repCtrl.register)
+router.post('/register',[authJwt.verifyToken,authJwt.isTeacher],repCtrl.register)
 //PUT
 router.put('/update/:id',[authJwt.verifyToken,authJwt.isTeacher],repCtrl.update)
 
