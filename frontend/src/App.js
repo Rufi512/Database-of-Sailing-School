@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import FormStudent from "./pages/students/FormStudent";
 import StudentInfo from "./pages/students/StudentInfo";
 import StudentsList from "./pages/students/StudentsList";
+import Logout from './pages/Logout'
 //Moderator level
 import ListRep from "./pages/reps/ListRep";
 import CreateRep from "./pages/reps/CreateRep";
@@ -49,6 +50,11 @@ const App = () => (
           path="/reset-password/questions/"
           element={<Questions />}
         />
+        {/*Logout*/}
+
+        <Route exact path="logout" element={<Logout />} />
+
+        {/*Protected routes*/}
         <Route exact path="/*" element={<ProtectedRoute />}>
           <Route exact path="home" element={<Home />} />
           <Route exact path="sections" element={<SectionList />} />

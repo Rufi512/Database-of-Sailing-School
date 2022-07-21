@@ -150,6 +150,43 @@ export const repDetail= async (id) =>{
   return res
 }
 
+//Admin level request
+
+//POST Users
+
+export const createUser = async (data) =>{
+  const res = await axios.post("/api/user/register",data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const updateUser = async ({data,id}) =>{
+  const res = await axios.put(`/api/user/update/${id}`,data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const detailUser = async (id) =>{
+  const res = await axios.get(`/api/user/detail/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
 export const studentsList = async (students,params) => {
     console.log(params)
 
@@ -382,24 +419,6 @@ export const gradeStudent = async (value, ids) => {
 
 export const academicInformation = async (id, values) => {
   const res = await axios.put("/api/students/info/" + id, values, {
-      headers: { "x-access-token": Cookies.get("token") },
-    }).catch((err) => {
-      console.log(err)
-      return err.response
-    })
-  
-  if (res.status === 401) {
-    alert("Token vencido o perdido")
-    Cookies.remove("token")
-    Cookies.remove("rol")
-    window.location.href = "/"
-    return
-  }
-  return res
-}
-
-export const updateUser = async (user) => {
-  const res = await axios.put("/api/user/update/" + user.id, user, {
       headers: { "x-access-token": Cookies.get("token") },
     }).catch((err) => {
       console.log(err)

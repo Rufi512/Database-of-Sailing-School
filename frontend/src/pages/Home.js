@@ -5,25 +5,26 @@ import studentMistakeImg from '../static/img/student_mistake.png'
 import seccImg from '../static/img/secc.png'
 import repImg from '../static/img/rep.png'
 import Navbar from '../components/Navbar'
+import Cookies from "js-cookie";
 import '../static/styles/home.css'
 const Home = () =>{
 	const saluted = () =>{
 		const d = new Date();
 		let hour = d.getHours();
 		if(hour > 18){
-			return 'Buenas noches rol'
+			return `Buenas noches ${Cookies.get('rol')}`
 		}
 
 		if(hour > 11){
-			return 'Buenas tardes rol'
+			return `Buenas tardes ${Cookies.get('rol')}`
 		}
 
 		if(hour > 6){
-			return 'Buenos dias rol'
+			return `Buenos dias ${Cookies.get('rol')}`
 		}
 
 		if(hour > 0){
-			return 'Buenas madrugadas rol'
+			return `Buenas madrugadas ${Cookies.get('rol')}`
 		}
 
 

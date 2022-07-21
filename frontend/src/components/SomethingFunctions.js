@@ -14,6 +14,19 @@ export const fieldTest = (field,value) =>{
     return true
   }
 }
+
+export const saludateRol = (value) =>{
+  switch(value){
+    case "Teacher":
+    return "Maestro/a"
+    case "Moderator":
+    return "Moderador/a"
+    case "Admin":
+    return "Administrador/a"
+    default:
+    return "Usuario"
+  }
+}
 export const screenComment = (value) => {
   const container = document.querySelector('.screen-back')
   const container_commit = document.querySelector('.screen-comment')

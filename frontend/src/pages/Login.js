@@ -1,6 +1,6 @@
 import React, { useState,useRef } from "react";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import boscoImg from "../static/logos/jb.jpg";
 import { ReactComponent as PersonIcon } from "../static/icons/person.svg";
@@ -12,6 +12,7 @@ import { loginUser } from "../API";
 import "../static/styles/form-login.css";
 const Login = (props) => {
   const recaptchaRef = useRef(null)
+  const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false)
@@ -60,6 +61,8 @@ const Login = (props) => {
         closeOnClick: true,
         autoClose: 5000,
       });
+
+      navigate('/home')
 
       Cookies.set("token", res.data.token);
       Cookies.set("rol", res.data.rol);

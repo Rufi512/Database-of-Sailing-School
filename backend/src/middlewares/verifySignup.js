@@ -52,10 +52,11 @@ export const checkRolesExisted = async (req, res, next) => {
 };
 
 export const validateInputUsers = (req,res,next) =>{
-  const { ci, firstname, lastname, email, password, rol } = req.body;
+  console.log(req)
+  const { ci, firstname, lastname, email, rol } = req.body;
   const emailValidator = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  if (!ci || !firstname || !lastname || !email || !password || !rol)
+  if (!ci || !firstname || !lastname || !email || !rol)
     return res.status(401).json({message:"Petición no valida,rellene los campos correctamente"});
 
   if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
@@ -95,3 +96,4 @@ export const validateInputUsers = (req,res,next) =>{
   }
   next()
 }
+

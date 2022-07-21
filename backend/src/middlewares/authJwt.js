@@ -14,6 +14,9 @@ export const verifyToken = async (req, res, next) => {
     const decoded = jwt.verify(token, secret);
     //Buscamos el usuario que se refiere el token
 
+
+    console.log(decoded)
+
     req.userId = decoded.id;
 
     const userFind = await user.findById(decoded.id, { password: 0 });
