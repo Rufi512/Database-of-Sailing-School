@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "all-dev": "concurrently \"npm run dev\" \"npm run client\" ",
     "build": "babel src --out-dir build",
     "start": "node build/index.js",
+    "client": "cd ../frontend && npm run start",
     "dev": "nodemon src/index.js --exec babel-node"
   },
   "keywords": [],
@@ -36,6 +38,7 @@
     "@babel/core": "^7.18.0",
     "@babel/node": "^7.13.10",
     "@babel/preset-env": "^7.13.10",
+    "concurrently": "^7.3.0",
     "nodemon": "^2.0.4"
   }
 }

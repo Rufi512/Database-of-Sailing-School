@@ -6,21 +6,22 @@ import seccImg from '../static/img/secc.png'
 import repImg from '../static/img/rep.png'
 import Navbar from '../components/Navbar'
 import Cookies from "js-cookie";
+import {saludateRol} from '../components/SomethingFunctions'
 import '../static/styles/home.css'
 const Home = () =>{
 	const saluted = () =>{
 		const d = new Date();
 		let hour = d.getHours();
 		if(hour > 18){
-			return `Buenas noches ${Cookies.get('rol')}`
+			return `Buenas noches ${saludateRol(Cookies.get('rol'))}`
 		}
 
 		if(hour > 11){
-			return `Buenas tardes ${Cookies.get('rol')}`
+			return `Buenas tardes ${saludateRol(Cookies.get('rol'))}`
 		}
 
 		if(hour > 6){
-			return `Buenos dias ${Cookies.get('rol')}`
+			return `Buenos dias ${saludateRol(Cookies.get('rol'))}`
 		}
 
 		if(hour > 0){
