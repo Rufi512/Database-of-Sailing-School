@@ -1,14 +1,183 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { listUsers, deleteUserFromId } from "../../API";
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import TableList from "../../components/TableList";
+import { saludateRol } from "../../components/SomethingFunctions";
 const ListUser = () => {
-let navigate = useNavigate();
+	let navigate = useNavigate();
+	const [data, setData] = useState([]);
+	const [pageActual, setActualPage] = useState(1);
+	const [avalaiblePages, setAvalaiblePages] = useState(0);
+	const [limit, setLimit] = useState(15);
+	const [deleteModal, setDeleteModal] = useState(false);
+	const [deleteUser, setDeleteUser] = useState({});
+	const [password,setPassword] = useState('')
+
+	const showModalDelete = (id) => {
+		setDeleteModal(true);
+		let user = data.filter((elm) => {
+			return elm.id === id;
+		});
+		console.log(user[0]);
+		setDeleteUser(user[0]);
+	};
+
+	const request = useCallback(async () => {
+		const toastId = toast.loading("Cargando datos...", {
+			closeOnClick: true,
+		});
+		try {
+			const res = await listUsers({ limit: limit, page: pageActual });
+			console.log(res);
+
+			if (res.status >= 400) {
+				return toast.update(toastId, {
+					render: res.data.message,
+					type: "error",
+					isLoading: false,
+					autoClose: 5000,
+				});
+			}
+			const users = res.data.docs.map((el) => {
+				let { _id, ci, firstname, lastname, rol } = el;
+				return Object({
+					id: _id,
+					ci,
+					firstname,
+					lastname,
+					rol: saludateRol(rol ? rol.name : 'user'),
+				});
+			});
+			setAvalaiblePages(res.data.totalPages);
+			setData(users);
+
+			toast.update(toastId, {
+				render: "Lista Cargada",
+				type: "success",
+				isLoading: false,
+				autoClose: 3000,
+			});
+		} catch (e) {
+			console.log(e);
+
+			toast.update(toastId, {
+				render: "Error al enviar informacion, intente de nuevo",
+				type: "error",
+				isLoading: false,
+				autoClose: 5000,
+			});
+
+			setTimeout(() => {
+				request();
+			}, 3000);
+		}
+	},[limit,pageActual]);
+
+	const deleteUserId = async () => {
+		const toastId = toast.loading("Cargando datos...", {
+			closeOnClick: true,
+		});
+		try {
+			const res = await deleteUserFromId({id:deleteUser.id,password:password});
+			if (res.status >= 400) {
+				return toast.update(toastId, {
+					render: res.data.message,
+					type: "error",
+					isLoading: false,
+					autoClose: 5000,
+				});
+			}
+			console.log(`Delete user: ${deleteUser.id}`);
+			setDeleteModal(false);
+			toast.update(toastId, {
+				render: "Usuario eliminado",
+				type: "success",
+				isLoading: false,
+				autoClose: 3000,
+			});
+			request();
+		} catch (e) {
+			console.log(e);
+			return toast.update(toastId, {
+				render: "Error al enviar la peticion",
+				type: "error",
+				isLoading: false,
+				autoClose: 5000,
+			});
+		}
+	};
+
+	useEffect(() => {
+		console.log(pageActual, limit);
+		request();
+	}, [pageActual, limit,request]);
 
 	return (
 		<>
 			<Navbar />
 			<div className="container-body container-list-rep">
+				{/*Delete User modal*/}
+				<div
+					className={`modal-request-admin ${
+						deleteModal ? "modal-request-admin-active" : ""
+					}`}
+				>
+					<div className="container-modal card">
+						<h5 className="card-header">Advertencia</h5>
+						<div className="card-body">
+							<h5 className="card-title">
+								Confirmacion de accion de adminitrador
+							</h5>
+							
+								<div>
+									<p className="card-text">Estas seguro de borrar al usuario{" "}</p>
+									<p className="card-text">
+										<span style={{ fontWeight: "bold" }}>
+											Cedula:
+										</span>
+										{deleteUser.ci}
+										<br />
+										<span style={{ fontWeight: "bold" }}>
+											Nombre y Apellido:
+										</span>{" "}
+										{`${deleteUser.firstname} ${deleteUser.lastname}`}
+									</p>
+									<p className="card-text">De ser asi introduzca su contraseña y
+									confirma la accion</p>
+								</div>
+							
+							<input
+								type="password"
+								className="form-control"
+								style={{marginTop:'10px'}}
+								id="password-admin"
+								placeholder="Introduzca su contraseña"
+								onInput={(e)=> setPassword(e.target.value)}
+								value={password}
+							/>
+							<div className="container-buttons">
+								<button
+									className="btn btn-primary"
+									onClick={deleteUserId}
+								>
+									Confirmar Accion
+								</button>
+								<button
+									className="btn btn-secondary"
+									onClick={(e) => {
+										setDeleteUser({});
+										setDeleteModal(false);
+									}}
+								>
+									Regresar
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				{/*Page return*/}
 				<div className="card card-container">
 					<div className="card-header">
 						<h2>Lista de Usuarios</h2>
@@ -20,57 +189,47 @@ let navigate = useNavigate();
 							</Link>
 						</div>
 						<div className="container-options-list">
-							<div className="navigation-button">
-								<nav aria-label="...">
-									<ul className="pagination">
-										<li className="page-item disabled">
-											<button
-												className="page-link"
-												href="#"
-												tabIndex="-1"
-											>
-												Anterior
-											</button>
-										</li>
-										<li className="page-item">
-											<button className="page-link" href="#">
-												1
-											</button>
-										</li>
-										<li className="page-item active">
-											<button className="page-link" href="#">
-												2
-											</button>
-										</li>
-										<li className="page-item">
-											<button className="page-link" href="#">
-												3
-											</button>
-										</li>
-										<li className="page-item">
-											<button className="page-link" href="#">
-												Siguiente
-											</button>
-										</li>
-									</ul>
-								</nav>
+							<div className="navigation-button m-2">
+								<button className="btn btn-secondary m-1" onClick={(e)=>{pageActual > 1 ? setActualPage(pageActual - 1) : setActualPage(pageActual)}}  >Anterior</button>
+								<button className="btn btn-primary m-1" onClick={(e)=>{avalaiblePages > pageActual ? setActualPage(pageActual + 1) : setActualPage(pageActual)}}>Siguiente</button>
 							</div>
-							<div className="indicator-jump-page">
+							<div className="indicator-jump-page m-2">
 								<span>Pagina </span>
-								<select className="custom-select">
-									<option defaultValue={2}>2</option>
+								<select className="custom-select" value={pageActual} onChange={(e)=>{setActualPage(e.target.value)}}>
+									{[...Array(avalaiblePages)].map((el, i) => {
+										if (i === 0) {
+											return (
+												<option
+													defaultValue={i + 1}
+													key={i + 1}
+												>
+													{i + 1}
+												</option>
+											);
+										}
+										return (
+											<option value={i + 1} key={i + 1}>
+												{i + 1}
+											</option>
+										);
+									})}
 								</select>
 								<span>
 									{" "}
 									de{" "}
 									<span style={{ color: "#005adf" }}>
-										38
+										{avalaiblePages}
 									</span>{" "}
 								</span>
 							</div>
-							<div className="indicator-limit">
+							<div className="indicator-limit m-2">
 								<span>Cantidad de elementos a mostrar: </span>
-								<select className="custom-select">
+								<select
+									onChange={(e) => {
+										setLimit(e.target.value);
+									}}
+									className="custom-select"
+								>
 									<option defaultValue={15}>15</option>
 									<option value={20}>20</option>
 									<option value={30}>30</option>
@@ -80,37 +239,13 @@ let navigate = useNavigate();
 						</div>
 						<div className="table-container">
 							<TableList
-								data={[
-									{
-										id: "tal",
-										ci: "20135459",
-										firstname: "seccion1",
-										lastname: "cgfdtal",
-										rol: "csdsfd",
-									},
-									{
-										id: "sad",
-										ci: "20879719",
-										firstname: "dsioufouoeufds",
-										lastname: "dfsewfwefeef",
-										rol: "toreert",
-									},
-									{
-										id: "hfgh",
-										ci: "09290019",
-										firstname: "sadhuhqwuyeuqiw",
-										lastname: "jhkhiuoiugf",
-										rol: "ewrw3",
-									},
-								]}
+								data={data}
 								labels={[
-									{ field: "ci", 
-									nameField: "Cedula" 
-								},
+									{ field: "ci", nameField: "Cedula" },
 									{
 										field: "firstname",
 										nameField: "Nombre",
-										linked:true,
+										linked: true,
 									},
 									{
 										field: "lastname",
@@ -125,11 +260,15 @@ let navigate = useNavigate();
 								actions={[
 									{
 										name: "edit",
-										func: (id)=>{navigate(`/user/detail/${id}`)},
+										func: (id) => {
+											navigate(`/user/detail/${id}`);
+										},
 									},
 									{
 										name: "delete",
-										func: ()=>{console.log('delete')},
+										func: (id) => {
+											showModalDelete(id);
+										},
 									},
 								]}
 							/>

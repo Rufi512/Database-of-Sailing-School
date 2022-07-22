@@ -187,6 +187,29 @@ export const detailUser = async (id) =>{
   return res
 }
 
+export const listUsers = async ({limit,page}) =>{
+  const res = await axios.get(`/api/user/list?&limit=${limit}&page=${page}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const deleteUserFromId = async ({id,password}) =>{
+  console.log(id,password)
+  const res = await axios.post(`/api/user/delete/${id}`,{password},{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
 export const studentsList = async (students,params) => {
     console.log(params)
 

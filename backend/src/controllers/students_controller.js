@@ -9,12 +9,6 @@ import path from "path";
 import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
 import { date } from "../libs/dateformat";
-import {
-    materias1,
-    materias2,
-    materias3,
-    materias4,
-} from "../libs/subjects.js";
 import { getComments } from "./comment_controller";
 import { graduate, demote } from "./graduation_controller";
 import { verifyForms } from "../middlewares";
@@ -277,53 +271,6 @@ export const saveScore = async (req, res) => {
     }
 };
 
-//Lista de estudiantes de cada curso (indicador)
-/*
-export const sectionMax = async (req, res) => {
-
-  const studentsSectionMax = await student
-    .find(
-      { status: true,},
-      { annual_comments: 0, subjects: 0, record: 0, comments: 0,ci:0,firstname:0,lastname:0,last_modify:0,_id:0 }
-    )
-    .sort({ _id: -1 });
-
-  let maxA = [] 
-  let maxB = [] 
- 
-  for(var i = 0; i<5; i++){
-    maxA[i] = studentsSectionMax.filter((el)=>{return el.school_year === `${i+1}-A`}).length
-    maxB[i] = studentsSectionMax.filter((el)=>{return el.school_year === `${i+1}-B`}).length
-  }
-
-    return res.json({
-      section1:{
-      studentsTotalA:maxA[0],
-      studentsTotalB:maxB[0]
-       },
-       section2:{
-      studentsTotalA:maxA[1],
-      studentsTotalB:maxB[1]
-       },
-       section3:{
-      studentsTotalA:maxA[2],
-      studentsTotalB:maxB[2]
-       },
-       section4:{
-      studentsTotalA:maxA[3],
-      studentsTotalB:maxB[3]
-       },
-       section5:{
-      studentsTotalA:maxA[4],
-      studentsTotalB:maxB[4]
-       },
-
-     })
-     
-
-    
-};
-*/
 //Consulta Estudiante individual
 export const showStudent = async (req, res) => {
     const validId = mongoose.Types.ObjectId.isValid(req.params.id);

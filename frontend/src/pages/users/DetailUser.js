@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useCallback } from "react";
 import Navbar from "../../components/Navbar";
 import {saludateRol} from '../../components/SomethingFunctions'
 import { toast } from "react-toastify";
@@ -24,14 +24,14 @@ const DetailUser = () => {
 
 	const params = useParams()
 
-	const request = async () =>{
+	const request = useCallback(async () =>{
 		
 		try{
 			const res = await detailUser(params.id)
 			console.log(res)
 			const {ci,firstname,lastname,email,rol} = res.data
 			if(res.status >= 400) return toast.error(res.data.message,{autoClose:false})
-			setUser({...user,ci,firstname,lastname,email,rol:rol.name})
+			setUser(user => {setUser({...user,ci,firstname,lastname,email,rol:rol ? rol.name : 'teacher'})})
 
 		}catch(e){
 			console.log(e)
@@ -41,11 +41,11 @@ const DetailUser = () => {
 			},3000)
 		}
 
-	}
+	},[params])
 
 	useEffect(()=>{
 		request()
-	},[])
+	},[request])
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -107,9 +107,9 @@ const DetailUser = () => {
 						<h2>Información del usuario</h2>
 					</div>
 					<div className="actions-container">
-						<div class="form-check form-switch">
+						<div className="form-check form-switch">
 							<input
-								class="form-check-input"
+								className="form-check-input"
 								type="checkbox"
 								id="flexSwitchCheckDefault"
 								onChange={(e) => {
@@ -117,8 +117,8 @@ const DetailUser = () => {
 								}}
 							/>
 							<label
-								class="form-check-label"
-								for="flexSwitchCheckDefault"
+								className="form-check-label"
+								htmlFor="flexSwitchCheckDefault"
 							>
 								Editar usuario
 							</label>
@@ -275,11 +275,11 @@ const DetailUser = () => {
 							</div>
 							{showEdit ? (
 								<div
-									class="form-check form-switch"
+									className="form-check form-switch"
 									style={{ padding: "0 2.8rem" }}
 								>
 									<input
-										class="form-check-input"
+										className="form-check-input"
 										type="checkbox"
 										id="passwordLabel"
 										onChange={(e) => {
@@ -289,8 +289,8 @@ const DetailUser = () => {
 										}}
 									/>
 									<label
-										class="form-check-label"
-										for="passwordLabel"
+										className="form-check-label"
+										htmlFor="passwordLabel"
 										style={{
 											background: "none",
 											color: "#212529",

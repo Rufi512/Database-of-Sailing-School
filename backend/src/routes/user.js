@@ -13,6 +13,6 @@ router.post('/change/password',usersCtrl.changePassword)
 
 router.put('/update/:id',[authJwt.verifyToken,verifySignup.validateInputUsers],usersCtrl.updateUser)
 
-router.delete('/delete/:id',[authJwt.verifyToken,authJwt.isAdmin],usersCtrl.deleteUser)
+router.post('/delete/:id',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin],usersCtrl.deleteUser)
 
 export default router

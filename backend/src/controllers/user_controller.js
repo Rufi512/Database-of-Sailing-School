@@ -8,15 +8,43 @@ dotenv.config();
 const secret = process.env.SECRET;
 
 export const getUsers = async (req, res) => {
+    if (req.query) {
+        const { limit, page, students } = req.query;
+        if (limit && isNaN(limit))
+            return res
+                .status(400)
+                .json({ message: "El limite de elementos no es un numero!" });
+        if (page && isNaN(page))
+            return res
+                .status(400)
+                .json({ message: "El limite de paginas no es un numero!" });
+        if (Number(students))
+            return res
+                .status(400)
+                .json({ message: "La busqueda no es una cadena!" });
+    }
+
+    let optionsPagination = {
+        lean: false,
+        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+        page: req.query && Number(req.query.page) ? req.query.page : 1,
+        select: { password: 0},
+        populate:({path: 'rol', select: {name:1} })
+    };
+
+    console.log(req.query)
+/*
     const users = await user
         .find({}, { password: 0 })
         .populate("rol", { _id: 0 })
         .sort({ _id: -1 });
+*/
+    const users = await user.paginate({},optionsPagination);
+
+    console.log(users)
     if (users.length === 1) {
         return res.status(404).json({ message: "Usuarios no encontrados" });
     }
-
-    users.pop();
 
     res.json(users);
 };

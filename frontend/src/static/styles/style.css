@@ -101,9 +101,49 @@ body {
     margin: 20px auto;
 }
 
+/*Styles from level admin*/
+
+.modal-request-admin{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -10000;
+    opacity: 0;
+    background: #000000a3;
+    transition: all 0.3s ease;
+}
+
+.modal-request-admin-active{
+    opacity: 1;
+    z-index: 10000;
+}
+
+.modal-request-admin .container-modal .container-buttons{
+    margin: 15px auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 768px;
+}
+
+.modal-request-admin .container-modal .container-buttons button{
+    width: 100%;
+}
+
 @media(min-width: 768px) {
     .container-body .container-actions-body {
         justify-content: flex-end;
+    }
+
+    .modal-request-admin .container-modal .container-buttons{
+        flex-direction: row-reverse;
     }
 }
 

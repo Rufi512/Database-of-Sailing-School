@@ -28,6 +28,13 @@ npm i
 mongod
 ```
 
+* To run all, position yourself in the backend folder and run:
+
+```
+npm run all-dev
+```
+
+* To run individual
 
 * Backend: 
 
