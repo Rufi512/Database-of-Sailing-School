@@ -54,17 +54,10 @@ app.use("/api/subject", subjects);
 app.use("/api/rep", representative);
 app.use("/api/chest", chest);
 
-app.get("*", (req, res) => {
-    /*app.use(express.static('client/'))
-        res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
-        */
-
     const root = path.join(__dirname, "client");
-    console.log(root)
     app.use(express.static(root));
     app.get("*", (req, res) => {
         res.sendFile("index.html", { root });
     });
-});
 
 export default app;
