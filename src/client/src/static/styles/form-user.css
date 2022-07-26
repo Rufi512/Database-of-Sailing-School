@@ -1,0 +1,98 @@
+.container-create-user .actions-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px 20px;
+    margin-top: 20px;
+}
+
+.container-create-user .card-body form .form-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.container-create-user .card-body form label {
+    width: 100%;
+    font-weight: 600;
+}
+
+.container-create-user .card-body form .field-container {
+    margin: 5px 0;
+}
+
+.container-create-user .card-body form .container-buttons {
+    display: flex;
+    align-items: center;
+    flex-direction: column-reverse;
+    justify-content: center;
+}
+
+.container-create-user .card-body form .container-buttons button {
+    margin: 10px 0;
+}
+
+/*modal creator questions*/
+.questions-creator-user-modal {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100vh;
+    background: #0000002e;
+    z-index: -10000000;
+    transition: all 0.3s ease;
+}
+
+.show-creator-questions{
+    opacity: 1;
+    z-index: 100;
+}
+
+.questions-creator-user-modal .questions-creator-container {
+    width: 90%;
+    padding: 5px;
+}
+
+.questions-creator-user-modal .questions-creator-container label{
+    width: 100%;
+    font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .container-create-user .card-body form .container-buttons {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .container-create-user .card-body form .container-buttons button,
+    .container-create-user .card-body form .container-buttons a {
+        height: 42px;
+    }
+
+    .container-create-user .card-body form .container-buttons a {
+        margin-right: 5px;
+    }
+
+    .container-create-user .card-body form .form-row {
+        flex-direction: row;
+        flex-flow: wrap;
+    }
+
+    .container-create-user .card-body form .container-buttons .submit {
+        margin-left: 10px;
+    }
+
+    .questions-creator-user-modal
+        .questions-creator-container
+        .container-buttons {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

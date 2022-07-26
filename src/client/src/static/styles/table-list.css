@@ -1,0 +1,113 @@
+.table-general {
+    border: 2px solid #6e6e6e;
+    padding: 10px;
+    margin-top: 20px;
+    box-shadow: 0px 2px 9px 0px #b1b1b194;
+}
+
+.table-general .header-field {
+    display: none;
+}
+
+.table-general .header-field p {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-general .data-body {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 8px;
+    margin: 5px 0;
+    border: 2px solid black;
+}
+
+.table-general .data-body p {
+    margin: 0;
+}
+
+.table-general .container-actions {
+    display: flex;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-general .container-actions button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70px;
+    height: 35px;
+    margin: 5px;
+}
+
+@media (min-width: 768px) {
+    .table-general .container-actions {
+        position: absolute;
+        right: 4px;
+        margin-top: 0px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+@media (min-width: 1024px) {
+    .table-general .header-field {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        font-weight: 600;
+    }
+
+    .table-general .header-field p,
+    .table-general .data-body p {
+        padding: 3px;
+        border: 1px solid #6e6e6e;
+        width: 100%;
+        text-align: center;
+    }
+
+    .table-general .data-body {
+        width: 100%;
+        padding: 0px;
+        margin: 0;
+        display: flex;
+        justify-content: space-between;
+        flex-flow: unset;
+        border: none;
+    }
+
+    .table-general .container-actions {
+        position: relative;
+        display: flex;
+        right: 0;
+        width: 100%;
+        justify-content: space-around;
+        border: 1px solid #6e6e6e;
+    }
+
+    .table-general .container-actions button,
+    .table-general .data-body p {
+        padding: 5px 0;
+        text-align: center;
+    }
+
+    .table-general .data-body p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .table-general .container-actions button {
+        font-size: 0.8em;
+        width: 32px;
+        height: 32px;
+    }
+}

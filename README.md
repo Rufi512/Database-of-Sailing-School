@@ -19,8 +19,15 @@ and those of the frontend
 cd frontend
 npm i
 ```
-
-2.Run:
+2.Values required for env:
+```
+SECRET
+SITE_KEY_CAPTCHA
+SERVER_KEY_CAPTCHA
+MAIL_USER
+MAIL_PASSWORD
+```
+3.Run:
 
 * Mongodb
 
