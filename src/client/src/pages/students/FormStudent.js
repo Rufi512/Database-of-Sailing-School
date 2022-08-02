@@ -17,7 +17,7 @@ const FormStudent = () => {
   ]);
   const [avalaibleReps, setAvalaiblesReps] = useState([
     { label: "Sin asignar", value: "" },
-    { label: "Registrar representante", value: "custom" }
+    { label: "Registrar representante", value: "custom" },
   ]);
   const [avalaibleCountries, setAvalaiblesCountries] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
@@ -25,7 +25,7 @@ const FormStudent = () => {
     ci: "",
     firstname: "",
     lastname: "",
-    section: "",
+    section_id: "",
     contact: {
       address_1: "",
       address_2: "",
@@ -78,46 +78,83 @@ const FormStudent = () => {
     };
     request();
   }, []);
-  console.log(idRep);
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (isSubmit) return;
     setIsSubmit(true);
     const { ci, firstname, lastname } = student;
-    if (!ci){
+    if (!ci) {
       setIsSubmit(false);
       return toast.error("El campo cedula no puede quedar vacio!");
-    } 
-    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0){
+    }
+    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
       setIsSubmit(false);
       return toast.error("Parámetros en Cédula inválidos,solo números!");
     }
-    if (!firstname){
+    if (!firstname) {
       setIsSubmit(false);
       return toast.error("El campo nombre no puede quedar vacio!");
     }
-    if (!lastname){
+    if (!lastname) {
       setIsSubmit(false);
       return toast.error("El campo apellido no puede quedar vacio!");
     }
     const data = Object.assign({}, student);
-    if (!OptStudent) delete data.contact
-    if (!OptRep) delete data.rep_data
+    if (!OptStudent) delete data.contact;
+    if (!OptRep) delete data.rep_data;
     const toastId = toast.loading("Verificando datos...", {
-        closeOnClick: true,
-      });
+      closeOnClick: true,
+    });
     try {
-      
       const res = await registerStudent(data);
       setIsSubmit(false);
       if (res.status >= 400) {
-        return toast.update(toastId,{ render: res.data.message, type: "error",isLoading:false,autoClose:5000 });
+        return toast.update(toastId, {
+          render: res.data.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       }
-      toast.update(toastId,{ render: res.data.message, type: "success",isLoading:false,autoClose:5000 });
+      setStudent({
+        ci: "",
+        firstname: "",
+        lastname: "",
+        section_id: "",
+        contact: {
+          address_1: "",
+          address_2: "",
+          phone_numbers: [{ number: "", countryCode: "" }],
+          emails: [""],
+        },
+        rep_data: {
+          id: "",
+          ci: "",
+          firstname: "",
+          lastname: "",
+          contact: {
+            address_1: "",
+            address_2: "",
+            phone_numbers: [{ number: "", countryCode: "" }],
+            emails: [""],
+          },
+        },
+      });
+      toast.update(toastId, {
+        render: res.data.message,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
     } catch (e) {
       setIsSubmit(false);
-      toast.update(toastId,{ render: "Error al enviar informacion", type: "error",isLoading:false,autoClose:5000 });
+      toast.update(toastId, {
+        render: "Error al enviar informacion",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
       console.log(e);
     }
 
@@ -141,7 +178,7 @@ const FormStudent = () => {
                 type="text"
                 className="form-control"
                 id="ci"
-                placeholder="Introduce tu cedula"
+                placeholder="Introduce la cedula"
                 autoComplete="off"
                 onInput={(e) => {
                   if (Number(e.target.value) || e.target.value === "")
@@ -205,7 +242,7 @@ const FormStudent = () => {
                 isLoading={loading}
                 defaultValue={avalaibleSections[0]}
                 onChange={(e) => {
-                  setStudent({ ...student, section: e.value });
+                  setStudent({ ...student, section_id: e.value });
                 }}
               />
               <small id="section-help" className="form-text text-muted">
@@ -368,25 +405,25 @@ const FormStudent = () => {
                   idRep === "custom" ? "" : "container-rep-disabled"
                 }`}
               >
-               <div className="form-group col-md-12">
-                    <label className="font-weight-bold" htmlFor="ci-rep">
-                      Cedula del representante
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="ci-rep"
-                      placeholder="Introduce la cedula del representante"
-                      autoComplete="off"
-                      onInput={(e) => {
-                        return setStudent({
-                          ...student,
-                          rep_data: { ...student.rep_data, ci: e.target.value },
-                        });
-                      }}
-                      value={student.rep_data.ci}
-                    />
-                  </div>
+                <div className="form-group col-md-12">
+                  <label className="font-weight-bold" htmlFor="ci-rep">
+                    Cedula del representante
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="ci-rep"
+                    placeholder="Introduce la cedula del representante"
+                    autoComplete="off"
+                    onInput={(e) => {
+                      return setStudent({
+                        ...student,
+                        rep_data: { ...student.rep_data, ci: e.target.value },
+                      });
+                    }}
+                    value={student.rep_data.ci}
+                  />
+                </div>
 
                 <div className="row" style={{ marginBottom: "10px" }}>
                   <div className="form-group col-md-6">
@@ -435,38 +472,38 @@ const FormStudent = () => {
                   </div>
                 </div>
                 <div className="row" style={{ marginBottom: "10px" }}>
-                <div className="form-group col-md-6">
-                  <label className="font-weight-bold" htmlFor="address-rep">
-                    Direccion del representante
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address-rep"
-                    placeholder="Introduce la direccion domiciliaria del representante"
-                    onInput={(e) => {
-                      let items = student;
-                      items.rep_data.contact.address_1 = e.target.value;
-                      setStudent({ ...student, items });
-                    }}
-                  />
-                </div>
-                <div className="form-group col-md-6">
-                  <label htmlFor="address2-rep">
-                    Segunda direccion del representante
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address2-rep"
-                    placeholder="Introduce direccion de referencia del representante"
-                    onInput={(e) => {
-                      let items = student;
-                      items.rep_data.contact.address_2 = e.target.value;
-                      setStudent({ ...student, items });
-                    }}
-                  />
-                </div>
+                  <div className="form-group col-md-6">
+                    <label className="font-weight-bold" htmlFor="address-rep">
+                      Direccion del representante
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="address-rep"
+                      placeholder="Introduce la direccion domiciliaria del representante"
+                      onInput={(e) => {
+                        let items = student;
+                        items.rep_data.contact.address_1 = e.target.value;
+                        setStudent({ ...student, items });
+                      }}
+                    />
+                  </div>
+                  <div className="form-group col-md-6">
+                    <label htmlFor="address2-rep">
+                      Segunda direccion del representante
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="address2-rep"
+                      placeholder="Introduce direccion de referencia del representante"
+                      onInput={(e) => {
+                        let items = student;
+                        items.rep_data.contact.address_2 = e.target.value;
+                        setStudent({ ...student, items });
+                      }}
+                    />
+                  </div>
                 </div>
                 <div className="row" style={{ marginBottom: "10px" }}>
                   <div className="form-group col-md-6">
@@ -481,7 +518,8 @@ const FormStudent = () => {
                           defaultValue={avalaibleCountries[0]}
                           onChange={(e) => {
                             let items = student;
-                            items.rep_data.contact.phone_numbers[0].countryCode = e.value;
+                            items.rep_data.contact.phone_numbers[0].countryCode =
+                              e.value;
                             setStudent({ ...student, items });
                           }}
                         />

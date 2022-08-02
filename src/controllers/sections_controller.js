@@ -2,6 +2,7 @@ import section from "../models/section"
 import student from "../models/student";
 import user from "../models/user";
 import mongoose from 'mongoose';
+import {addSubjectsNewStudentsSection} from '../controllers/subjects_controller'
 import { date } from "../libs/dateformat";
 import dateFormat from "dateformat";
 import subject from '../models/subject'
@@ -176,6 +177,54 @@ export const update = async (req, res) => {
     }
 
     return res.json({ section: savedSection })
+}
+
+//Add student to section if every register
+
+export const addStudentsSectionRegistered = async (section_id,students) =>{
+    let now = new Date();
+    dateFormat.i18n = date;
+    let arrayStudentsIds = []
+    let arrayStudentsInvalid = []
+    let oldArrayStudentsIds = []
+
+    const sectionFound = await section.findById(section_id)
+    if (sectionFound) {
+        oldArrayStudentsIds = sectionFound.students
+        for (const id of students) {
+            const res = await requestIds(id, sectionFound, false);
+            if (res === true) {
+                arrayStudentsIds.push(id)
+            } else {
+                arrayStudentsInvalid.push(res)
+            }
+        }
+
+    }
+
+    for (const id of arrayStudentsIds) {
+        const prevRegister = oldArrayStudentsIds.find((el) => {return el == id})
+        if (prevRegister) {
+            arrayStudentsIds = arrayStudentsIds.filter((el)=> {return el != id})
+        }
+    }
+
+    const savedSection = await section.updateOne({
+        _id: section_id
+    }, {
+        $set: {
+            last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
+            students: oldArrayStudentsIds.concat(arrayStudentsIds)
+        }
+    }, { upsert: true })
+
+    const stateSubjects = await addSubjectsNewStudentsSection(section_id)
+
+    if (arrayStudentsInvalid.length > 0) {
+        return { section: sectionFound, invalids: arrayStudentsInvalid, checked_subjects:stateSubjects }
+    }
+
+    return { section: savedSection, checked_subjects:stateSubjects }
 }
 
 

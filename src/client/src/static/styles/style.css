@@ -26,9 +26,24 @@ body {
 
 .container-body .container-actions-body {
     margin: 15px 0;
+    padding: 0 10px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
+}
+
+.container-body .container-actions-body .container-label-select label{
+font-size: 16px;
+font-weight: 600;
+}
+
+.container-body .container-actions-body button {
+    height: 37px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 
 .form .button-submit {
@@ -78,14 +93,14 @@ body {
     background: #e3e3e3;
 }
 
-.container-body .field-container{
-  display: flex;
-  flex-flow: wrap;
+.container-body .field-container {
+    display: flex;
+    flex-flow: wrap;
 }
 
-.container-body .actions-container{
-  display: flex;
-  padding: 10px 20px;
+.container-body .actions-container {
+    display: flex;
+    padding: 10px 20px;
 }
 
 .container-options-list {
@@ -95,7 +110,7 @@ body {
     justify-content: space-between;
 }
 
-.captcha_container{
+.captcha_container {
     display: flex;
     justify-content: center;
     margin: 20px auto;
@@ -103,7 +118,7 @@ body {
 
 /*Styles from level admin*/
 
-.modal-request-admin{
+.modal-request-admin {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -121,19 +136,19 @@ body {
     transition: all 0.3s ease;
 }
 
-.modal-request-admin-active{
+.modal-request-admin-active {
     opacity: 1;
     z-index: 100;
 }
 
-.modal-request-admin .container-modal .container-buttons{
+.modal-request-admin .container-modal .container-buttons {
     margin: 15px auto;
     display: flex;
     flex-direction: column;
     max-width: 768px;
 }
 
-.modal-request-admin .container-modal .container-buttons button{
+.modal-request-admin .container-modal .container-buttons button {
     width: 100%;
 }
 
@@ -142,7 +157,7 @@ body {
         justify-content: flex-end;
     }
 
-    .modal-request-admin .container-modal .container-buttons{
+    .modal-request-admin .container-modal .container-buttons {
         flex-direction: row-reverse;
     }
 }

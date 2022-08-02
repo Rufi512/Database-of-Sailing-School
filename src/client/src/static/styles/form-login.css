@@ -6,10 +6,9 @@
   display: flex;
   flex-direction: column;
   width: 90%;
-  height: 100vh;
   align-items: center;
   justify-content: center;
-  margin: auto;
+  margin: 50px auto;
   max-width: 550px;
 }
 

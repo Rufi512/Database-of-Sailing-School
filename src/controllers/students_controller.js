@@ -1,10 +1,12 @@
 import student from "../models/student";
 import user from "../models/user";
+import section from "../models/section"
 import representative from "../models/representative";
 import comment from "../models/comment";
 import mongoose from "mongoose";
 import dateFormat from "dateformat";
 import fs from "fs";
+import { parsePhoneNumber } from 'awesome-phonenumber'
 import path from "path";
 import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
@@ -12,6 +14,8 @@ import { date } from "../libs/dateformat";
 import { getComments } from "./comment_controller";
 import { graduate, demote } from "./graduation_controller";
 import { verifyForms } from "../middlewares";
+import {addStudentsSectionRegistered} from '../controllers/sections_controller'
+
 let now = new Date();
 
 dateFormat.i18n = date;
@@ -39,27 +43,25 @@ export const list = async (req, res) => {
         limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
         page: req.query && Number(req.query.page) ? req.query.page : 1,
         select: { subjects: 0, record: 0 },
+        populate: { path: "section", select: { name: 1 } },
     };
 
-    let students;
-    if (req.query.students === "graduados") {
-        students = await student.paginate(
-            { school_year: "graduado" },
-            optionsPagination
-        );
-    } else {
-        console.log("pass", req.query.students);
-        students = await student.paginate(
+    const optionsSearch = {
+        $or: [
+            { firstname: new RegExp(req.query.search, "gi") },
+            { lastname: new RegExp(req.query.search, "gi") },
             {
-                status: req.query.students === "activos" ? true : false,
-                school_year:
-                    req.query.students === "graduados"
-                        ? "graduado"
-                        : { $ne: "graduado" },
+                $and: [
+                    { status: req.query.students === "activos" ? true : false },
+                    {
+                        graduate:
+                            req.query.students === "graduados" ? true : false,
+                    },
+                ], // and operator body finishes
             },
-            optionsPagination
-        );
-    }
+        ],
+    };
+    const students = await student.paginate(optionsSearch, optionsPagination);
 
     if (students.totalDocs < 0) {
         return res.status(404).json({ message: "Estudiantes no encontrados" });
@@ -68,47 +70,7 @@ export const list = async (req, res) => {
     return res.json(students);
 };
 
-//Search students for the bar search
-
-export const search = async (req, res) => {
-    if (req.query) {
-        const { limit, page, students } = req.query;
-        if (limit && isNaN(limit))
-            return res
-                .status(400)
-                .json({ message: "El limite de elementos no es un numero!" });
-        if (page && isNaN(page))
-            return res
-                .status(400)
-                .json({ message: "El limite de paginas no es un numero!" });
-        if (Number(students))
-            return res
-                .status(400)
-                .json({ message: "La busqueda no es una cadena!" });
-    }
-
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
-        page: req.query && Number(req.query.page) ? req.query.page : 1,
-        select: { subjects: 0, record: 0, contact: 0 },
-    };
-
-    const { search } = req.body;
-    //const students = await student.searchPartial(search)
-    const students = await student.paginate(
-        {
-            $or: [
-                { firstname: new RegExp(search, "gi") },
-                { lastname: new RegExp(search, "gi") },
-            ],
-        },
-        optionsPagination
-    );
-
-    res.json(students);
-};
-
+/*
 export const inactive = async (req, res) => {
     if (req.query) {
         const { limit, page } = req.query;
@@ -192,9 +154,10 @@ export const gradues = async (req, res) => {
 
     return res.json(list);
 };
-
+*/
+/*
 //Lista de estudiantes por curso
-export const section = async (req, res) => {
+export const studentsInSection = async (req, res) => {
     const studentsSection = await student
         .find(
             { status: true, school_year: req.body.school_year },
@@ -203,11 +166,9 @@ export const section = async (req, res) => {
         .sort({ _id: -1 });
     const sections = studentsSection.length;
     if (!sections) {
-        return res
-            .status(404)
-            .json({
-                message: `Estudiantes del curso ${req.body.school_year} no encontrados`,
-            });
+        return res.status(404).json({
+            message: `Estudiantes del curso ${req.body.school_year} no encontrados`,
+        });
     }
 
     if (req.query) {
@@ -235,7 +196,7 @@ export const section = async (req, res) => {
 
     return res.json(list);
 };
-
+*/
 //Saved score from subjects for student
 export const saveScore = async (req, res) => {
     try {
@@ -282,6 +243,14 @@ export const showStudent = async (req, res) => {
         .populate("subjects.subject", { fromYears: 0 })
         .populate("representative");
     const comments = await getComments(req.params.id);
+    
+    const listPhone = studentFind.contact.phone_numbers
+    studentFind.contact.phone_numbers = listPhone.map((el)=>{
+                return {
+                    countryCode:el.countryCode,
+                    number:el.number,
+                    formatted:parsePhoneNumber(el.number,el.countryCode).getNumber()}
+            })
 
     if (studentFind) {
         res.json({ student: studentFind, comments: comments });
@@ -293,27 +262,41 @@ export const showStudent = async (req, res) => {
 //Crear Estudiante Individual
 export const createStudent = async (req, res) => {
     const { ci, firstname, lastname, contact, rep_data, section_id } = req.body;
+    let validSection = false
+    console.log(req.body)
     const checkRegister = await verifyForms.verifyCreate(req.body);
     let repRegister;
     let newStudentRegister;
     if (checkRegister)
         return res.status(400).json({ message: checkRegister.message });
-    const listPhone = contact.phone_numbers;
-    contact.phone_numbers = listPhone.map((el) => {
-        return {
-            countryCode: el.countryCode,
-            number: el.number,
-            formatted: parsePhoneNumber(el.number, el.countryCode).getNumber(),
-        };
-    });
+    if(section_id || section_id !== "" ){
+        const sectionFound = await section.findById(section_id)
+        if (!sectionFound) return res.status(404).json({ message: 'Seccion no especificada encontrada!' })
+        validSection = true
+    }
+    if (contact) {
+        const listPhone = contact.phone_numbers;
+        contact.phone_numbers = listPhone.map((el) => {
+            return {
+                countryCode: el.countryCode,
+                number: el.number,
+                formatted: parsePhoneNumber(
+                    el.number,
+                    el.countryCode
+                ).getNumber(),
+            };
+        });
+    }
     newStudentRegister = {
         ci,
         firstname,
         lastname,
         contact: contact,
-        section: section_id,
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
     };
+
+    if(section_id && section_id !== "") newStudentRegister.section = section_id
+    
     // If exists id verify and register representative on student
     if (rep_data && rep_data.id) {
         const repFound = await representative.findOne({ _id: rep_data.id });
@@ -357,6 +340,10 @@ export const createStudent = async (req, res) => {
     const newStudent = new student(newStudentRegister);
 
     const saveStudent = await newStudent.save();
+    if(validSection){
+        const addToSection = addStudentsSectionRegistered(section_id,[saveStudent.id])
+        console.log(addToSection)
+    }
     console.log(saveStudent);
     res.json({ message: "Estudiante registrado" });
 };
@@ -496,12 +483,10 @@ export const createStudents = async (req, res) => {
                 headerError.exist = true;
                 headerError.description =
                     "Las cabeceras no cumplen con el formato solicitado: Cedula | Nombre | Apellido";
-                return res
-                    .status(400)
-                    .json({
-                        message: "Problemas con las cabeceras del archivo",
-                        headerError,
-                    });
+                return res.status(400).json({
+                    message: "Problemas con las cabeceras del archivo",
+                    headerError,
+                });
             }
             rows.shift(); //Delete headers from array
 
@@ -593,7 +578,7 @@ export const updateStudent = async (req, res) => {
                 lastname: req.body.lastname ? req.body.lastname : lastname,
                 status: req.body.status,
                 contact: req.body.contact || contact,
-                representative: rep_id,
+                representative: rep_data && rep_data.id,
                 last_modify: dateFormat(
                     now,
                     "dddd, d De mmmm , yyyy, h:MM:ss TT"
@@ -602,7 +587,7 @@ export const updateStudent = async (req, res) => {
         },
         { upsert: true }
     );
-    res.json("Estudiante Actualizado!");
+    res.json({message:"Estudiante Actualizado!"});
 };
 
 //Graduar estudiante/s

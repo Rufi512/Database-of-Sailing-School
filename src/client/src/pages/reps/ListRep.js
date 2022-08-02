@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback,useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavigationOptionsList from "../../components/NavigationOptionsList";
 import { toast } from "react-toastify";
@@ -6,6 +6,7 @@ import { listReps,deleteRepFromId } from "../../API";
 import Navbar from "../../components/Navbar";
 import TableList from "../../components/TableList";
 const ListRep = () => {
+	const timerRef = useRef(null);
 	let navigate = useNavigate();
 	const [pageActual, setActualPage] = useState(1);
 	const [avalaiblePages, setAvalaiblePages] = useState(0);
@@ -61,7 +62,7 @@ const ListRep = () => {
 				autoClose: 5000,
 			});
 
-			setTimeout(() => {
+			timerRef.current = setTimeout(() => {
 				request();
 			}, 3000);
 		}
@@ -116,6 +117,7 @@ const ListRep = () => {
 	useEffect(() => {
 		console.log(pageActual, limit);
 		request();
+		return () => clearTimeout(timerRef)
 	}, [pageActual, limit, request]);
 
 	return (

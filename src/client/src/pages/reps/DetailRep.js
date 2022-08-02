@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { repDetail, updateRep, codesPhones } from "../../API";
@@ -6,6 +6,7 @@ import { fieldTest } from "../../components/SomethingFunctions";
 import Select from "react-select";
 import { toast } from "react-toastify";
 const DetailRep = (props) => {
+	const timerRef = useRef(null)
 	const params = useParams();
 	console.log(params);
 	const [activeForm, setActiveForm] = useState(false);
@@ -29,7 +30,7 @@ const DetailRep = (props) => {
 		return object.value === rep.contact.phone_numbers[0].countryCode;
 	});
 
-	const request = async () => {
+	const request = useCallback(async () => {
 		try {
 			isLoading(true);
 			const res = await repDetail(params.id);
@@ -47,16 +48,17 @@ const DetailRep = (props) => {
 			toast.success("Información cargada!")
 		} catch (e) {
 			toast.error("Error al cargar opciones, reitentando...");
-			setTimeout(() => {
+			timerRef.current = setTimeout(() => {
 				request();
 			}, 3000);
 			console.log(e);
 		}
-	}
+	},[params])
 
 	useEffect(() => {
 		request();
-	}, [params]);
+		return () => clearTimeout(timerRef)
+	}, [params,request]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();

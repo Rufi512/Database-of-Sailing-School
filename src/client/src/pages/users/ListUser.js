@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { listUsers, deleteUserFromId } from "../../API";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import TableList from "../../components/TableList";
 import NavigationOptionsList from "../../components/NavigationOptionsList";
 import { saludateRol } from "../../components/SomethingFunctions";
 const ListUser = () => {
+	const timerRef = useRef(null);
 	let navigate = useNavigate();
 	const [data, setData] = useState([]);
 	const [pageActual, setActualPage] = useState(1);
@@ -70,7 +71,7 @@ const ListUser = () => {
 				autoClose: 5000,
 			});
 
-			setTimeout(() => {
+			timerRef.current = setTimeout(() => {
 				request();
 			}, 3000);
 		}
@@ -116,6 +117,7 @@ const ListUser = () => {
 	useEffect(() => {
 		console.log(pageActual, limit);
 		request();
+		return () => clearTimeout(timerRef.current)
 	}, [pageActual, limit, request]);
 
 	return (

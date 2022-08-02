@@ -26,7 +26,7 @@ const TableList = (props) => {
 			});
 		};
 	}, [props]);
-
+	if(data.length === 0) return(<h2>Sin datos que mostrar :/</h2>)
 	return (
 		<>
 			<div className="table-general">
@@ -34,7 +34,7 @@ const TableList = (props) => {
 					{labels.map((el, i) => {
 						if (!labels[i - 1] && el.nameField) {
 							return (
-								<p key={i} scope="col">
+								<p key={i}>
 									{el.nameField}
 								</p>
 							);
@@ -47,7 +47,7 @@ const TableList = (props) => {
 							el.nameField
 						) {
 							return (
-								<p key={i} scope="col">
+								<p key={i}>
 									{el.nameField}
 								</p>
 							);
@@ -55,18 +55,19 @@ const TableList = (props) => {
 
 						if (el.linked && el.nameField) {
 							return (
-								<p key={i} scope="col">
+								<p key={i}>
 									{el.nameField} y {labels[i + 1].nameField}
 								</p>
 							);
 						}
+						return(<></>)
 					})}
 				</div>
 				<div className="table-body-select">
 					{data.map((el, i) => (
 						<div className="data-body" key={i}>
 							{labels.map((label, idx) => {
-								if(label.field === 'actions') return
+								if(label.field === 'actions') return(<></>)
 								if (!labels[idx - 1]) {
 									return (
 										<p
@@ -207,6 +208,7 @@ const TableList = (props) => {
 										</p>
 									);
 								}
+								return(<></>)
 								/*if(labels[idx-1] && !labels[idx-1].linked && !label.linked){
 									return <p className={`${label.field}`} key={idx}>{screenSize.current < 1024 ? (<span style={{fontWeight:'600'}}>{label.nameField}:</span>) : ''} {`${el[label.field]}`}</p>;
 								}*/

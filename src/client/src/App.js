@@ -62,7 +62,7 @@ const App = () => (
         <Route exact path="/*" element={<ProtectedRoute />}>
           <Route exact path="home" element={<Home />} />
           <Route exact path="sections" element={<SectionList />} />
-          <Route exact path="students" element={<StudentsList />} />
+          <Route exact path="students/list/" element={<StudentsList />} />
           <Route exact path="register/students" element={<FormStudent />} />
           <Route exact path="student/detail/:id" element={<StudentInfo />} />
           <Route exact path="section/detail/:id" element={<Section />} />

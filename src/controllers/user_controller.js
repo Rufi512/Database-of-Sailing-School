@@ -1,4 +1,7 @@
 import user from "../models/user";
+import student from "../models/student";
+import representative from "../models/representative";
+import section from "../models/section";
 import comment from "../models/comment";
 import roles from "../models/roles";
 import mongoose from "mongoose";
@@ -28,13 +31,13 @@ export const getUsers = async (req, res) => {
         lean: false,
         limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
         page: req.query && Number(req.query.page) ? req.query.page : 1,
-        select: { password: 0},
-        populate:({path: 'rol', select: {name:1} })
+        select: { password: 0 },
+        populate: { path: "rol", select: { name: 1 } },
     };
 
-    const users = await user.paginate({},optionsPagination);
+    const users = await user.paginate({}, optionsPagination);
 
-    console.log(users)
+    console.log(users);
     if (users.length === 1) {
         return res.status(404).json({ message: "Usuarios no encontrados" });
     }
@@ -45,11 +48,9 @@ export const getUsers = async (req, res) => {
 export const createUser = async (req, res) => {
     const { ci, firstname, lastname, email, password, rol } = req.body;
     if (!password)
-        return res
-            .status(400)
-            .json({
-                message: "El usuario necesita una contraseña para ser creado!",
-            });
+        return res.status(400).json({
+            message: "El usuario necesita una contraseña para ser creado!",
+        });
     //Creamos el usuario
     const newUser = new user({
         ci,
@@ -95,25 +96,29 @@ export const updateUser = async (req, res) => {
     //Request the info from user what make the modification
     const userRequestFind = await user.findById(req.userId);
 
-    const rolUserRequest = await roles.find({ _id: { $in: userRequestFind.rol } });
+    const rolUserRequest = await roles.find({
+        _id: { $in: userRequestFind.rol },
+    });
     if (!foundUser)
         return res.status(404).json({ message: "Usuario no encontrado" });
 
     if (userFind && userFind.id !== req.params.id) {
-        return res
-            .status(400)
-            .json({
-                message: "Cambio de email rechazado,el email esta en uso!",
-            });
+        return res.status(400).json({
+            message: "Cambio de email rechazado,el email esta en uso!",
+        });
     }
 
     const rolFind = await roles.findOne({ name: { $in: req.body.rol } });
 
     if (!rolFind) return res.status(400).json({ message: "Rol no existe" });
-    //Verify if the user is admin or is the same   
-    if (rolUserRequest[0].name != 'Admin'){
-        if(foundUser.id != req.userId){
-            return res.status(401).json({ message: "No tienes permisos para modificar al usuario" });
+    //Verify if the user is admin or is the same
+    if (rolUserRequest[0].name != "Admin") {
+        if (foundUser.id != req.userId) {
+            return res
+                .status(401)
+                .json({
+                    message: "No tienes permisos para modificar al usuario",
+                });
         }
     }
 
@@ -133,7 +138,6 @@ export const updateUser = async (req, res) => {
                 },
             }
         );
-
     } else {
         await user.updateOne(
             { _id: req.params.id },
@@ -148,7 +152,24 @@ export const updateUser = async (req, res) => {
             }
         );
     }
-     res.json({message:'Usuario modificado'})
+    res.json({ message: "Usuario modificado" });
+};
+
+//Stats user
+
+export const stats = async (req, res) => {
+    const students = await student.find();
+    const students_gradues = await student.find({ graduate: true });
+    const frozen_students = await student.find({ status: false });
+    const representatives = await representative.find();
+    const sections = await section.find();
+    return res.json({
+        registered_students: students.length,
+        graduate_students: students_gradues.length,
+        frozen_students: frozen_students.length,
+        registered_representatives: representatives.length,
+        registered_sections:sections.length
+    });
 };
 
 //Detail user
@@ -187,8 +208,11 @@ export const deleteUser = async (req, res) => {
     if (!validId) return res.status(404).json({ message: "ID invalido" });
 
     const userFind = await user.findById(req.params.id);
-    const userAdmin = await user.find()[0]
-    if(userAdmin.id === userFind.id) return res.status(400).json({message:'No esta permitido borrar al usuario'})
+    const userAdmin = await user.find()[0];
+    if (userAdmin.id === userFind.id)
+        return res
+            .status(400)
+            .json({ message: "No esta permitido borrar al usuario" });
     if (userFind) {
         await user.findByIdAndDelete(req.params.id);
         await comment.deleteMany({ user: req.params.id });

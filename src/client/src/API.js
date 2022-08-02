@@ -99,9 +99,97 @@ export const repsList = async () =>{
   return res.data
 }
 
+export const stats = async () =>{
+  const res = await axios.get("/api/user/stats",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res.data
+}
+
+//Get Students
+
+//List
+
+export const listStudents = async ({limit,page,queryStudent,search}) =>{
+  const res = await axios.get(`/api/students/list?students=${queryStudent}&limit=${limit}&page=${page}&search=${search || ''}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//Detail
+export const detailStudent = async (id) =>{
+  const res = await axios.get(`/api/students/info/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//Chest Student
+
+export const chestStudent = async (id) =>{
+   const res = await axios.get(`/api/chest/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
 //POST Students
 export const registerStudent = async (data) =>{
   const res = await axios.post("/api/students/register",data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+// PUT Student Score
+
+export const updateScore = async (id,scores) =>{
+  const res = await axios.put(`/api/students/scores/${id}`,scores,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const updateStudent = async (id,student) =>{
+  const res = await axios.put(`/api/students/info/${id}`,student,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//Delete Students
+
+export const deleteStudentFromId = async (id,password) =>{
+     const res = await axios.post("/api/students/delete",{ids:[id],password},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }
@@ -254,66 +342,6 @@ export const deleteUserFromId = async ({id,password}) =>{
       return err.response
     })
   return res
-}
-
-export const studentsList = async (students,params) => {
-    console.log(params)
-
-  if (students === "studentsActive") {
-    const res = await axios.get(`/api/students/actives${params.limit ? `/?limit=${params.limit ? params.limit : 10}&page=${params.page ? params.page : 1}` : `/${params}`}`, {
-        headers: { "x-access-token": Cookies.get("token") },
-      }).catch((err) => {
-        console.log(err)
-        return err.response
-      })
-    
-    
-    if (res.status === 401) {
-      alert("Token vencido o perdido")
-      Cookies.remove("token")
-      Cookies.remove("rol")
-      window.location.href = "/"
-      return
-    }
-    return res
-  }
-
-  if (students === "studentsInactive") {
-    const res = await axios.get(`/api/students/inactives${params.limit ? `/${params}` : `/${params}`}`, {
-        headers: { "x-access-token": Cookies.get("token") },
-      }).catch((err) => {
-        console.log(err)
-        return err.response
-      })
-
-    
-    if (res.status === 401) {
-      alert("Token vencido o perdido")
-      Cookies.remove("token")
-      Cookies.remove("rol")
-      window.location.href = "/"
-      return
-    }
-    return res
-  }
-
-  if (students === "studentsGradues") {
-    const res = await axios.get(`/api/students/gradues${params.limit ? `/${params}` : `/${params}`}`, {
-        headers: { "x-access-token": Cookies.get("token") },
-      }).catch((err) => {
-        console.log(err)
-        return err.response
-      })
-    
-    if (res.status === 401) {
-      alert("Token vencido o perdido")
-      Cookies.remove("token")
-      Cookies.remove("rol")
-      window.location.href = "/"
-      return
-    }
-    return res
-  }
 }
 
 export const studentInformation = async (id) => {

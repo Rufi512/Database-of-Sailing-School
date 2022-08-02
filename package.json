@@ -9,7 +9,7 @@
     "build": "babel src --ignore src/client --out-dir build && cd src/client && npm run build",
     "start": "node build/index.js",
     "client": "cd src/client && npm run start",
-    "dev": "nodemon src/index.js --exec babel-node"
+    "dev": "nodemon src/index.js --ignore './src/client/'  --exec babel-node"
   },
   "dependencies": {
     "awesome-phonenumber": "^3.0.2",

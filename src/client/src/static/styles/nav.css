@@ -1,7 +1,7 @@
 .button-nav{
     position: absolute;
     display: flex;
-    top: 8px;
+    top: 5px;
     padding: 10px;
     left: 8px;
     z-index: 1;

@@ -51,3 +51,29 @@
     max-height: max-content;
     border-color:#6e6e6e;
 }
+
+.container-detail .message-missings{
+    margin-top: 15px;
+}
+
+.container-detail .container-section {
+    overflow: auto;
+    border: 2px solid;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.container-detail .container-section h4{
+    background: #284d9b;
+    color: white;
+    padding-left: 5px;
+    border-radius: 2px;
+}
+
+.container-detail .container-section table tbody th{
+    width: 185px;
+}
+
+.container-detail .student-contact{
+    margin: 50px 0;
+}

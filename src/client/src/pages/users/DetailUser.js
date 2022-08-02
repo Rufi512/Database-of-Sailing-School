@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { saludateRol } from "../../components/SomethingFunctions";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import {
 } from "../../API";
 import "../../static/styles/form-user.css";
 const DetailUser = () => {
+	const timerRef = useRef(null);
 	const [showEdit, setShowEdit] = useState(false);
 	const [showChangePassword, setShowChangePassword] = useState(false);
 	const [showQuestionsModal, setShowQuestionsModal] = useState(false);
@@ -60,7 +61,7 @@ const DetailUser = () => {
 			toast.error("Error al requeridr información, reitentando...", {
 				autoClose: 3000,
 			});
-			setTimeout(() => {
+			timerRef.current = setTimeout(() => {
 				request();
 			}, 3000);
 		}
@@ -68,6 +69,7 @@ const DetailUser = () => {
 
 	useEffect(() => {
 		request();
+		return () => clearTimeout(timerRef.current)
 	}, [request]);
 
 	const handleSubmit = async (e) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as HomeIcon } from "../static/icons/navbar/home.svg";
 import { ReactComponent as CloseIcon } from "../static/icons/navbar/close.svg";
@@ -12,10 +12,35 @@ import { ReactComponent as SectionIcon } from "../static/icons/navbar/section.sv
 import "../static/styles/nav.css";
 const Navbar = (props) => {
   const [navActive, setNavActive] = useState(false);
+  const [screenSize, setScreenSize] = useState({
+    current: window.innerWidth,
+  });
   const showBar = (value) => {
     if (value) return setNavActive(true);
     setNavActive(false);
   };
+
+  if(screenSize.current >= 900 || !navActive){
+    document.body.style.overflow = "auto"
+  }else{
+    if(navActive){
+      document.body.style.overflow = "hidden"
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      setScreenSize({ current: window.innerWidth });
+    });
+    window.addEventListener("load", () => {
+      setScreenSize({ current: window.innerWidth });
+    });
+    return () => {
+      window.removeEventListener("resize", () => {
+        setScreenSize({ current: window.innerWidth });
+      });
+    };
+  }, [props]);
 
   return (
     <React.Fragment>
@@ -51,7 +76,7 @@ const Navbar = (props) => {
         <p className="indicator-text">Estudiantes y secciones</p>
         <div className="links-container">
           <Link
-            to="/students"
+            to="/students/list"
             className={`link ${
               props.actualPage === "studentsList" ? "link-active" : ""
             }`}

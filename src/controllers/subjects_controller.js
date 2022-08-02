@@ -2,6 +2,7 @@ import subject from '../models/subject';
 import section from '../models/section';
 import student from '../models/student';
 import mongoose from 'mongoose'
+
 const checkSubject = async (data, res, update) => {
     const { name, fromYears } = data
     if (!name || !fromYears) {
@@ -119,6 +120,31 @@ export const addSubjectsBySection = async (req,res) =>{
 		console.log(err)
 		res.status(500).json({message:'Error fatal'})
 	}
+}
+
+// Called if every student is registered and add subjects for the section
+
+export const addSubjectsNewStudentsSection = async (id) =>{
+    try{
+        let sectionFound = await section.findOne({ _id: id })
+        let listSubject = sectionFound.subjects.map((el)=>{return {subject:el, scores:[]}})
+        if(!listSubject) return res.status(400).json({message:'Seccion no encontrada'})
+        for (const studentRegister of sectionFound.students) {
+            const studentFind = await student.findOne({ _id: studentRegister })
+            let subjectToStudent = listSubject
+            // Verify if subject is already exists
+            for(const oldSubjects of studentFind.subjects){
+                subjectToStudent = subjectToStudent.filter((el)=> (el.subject == oldSubjects.subject))
+            }
+            // Add if not subjects in student and is register and push to saved
+            await student.updateOne({_id:studentFind.id},{$addToSet:{subjects:{$each:subjectToStudent}}})
+
+        }
+        return true
+    }catch(err){
+        console.log(err)
+        return false
+    }
 }
 
 export const deleteSubject = async (req,res) =>{

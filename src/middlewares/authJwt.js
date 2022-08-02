@@ -28,6 +28,26 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
+export const verifyTokenExpire = async (req, res, next) => {
+  try {
+    const token = req.headers["x-access-token"];
+    if (!token)
+      return res.status(403).json({ message: "No se ha obtenido el token" });
+    const decoded = jwt.verify(token, secret);
+
+    req.userId = decoded.id;
+
+    const userFind = await user.findById(decoded.id, { password: 0 });
+
+    if (!userFind)
+      return res.status(404).json({ message: "Usuario no encontrado" });
+
+    return res.status(200)
+  } catch (err) {
+    return res.status(401).json({ message: "Token perdido o no autorizado" });
+  }
+};
+
 export const checkPassword = async (req, res, next) => {
   try {
     console.log(req.body);
