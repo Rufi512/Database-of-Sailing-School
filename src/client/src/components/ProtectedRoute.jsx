@@ -1,8 +1,12 @@
-import useAuth from './auth'
+import React,{useEffect} from 'react'
+import Cookies from "js-cookie";
 import {Navigate, Outlet} from "react-router-dom"
-const ProtectedRoute = ({ children }) => {
- const auth = useAuth
- console.log(children)
+import {verifyToken} from '../API'
+const ProtectedRoute = () => {
+ useEffect(()=>{
+    verifyToken()
+ },[])
+ const auth = Cookies.get("token") || false
  return auth ? <Outlet/> : <Navigate to="/"/>
 };
 

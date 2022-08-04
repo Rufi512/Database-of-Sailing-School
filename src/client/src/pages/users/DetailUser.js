@@ -45,7 +45,6 @@ const DetailUser = () => {
 			if (res.status >= 400)
 				return toast.error(res.data.message, { autoClose: false });
 			setUser({
-				...user,
 				ci,
 				firstname,
 				lastname,

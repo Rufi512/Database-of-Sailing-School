@@ -54,6 +54,9 @@ const Login = (props) => {
       });
       }
 
+      Cookies.set("token", res.data.token);
+      Cookies.set("rol", res.data.rol);
+
       toast.update(toastId, {
         render: "Ingreso Correcto",
         type: "success",
@@ -63,9 +66,6 @@ const Login = (props) => {
       });
 
       navigate('/home')
-
-      Cookies.set("token", res.data.token);
-      Cookies.set("rol", res.data.rol);
     } catch(e) {
       setIsSubmit(false)
       console.log(e)

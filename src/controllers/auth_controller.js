@@ -39,3 +39,7 @@ export const signIn = async (req, res) => {
     });
 };
 
+export const verifyTokenConfirm = (req,res) =>{
+    return res.json({message:'Token valido'})
+}
+

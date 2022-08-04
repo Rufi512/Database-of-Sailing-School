@@ -1,5 +1,21 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+
+export const verifyToken = async ()=>{
+    const res = axios.get('/api/auth/verify/token',{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      toast.error('Sesion expirada')
+      Cookies.remove("token")
+      Cookies.remove("rol")
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.message = "Falla en el servidor :("
+      return err.response
+    })
+    return res
+}
+
 
 //POST Login user
 

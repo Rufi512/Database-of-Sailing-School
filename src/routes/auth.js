@@ -13,6 +13,11 @@ router.get('/codes/phones',(req,res)=>{
 	}
 	res.json(newList)
 })
+
+router.get('/questions/user/:id',[authJwt.verifyToken],recoveryCtrl.getQuestionsOnLogin) //list question from user registered
+
+router.get('/verify/token',[authJwt.verifyToken],authCtrl.verifyTokenConfirm)
+
 //POST
 router.post('/login',[validateCaptcha],authCtrl.signIn)
 
@@ -20,9 +25,9 @@ router.post('/questions',[validateCaptcha],recoveryCtrl.getQuestions) //list que
 router.post('/register/questions/:id',[authJwt.verifyToken],recoveryCtrl.setQuestions) //set list question from user registered
 router.post('/questions/check',recoveryCtrl.checkQuestions)
 
-router.get('/questions/user/:id',[authJwt.verifyToken],recoveryCtrl.getQuestionsOnLogin) //list question from user registered
 
 router.post('/forgot-password',[validateCaptcha],recoveryCtrl.forgotPassword)
 
 router.post('/reset-password/:id/:token',recoveryCtrl.resetPassword)
+
 export default router
