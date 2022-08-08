@@ -1,12 +1,15 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const verifyToken = async ()=>{
     const res = axios.get('/api/auth/verify/token',{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       toast.error('Sesion expirada')
       Cookies.remove("token")
       Cookies.remove("rol")
+      let navigate = useNavigate();
+      navigate('/')
       if(err.response.status <= 500){
         return err.response
       }
@@ -82,6 +85,10 @@ export const resetPassword = async ({id,token,password})=>{
 } 
 
 // List
+
+//-------------------Sections-----------------------//
+//GETs
+
 export const sectionList = async ()=>{
   const res = await axios.get("/api/section/list/select",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
@@ -92,6 +99,54 @@ export const sectionList = async ()=>{
     })
   return res.data
 }
+
+export const sections = async ()=>{
+  const res = await axios.get("/api/section/list",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res.data
+}
+
+export const sectionDetail = async (id)=>{
+  const res = await axios.get(`/api/section/info/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res.data
+}
+
+//POSTs
+
+export const registerSection = async (newSection)=>{
+  const res = await axios.post("/api/section/register",newSection,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const deleteSectionFromId = async ({id,password}) =>{
+  const res = await axios.post(`/api/section/delete/${id}`,{password},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//-------------------section end---------------------------//
 
 export const codesPhones = async () =>{
   const res = await axios.get("/api/auth/codes/phones",{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
@@ -351,6 +406,52 @@ export const listUsers = async ({limit,page}) =>{
 export const deleteUserFromId = async ({id,password}) =>{
   console.log(id,password)
   const res = await axios.post(`/api/user/delete/${id}`,{password},{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//Subjects 
+export const subjectQueryList = async ({limit,page}) =>{
+   const res = await axios.get(`/api/subject/list?limit=${limit}&page=${page}`,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+
+export const registerSubject = async (data) =>{
+  const res = await axios.post(`/api/subject/register`,data,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const modifySubject = async (id,data) =>{
+  const res = await axios.post(`/api/subject/update/${id}`,data,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const deleteSubjectFromId = async ({id,password}) =>{
+  const res = await axios.post(`/api/subject/delete/`,{id,password},{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }

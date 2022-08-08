@@ -15,6 +15,7 @@ import CreateRep from "./pages/reps/CreateRep";
 import DetailRep from "./pages/reps/DetailRep";
 import SectionList from "./pages/sections/SectionList";
 import Section from "./pages/sections/Section";
+import SubjectList from './pages/subjects/SubjectList'
 //Admin level
 import CreateUser from "./pages/users/CreateUser";
 import DetailUser from "./pages/users/DetailUser";
@@ -72,6 +73,7 @@ const App = () => (
           <Route exact path="reps" element={<ListRep />} />
           <Route exact path="reps/create" element={<CreateRep />} />
           <Route exact path="reps/detail/:id" element={<DetailRep />} />
+          <Route exact path="subject/list" element={<SubjectList/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

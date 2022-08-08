@@ -21,8 +21,8 @@ const ListRep = () => {
 		});
 		try {
 			const res = await listReps({ limit: limit, page: pageActual });
-			console.log(res);
-
+			setPassword("")
+			setDeleteModal(false)
 			if (res.status >= 400) {
 				return toast.update(toastId, {
 					render: res.data.message,

@@ -8,8 +8,26 @@ import dateFormat from "dateformat";
 import subject from '../models/subject'
 const verifyFields = (req, res) => {
     if (!req.body.name || !req.body.year || !/^[A-Za-záéíóúñ'´ ]+$/.test(req.body.name) || !Number.isInteger(Number(req.body.year))) {
-        res.status(400).json({ message: 'Datos invalidos' })
+        return {message:'Datos invalidos'} 
     }
+
+    if(!req.body.period_initial || !req.body.completion_period){
+        return {message:'Indique el periodo de inicio y de culminacion'} 
+    }
+
+    let dt = new Date();
+    const year_actual = dt.getFullYear().toString()
+    
+    if(req.body.year > 10){
+        return {message:'Año invalido'}
+    }
+
+    if(Number(req.body.period_initial) < Number(year_actual) || Number(req.body.completion_period) < Number(year_actual)){
+        return {message:'Los años de periodo de inicio y culminacion no pueden ser menor al año actual '}
+    }
+
+    return false
+
 }
 
 const requestIds = async (id, sectionNew, isUpdated) => {
@@ -21,7 +39,7 @@ const requestIds = async (id, sectionNew, isUpdated) => {
     if(studentFound.section && !sectionNew)return { ci: studentFound.ci, firstname: studentFound.firstname, lastname: studentFound.lastname }
 
     if (!studentFound.section) {
-        const res = await student.updateOne({ _id: id }, { $set: { section: sectionNew.id, last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT") } }, { upsert: true });
+        //const res = await student.updateOne({ _id: id }, { $set: { section: sectionNew.id, last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT") } }, { upsert: true });
         return true
     }
 
@@ -45,7 +63,10 @@ const requestIds = async (id, sectionNew, isUpdated) => {
 }
 
 export const create = async (req, res) => {
-    verifyFields(req, res)
+    const isInvalid = verifyFields(req, res)
+    if(isInvalid){
+        return res.status(400).json({message:isInvalid.message})
+    }
     const { name, year, students,period_initial,completion_period } = req.body
     const sectionCheck = await section.find({ name: name.toLowerCase() })
     if (sectionCheck.length > 0) return res.status(400).json({ message: 'Seccion con el mismo nombre ya existe!' })
@@ -60,8 +81,6 @@ export const create = async (req, res) => {
     })
 
     const savedSection = await newSection.save()
-    console.log(savedSection)
-    console.log(savedSection.id)
     //Saved students for the section
     let arrayStudentsIds = []
     let arrayStudentsInvalid = []

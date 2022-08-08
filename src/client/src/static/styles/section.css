@@ -7,7 +7,6 @@
     flex-direction: column;
 }
 
-.container-section .card-container .card-header p,
 .container-section .card-container .card-header h2 {
     margin: 5px 0;
 }
@@ -127,6 +126,16 @@
     margin: 10px 0;
     display: flex;
     flex-flow: column;
+}
+
+.container-section .container-header-data{
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-between;
+}
+
+.container-section .container-header-data p {
+    margin: 10px 0;
 }
 
 /*Modal add subjects*/

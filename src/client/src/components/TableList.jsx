@@ -60,14 +60,14 @@ const TableList = (props) => {
 								</p>
 							);
 						}
-						return(<></>)
+						return(<p style={{display:'none'}} key={i}></p>)
 					})}
 				</div>
 				<div className="table-body-select">
 					{data.map((el, i) => (
 						<div className="data-body" key={i}>
 							{labels.map((label, idx) => {
-								if(label.field === 'actions') return(<></>)
+								if(label.field === 'actions') return(<p style={{display:'none'}} key={idx}></p>)
 								if (!labels[idx - 1]) {
 									return (
 										<p
@@ -208,7 +208,7 @@ const TableList = (props) => {
 										</p>
 									);
 								}
-								return(<></>)
+								return(<p style={{display:'none'}}key={idx}></p>)
 								/*if(labels[idx-1] && !labels[idx-1].linked && !label.linked){
 									return <p className={`${label.field}`} key={idx}>{screenSize.current < 1024 ? (<span style={{fontWeight:'600'}}>{label.nameField}:</span>) : ''} {`${el[label.field]}`}</p>;
 								}*/

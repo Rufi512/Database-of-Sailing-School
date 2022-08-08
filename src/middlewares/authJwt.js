@@ -130,7 +130,7 @@ export const isAdmin = async (req, res, next) => {
   const userFind = await user.findById(req.userId);
 
   const rol = await roles.find({ _id: { $in: userFind.rol } });
-
+  
   if (rol[0].name === "Admin") {
     next();
     return;

@@ -9,6 +9,7 @@ import { ReactComponent as FormStudentsIcon } from "../static/icons/navbar/form-
 import { ReactComponent as RepIcon } from "../static/icons/navbar/rep.svg";
 import { ReactComponent as ListIcon } from "../static/icons/navbar/table-list-solid.svg";
 import { ReactComponent as SectionIcon } from "../static/icons/navbar/section.svg";
+import { ReactComponent as SubjectListIcon } from "../static/icons/navbar/subject-list.svg"
 import "../static/styles/nav.css";
 const Navbar = (props) => {
   const [navActive, setNavActive] = useState(false);
@@ -87,6 +88,15 @@ const Navbar = (props) => {
           <Link to="/sections" className={`link`}>
             <SectionIcon style={{ width: "48px", height: "32px" }} />
             Lista de secciones
+          </Link>
+           <Link
+            to="/subject/list"
+            className={`link ${
+              props.actualPage === "subject-list" ? "link-active" : ""
+            }`}
+          >
+            <SubjectListIcon />
+            Lista de materias
           </Link>
           <Link
             to="/register/students"

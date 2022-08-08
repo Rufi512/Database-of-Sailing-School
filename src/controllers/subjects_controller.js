@@ -15,7 +15,7 @@ const checkSubject = async (data, res, update) => {
     if (prevSubject && update && !prevSubject.name == name.toLowerCase()) return { status: false, message: 'Ya hay una materia con el mismo nombre' }
 
     const verifyYears = fromYears.map((el) => {
-        if (el > 0 && el < 6 && !isNaN(el)) {
+        if (el > 0 && el < 11 && !isNaN(el)) {
             return el
         }
     })
@@ -39,7 +39,21 @@ export const register = async (req, res) => {
 }
 
 export const list = async (req, res) => {
-    const subjects = await subject.find()
+     if (req.query) {
+        const { limit, page } = req.query
+        if (limit && isNaN(limit)) return res.status(400).json({ message: 'El limite de elementos no es un numero!' })
+        if (page && isNaN(page)) return res.status(400).json({ message: 'El limite de paginas no es un numero!' })
+    }
+
+
+    let optionsPagination = {
+        lean: false,
+        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+        page: req.query && Number(req.query.page) ? req.query.page : 1,
+    }
+
+    const subjects = await subject.paginate({}, optionsPagination)
+    
     return res.json(subjects)
 }
 
@@ -150,13 +164,14 @@ export const addSubjectsNewStudentsSection = async (id) =>{
 export const deleteSubject = async (req,res) =>{
 	try{
 		const {id} = req.body
-		const subjectFind = subject.findOne({_id:id})
+		const subjectFind = await subject.findOne({_id:id})
 		if(subjectFind){
 			await section.updateMany({"subjects": { "$in": [id] }},{$pull:{subjects:id}})
 			await student.updateMany({"subjects": { "$in": [id] }},{$pull:{subject:id}})
-			return res.json({message:`Materia: ${subjectFind.name[0].toUpperCase() + subjectFind.name[0].substring(1)} eliminada`})
+            await subject.findByIdAndDelete(id)
+			return res.json({message:`Materia: ${subjectFind.name[0].toUpperCase() + subjectFind.name.substring(1)} eliminada`})
 		}
-		return res.status(400).json({message:'No se ha podido eliminar la materia especificada'})
+		return res.status(404).json({message:'No se ha podido eliminar la materia especificada'})
 	}catch(err){
 		console.log(err)
 		res.status(500).json({message:'Ha ocurrido un error fatal en el servidor y no se ha podido eliminar la materia'})
