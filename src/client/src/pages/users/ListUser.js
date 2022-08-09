@@ -22,7 +22,6 @@ const ListUser = () => {
 		let user = data.filter((elm) => {
 			return elm.id === id;
 		});
-		console.log(user[0]);
 		setDeleteUser(user[0]);
 	};
 
@@ -32,7 +31,6 @@ const ListUser = () => {
 		});
 		try {
 			const res = await listUsers({ limit: limit, page: pageActual });
-			console.log(res);
 
 			if (res.status >= 400) {
 				return toast.update(toastId, {
@@ -86,6 +84,9 @@ const ListUser = () => {
 				id: deleteUser.id,
 				password: password,
 			});
+			setPassword("")
+			setDeleteModal(false);
+
 			if (res.status >= 400) {
 				return toast.update(toastId, {
 					render: res.data.message,
@@ -94,8 +95,7 @@ const ListUser = () => {
 					autoClose: 5000,
 				});
 			}
-			console.log(`Delete user: ${deleteUser.id}`);
-			setDeleteModal(false);
+
 			toast.update(toastId, {
 				render: "Usuario eliminado",
 				type: "success",
@@ -115,7 +115,6 @@ const ListUser = () => {
 	};
 
 	useEffect(() => {
-		console.log(pageActual, limit);
 		request();
 		return () => clearTimeout(timerRef.current)
 	}, [pageActual, limit, request]);
@@ -129,7 +128,7 @@ const ListUser = () => {
 					className={`modal-request-admin ${
 						deleteModal ? "modal-request-admin-active" : ""
 					}`}
-				>
+					>
 					<div className="container-modal card">
 						<h5 className="card-header">Advertencia</h5>
 						<div className="card-body">
@@ -232,12 +231,14 @@ const ListUser = () => {
 								actions={[
 									{
 										name: "edit",
+										type:"button",
 										func: (id) => {
 											navigate(`/user/detail/${id}`);
 										},
 									},
 									{
 										name: "delete",
+										type:"button",
 										func: (id) => {
 											showModalDelete(id);
 										},

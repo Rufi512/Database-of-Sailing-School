@@ -4,14 +4,14 @@ import {authJwt} from '../middlewares'
 const router = Router()
 
 //GET
-router.get('/list',[authJwt.verifyToken,authJwt.isTeacher],subjectsCtrl.list)
+router.get('/list',subjectsCtrl.list)
+router.get('/list/section/:id',subjectsCtrl.listAvalaibleSection)
 //POST
-router.post('/register',[authJwt.verifyToken,authJwt.isModerator],subjectsCtrl.register)
+router.post('/register',subjectsCtrl.register)
 //Assign subjects in section 
-router.post('/assign',[authJwt.verifyToken,authJwt.isModerator],subjectsCtrl.assign) // Assign for year school
-router.post('/section/assign',[authJwt.verifyToken,authJwt.isModerator],subjectsCtrl.addSubjectsBySection) // Assign for section added previous
+router.put('/section/update/:id',subjectsCtrl.updateSubjectsBySection) // Assign for section added previous
 //PUT
-router.put('/update/:id',[authJwt.verifyToken,authJwt.isModerator],subjectsCtrl.update)
+router.put('/update/:id',subjectsCtrl.update)
 //Delete
-router.post('/delete',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin],subjectsCtrl.deleteSubject)
+router.post('/delete',subjectsCtrl.deleteSubject)
 export default router

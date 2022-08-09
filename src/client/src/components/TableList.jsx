@@ -213,9 +213,10 @@ const TableList = (props) => {
 									return <p className={`${label.field}`} key={idx}>{screenSize.current < 1024 ? (<span style={{fontWeight:'600'}}>{label.nameField}:</span>) : ''} {`${el[label.field]}`}</p>;
 								}*/
 							})}
-							{actions.length > 0 ? (
+							{actions && actions.length > 0 ? (
 								<div className="container-actions">
 									{actions.map((act, i) => {
+										if(act.type === "button"){
 										return (
 											<button
 												className={`btn ${
@@ -224,7 +225,7 @@ const TableList = (props) => {
 														: "btn-primary"
 												}`}
 												onClick={(e) => {
-													act.func(el.id);
+													act.func(el.id || el._id);
 												}}
 												key={i}
 											>
@@ -242,7 +243,14 @@ const TableList = (props) => {
 													/>
 												)}
 											</button>
+
+
 										);
+									}
+									if(act.type === "checkbox"){
+										return(<input key={i} className="form-check-input" type="checkbox" onChange={(e)=>{act.func(el.id || el._id ,e.target.checked)}} checked={props.checks.filter((elm)=> elm === el._id || el.id)[0]}/>)
+									}
+									return(<p key={i}>No disponible</p>)
 									})}
 								</div>
 							) : (

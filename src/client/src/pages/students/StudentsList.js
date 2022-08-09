@@ -301,12 +301,14 @@ const StudentsList = () => {
 								]}
 								actions={[
 									{
+										type:"button",
 										name: "edit",
 										func: (id) => {
 											navigate(`/student/detail/${id}`);
 										},
 									},
 									{
+										type:"button",
 										name: "delete",
 										func: (id) => {
 											showModalDelete(id);

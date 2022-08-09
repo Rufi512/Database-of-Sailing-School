@@ -68,7 +68,6 @@ const FormStudent = () => {
         }
         setAvalaiblesReps(itemReps);
         isLoading(false);
-        console.log(itemsSections);
       } catch (e) {
         setTimeout(() => {
           request();

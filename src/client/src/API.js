@@ -427,6 +427,27 @@ export const subjectQueryList = async ({limit,page}) =>{
   return res
 }
 
+export const subjectsForSection = async (id) =>{
+   const res = await axios.get(`/api/subject/list/section/${id}`,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const assingSubjectsForSection = async (id,subjects,defaultSubjects,password) =>{
+   const res = await axios.put(`/api/subject/section/update/${id}`,{subjects,applyYearSubjects:defaultSubjects,password},{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
 
 export const registerSubject = async (data) =>{
   const res = await axios.post(`/api/subject/register`,data,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {

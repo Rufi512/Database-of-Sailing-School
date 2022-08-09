@@ -405,10 +405,12 @@ const SubjectList = () => {
 							actions={[
 								{
 									name: "edit",
+									type:"button",
 									func: (el) => editSubject(el),
 								},
 								{
 									name: "delete",
+									type:"button",
 									func: (id) => {
 										showModalDelete(id);
 									},

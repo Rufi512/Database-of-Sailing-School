@@ -1,14 +1,245 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { sections, registerSection, deleteSectionFromId } from "../../API";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Navbar from "../../components/Navbar";
 import TableList from "../../components/TableList";
+import NavigationOptionsList from "../../components/NavigationOptionsList";
 import "../../static/styles/sections-list.css";
 const SectionList = () => {
+	const timerRef = useRef(null);
 	let dt = new Date();
+	let navigate = useNavigate();
 	const [showCreator, setShowCreator] = useState(false);
+	const [pageActual, setActualPage] = useState(1);
+	const [avalaiblePages, setAvalaiblePages] = useState(1);
+	const [limit, setLimit] = useState(15);
+	const [list, setList] = useState([]);
+	const [isSubmit, setIsSubmit] = useState(false);
+	const [deleteModal, setDeleteModal] = useState(false);
+	const [deleteSection, setDeleteSection] = useState({});
+	const [password, setPassword] = useState("");
+	const [newSection, setNewSection] = useState({
+		name: "",
+		year: 1,
+		period_initial: dt.getFullYear().toString(),
+		completion_period: dt.getFullYear().toString(),
+	});
+
+	const showModalDelete = (id) => {
+		setDeleteModal(true);
+		let secc = list.filter((elm) => {
+			return elm.id === id;
+		});
+		setDeleteSection(secc[0]);
+	};
+
+	//Request list section
+	const request = useCallback(async () => {
+		const toastId = toast.loading("Consultando datos...", {
+			closeOnClick: true,
+		});
+		try {
+			const res = await sections({ limit: limit, page: pageActual });
+			if (res.status >= 400) {
+				return toast.update(toastId, {
+					render: res.data.message,
+					type: "error",
+					isLoading: false,
+					autoClose: 5000,
+				});
+			}
+
+			const sectionsList = res.docs.map((el) => {
+				let {
+					_id,
+					name,
+					year,
+					period_initial,
+					completion_period,
+					students,
+				} = el;
+				return Object({
+					id: _id,
+					name,
+					year,
+					period_initial,
+					completion_period: "- " + completion_period,
+					students_indicator: students.length || "0",
+				});
+			});
+
+			setAvalaiblePages(res.totalPages);
+			toast.update(toastId, {
+				render: "Lista cargada!",
+				type: "success",
+				isLoading: false,
+				autoClose: 5000,
+			});
+
+			setList(sectionsList);
+		} catch (e) {
+			console.log(e);
+			toast.update(toastId, {
+				render: "Fallo al requerir datos al servidor, reintentando...",
+				type: "error",
+				isLoading: false,
+				autoClose: 3000,
+			});
+			timerRef.current = setTimeout(() => {
+				request();
+			}, 3000);
+		}
+	}, [limit, pageActual]);
+
+	const deleteSectionId = async () => {
+		const toastId = toast.loading("Cargando datos...", {
+			closeOnClick: true,
+		});
+		try {
+			const res = await deleteSectionFromId({
+				id: deleteSection.id,
+				password: password,
+			});
+			setPassword("")
+			if (res.status >= 400) {
+				return toast.update(toastId, {
+					render: res.data.message,
+					type: "error",
+					isLoading: false,
+					autoClose: 5000,
+				});
+			}
+			console.log(`Delete section: ${deleteSection.id}`);
+			setDeleteModal(false);
+			toast.update(toastId, {
+				render: "Seccion eliminada",
+				type: "success",
+				isLoading: false,
+				autoClose: 3000,
+			});
+			request();
+		} catch (e) {
+			console.log(e);
+			return toast.update(toastId, {
+				render: "Error al enviar la peticion",
+				type: "error",
+				isLoading: false,
+				autoClose: 5000,
+			});
+		}
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		if (isSubmit) return;
+		setIsSubmit(true);
+
+		const toastId = toast.loading("Enviando datos...", {
+			closeOnClick: true,
+		});
+
+		const res = await registerSection(newSection);
+		setIsSubmit(false);
+		setShowCreator(false);
+		setNewSection({
+			name: "",
+			year: 1,
+			period_initial: dt.getFullYear().toString(),
+			completion_period: dt.getFullYear().toString(),
+		});
+
+		if (res.status >= 400) {
+			return toast.update(toastId, {
+				render: res.data.message,
+				type: "error",
+				isLoading: false,
+				autoClose: 5000,
+			});
+		}
+
+		toast.update(toastId, {
+			render: "Seccion registrada",
+			type: "success",
+			isLoading: false,
+			autoClose: 5000,
+		});
+
+		return request();
+	};
+
+	useEffect(() => {
+		request();
+		console.log("pass");
+	}, [request, limit, pageActual]);
 	return (
 		<>
 			<Navbar actualPage={"sections"} />
 			<div className="container-body container-sections-list">
+				{/*Delete User modal*/}
+				<div
+					className={`modal-request-admin ${
+						deleteModal ? "modal-request-admin-active" : ""
+					}`}
+				>
+					<div className="container-modal card">
+						<h5 className="card-header">Advertencia</h5>
+						<div className="card-body">
+							<h5 className="card-title">
+								Confirmacion de accion de moderador
+							</h5>
+
+							<div>
+								<p className="card-text">
+									Estas seguro de borrar la sección?{" "}
+								</p>
+								<p className="card-text">
+									<span style={{ fontWeight: "bold" }}>
+										Nombre: 
+									</span>
+									{` ${deleteSection.name}`}
+									<br />
+									<span style={{ fontWeight: "bold" }}>
+										Periodo:
+									</span>{" "}
+									{`${deleteSection.period_initial} - ${deleteSection.completion_period}`}
+								</p>
+								<p className="card-text">
+									De ser asi introduzca su contraseña y
+									confirma la accion
+								</p>
+							</div>
+
+							<input
+								type="password"
+								className="form-control"
+								style={{ marginTop: "10px" }}
+								id="password-admin"
+								placeholder="Introduzca su contraseña"
+								onInput={(e) => setPassword(e.target.value)}
+								value={password}
+							/>
+							<div className="container-buttons">
+								<button
+									className="btn btn-primary"
+									onClick={deleteSectionId}
+								>
+									Confirmar Accion
+								</button>
+								<button
+									className="btn btn-secondary"
+									onClick={(e) => {
+										setDeleteSection({});
+										setDeleteModal(false);
+									}}
+								>
+									Regresar
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				{
 					//Modal to show form create section
 					<div
@@ -16,7 +247,11 @@ const SectionList = () => {
 							showCreator ? "modal-form-container-show" : ""
 						}`}
 					>
-						<form action="" className="form-container">
+						<form
+							action=""
+							className="form-container"
+							onSubmit={handleSubmit}
+						>
 							<h3>Registro de seccion</h3>
 							<div className="form-group">
 								<label htmlFor="section-name">
@@ -27,6 +262,14 @@ const SectionList = () => {
 									type="text"
 									className="form-control"
 									placeholder="Introduce el nombre de la seccion"
+									value={newSection.name}
+									onInput={(e) => {
+										setNewSection({
+											...newSection,
+											name: e.target.value,
+										});
+									}}
+									autoComplete="off"
 								/>
 								<small className="form-text text-muted">
 									Es necesario para indentificar la seccion
@@ -42,8 +285,15 @@ const SectionList = () => {
 									id="year-school"
 									step={1}
 									min={1}
-									max={5}
+									max={10}
 									placeholder="Especifica el año escolar de la seccion"
+									value={newSection.year}
+									onInput={(e) => {
+										setNewSection({
+											...newSection,
+											year: e.target.value,
+										});
+									}}
 								/>
 							</div>
 							<div className="form-group">
@@ -57,6 +307,13 @@ const SectionList = () => {
 										min={dt.getFullYear().toString()}
 										step="1"
 										placeholder="ej:2022"
+										onInput={(e) => {
+											setNewSection({
+												...newSection,
+												period_initial: e.target.value,
+											});
+										}}
+										value={newSection.period_initial}
 									/>
 									<input
 										className="form-control"
@@ -64,6 +321,14 @@ const SectionList = () => {
 										min={dt.getFullYear().toString()}
 										step="1"
 										placeholder="ej:2023"
+										onInput={(e) => {
+											setNewSection({
+												...newSection,
+												completion_period:
+													e.target.value,
+											});
+										}}
+										value={newSection.completion_period}
 									/>
 								</div>
 								<small className="form-text text-muted">
@@ -104,107 +369,50 @@ const SectionList = () => {
 						</button>
 					</div>
 					<div className="list p-3">
-						<div className="container-options-list">
-							<div className="navigation-button">
-								<nav aria-label="...">
-									<ul className="pagination">
-										<li className="page-item disabled">
-											<button
-												className="page-link"
-												href="#"
-												tabIndex="-1"
-											>
-												Anterior
-											</button>
-										</li>
-										<li className="page-item">
-											<button className="page-link" href="#">
-												1
-											</button>
-										</li>
-										<li className="page-item active">
-											<button className="page-link" href="#">
-												2
-											</button>
-										</li>
-										<li className="page-item">
-											<button className="page-link" href="#">
-												3
-											</button>
-										</li>
-										<li className="page-item">
-											<button className="page-link" href="#">
-												Siguiente
-											</button>
-										</li>
-									</ul>
-								</nav>
-							</div>
-							<div className="indicator-jump-page">
-								<span>Pagina </span>
-								<select className="custom-select">
-									<option defaultValue={2}>2</option>
-								</select>
-								<span>
-									{" "}
-									de{" "}
-									<span style={{ color: "#005adf" }}>
-										38
-									</span>{" "}
-								</span>
-							</div>
-							<div className="indicator-limit">
-								<span>Cantidad de elementos a mostrar: </span>
-								<select className="custom-select">
-									<option defaultValue={15}>15</option>
-									<option value={20}>20</option>
-									<option value={30}>30</option>
-									<option value={50}>50</option>
-								</select>
-							</div>
-						</div>
+						<NavigationOptionsList
+							changeActualPage={(e) => {
+								setActualPage(e);
+							}}
+							avalaiblePages={avalaiblePages}
+							pageActual={pageActual}
+							limit={limit}
+							changeLimit={(e) => {
+								setLimit(e);
+							}}
+						/>
 						<TableList
-							data={[
-								{
-									id: "tal",
-									name: "seccion1",
-									year: 2,
-									period_initial: "2019",
-									period_last: "2020",
-								},
-								{
-									id: "tal",
-									name: "secc2",
-									year: 4,
-									period_initial: "2019",
-									period_last: "2020",
-								},
-								{
-									id: "tal",
-									name: "secc3",
-									year: 5,
-									period_initial: "2019",
-									period_last: "2020",
-								},
-							]}
+							data={list}
 							labels={[
 								{ field: "name", nameField: "Seccion" },
 								{ field: "year", nameField: "Año" },
 								{
 									field: "period_initial",
 									nameField: "Periodo inicial",
+									linked: true,
 								},
 								{
-									field: "period_last",
+									field: "completion_period",
 									nameField: "Culminacion",
+								},
+								{
+									field: "students_indicator",
+									nameField: "Estudiantes registrados",
 								},
 								{ field: "actions", nameField: "Acciones" },
 							]}
 							actions={[
-								{ name: "edit", func: console.log("Modify") },
+								{
+									name: "edit",
+									type: "button",
+									func: (id) =>
+										navigate(`/section/detail/${id}`),
+								},
 								{
 									name: "delete",
-									func: console.log("Deleted"),
+									type:"button",
+									func: (id) => {
+										showModalDelete(id);
+									},
 								},
 							]}
 						/>

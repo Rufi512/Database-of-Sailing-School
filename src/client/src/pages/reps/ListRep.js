@@ -110,12 +110,10 @@ const ListRep = () => {
 		let rep = data.filter((elm) => {
 			return elm.id === id;
 		});
-		console.log(rep[0]);
 		setDeleteRep(rep[0]);
 	};
 
 	useEffect(() => {
-		console.log(pageActual, limit);
 		request();
 		return () => clearTimeout(timerRef)
 	}, [pageActual, limit, request]);
@@ -230,12 +228,14 @@ const ListRep = () => {
 								]}
 								actions={[
 									{
+										type: "button",
 										name: "edit",
 										func: (id) => {
 											navigate(`/reps/detail/${id}`);
 										},
 									},
 									{
+										type: "button",
 										name: "delete",
 										func: (id) => {
 											showModalDelete(id);

@@ -114,6 +114,10 @@
     padding: 10px 15px;
 }
 
+.container-section .data-body .name{
+    text-transform: capitalize;
+}
+
 .container-section .table-students table tr th,
 .container-section .table-students table tr td,
 .container-section .table-subjects-availables tr td,

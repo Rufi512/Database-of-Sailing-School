@@ -38,15 +38,17 @@ const requestIds = async (id, sectionNew, isUpdated) => {
     // Return if the student is in section previous and if registing in the new section not yet register
     if(studentFound.section && !sectionNew)return { ci: studentFound.ci, firstname: studentFound.firstname, lastname: studentFound.lastname }
 
-    if (!studentFound.section) {
-        //const res = await student.updateOne({ _id: id }, { $set: { section: sectionNew.id, last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT") } }, { upsert: true });
-        return true
-    }
 
     if (studentFound.section != sectionNew.id && isUpdated) {
         // Delete Students by section previous and assign new
         await section.updateMany({students:{$in: [studentFound.id]}},{ $pull: { students: studentFound.id } })
         await student.updateOne({ _id: id }, { $set: { section: sectionNew.id } }, { upsert: true });
+        return true
+    }
+
+    //New in section
+    if (!studentFound.section) {
+        const res = await student.updateOne({ _id: id }, { $set: { section: sectionNew.id, last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT") } }, { upsert: true });
         return true
     }
 
@@ -191,6 +193,8 @@ export const update = async (req, res) => {
         }
     }, { upsert: true })
 
+    await applySubjectsRegistered()
+
     if (arrayStudentsInvalid.length > 0) {
         return res.json({ section: sectionFound, invalids: arrayStudentsInvalid })
     }
@@ -249,47 +253,35 @@ export const addStudentsSectionRegistered = async (section_id,students) =>{
 
 //Subjects
 
-//Add subjects to section
-export const addSubjectSection = async (req,res)=>{
+//Add subjects and update to section
+export const applySubjectsRegistered = async (id)=>{
     try{
-        const {subjects,section_id} = req.body
-        const sectionFound = section.findOne({_id:section_id})
-        for(const verifySubject of subjects ){
-           const foundSubject = subject.findOne({_id:section_id})
-           if(!foundSubject) return res.status(404).json({message:'Alguna materia no ha sido encontrada'})
-        }
+        let sectionFound = await section.findOne({ _id: id })
+        let listSubject = sectionFound.subjects.map((el)=>{return {subject:el, scores:[]}})
+        if(!listSubject) return res.status(400).json({message:'Seccion no encontrada'})
+        for (const studentRegister of sectionFound.students) {
+            const studentFind = await student.findOne({ _id: studentRegister })
+            let subjectsFromStudents = studentFind.subjects
+            let subjectToStudent = listSubject
+            // preserve the subjects not remove
+            subjectToStudent.map((elm)=>{
+                let prevSubject = subjectsFromStudents.filter((item)=>{return item.id})[0]
+                if(prevSubject){
+                    return prevSubject
+                }
+                return elm
+            })
+            // Add if not subjects in student and is register and push to saved
+            await student.updateOne({_id:studentFind.id},{$set:{subjects:subjectToStudent}})
 
-    let listSubjects = subjects.map((el)=>{return {subject:el.id,scores:[]}})
-        if(!sectionFound) return res.status(404).json({message:'Seccion no encontrada!'})
-        await section.updateOne({_id:section_id},{$addToSet:{subjects:{$each: subjects}}})
-        return res.json({message:'Materias a seccion añadida'})
+        }
+        return true
     }catch(err){
         console.log(err)
-        return res.status(500).json({message:'No se ha podido añadir las materias a la seccion'})
+        return false
     }
 }
 
-
-//Delete subjects for the section
-export const deleteSubjectsSection = async (req,res)=>{
-    try{
-        const {id} = req.params
-        let {subjects} = req.body
-        const sectionFound = section.findOne({_id:id})
-        for(const verifySubject of subjects ){
-           const foundSubject = subject.findOne({_id:id})
-           if(!foundSubject) return res.status(404).json({message:'Alguna seccion no ha sido encontrada'})
-        }
-        if(!sectionFound) return res.status(404).json({message:'Seccion no encontrada!'})
-        subjects = subjects.map((el)=> mongoose.Types.ObjectId(el))
-        await section.updateOne({_id:id},{$pullAll:{subjects:subjects}})
-        await student.updateMany({section:id},{$pull:{subjects:{subject:{$in:subjects}}}})
-        return res.json({message:`Materia/s a seccion y estudiantes eliminadas`})
-    }catch(err){
-        console.log(err)
-        return res.status(500).json({message:'No se ha podido borrar las materias a la seccion'})
-    }
-}
 
 export const deleteSection = async (req,res)=>{
     const {section_id} = req.params
