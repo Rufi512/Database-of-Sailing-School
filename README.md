@@ -12,13 +12,12 @@ This version is very very very very very very very, and if it is not clear to yo
 
 1.Install the dependencies:
 ```
-cd backend
 npm i
 ```
 
 and those of the frontend
 ```
-cd frontend
+cd src/client/
 npm i
 ```
 2.Values required for env:
@@ -51,7 +50,7 @@ npm run all-dev
 npm run dev
 ```
 
-* Frontend:
+* Frontend in src/client:
 
 ```
 npm run start
