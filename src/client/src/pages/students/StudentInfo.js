@@ -15,16 +15,18 @@ import {
   chestStudent,
   updateScore,
 } from "../../API";
+
 const StudentInfo = () => {
   const timerRef = useRef(null);
   let navigate = useNavigate();
   const [activeForm, setActiveForm] = useState(false);
   const [showChest, setShowChest] = useState(false);
-  const [chest, setChest] = useState([]);
+  const [chest, setChest] = useState({ data: [] });
   const [loading, isLoading] = useState(true);
   const [avalaibleReps, setAvalaiblesReps] = useState([
     { label: "Sin asignar", value: "" },
   ]);
+
   const [avalaibleCountries, setAvalaiblesCountries] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [subjects, setSubjects] = useState([]);
@@ -34,6 +36,7 @@ const StudentInfo = () => {
     firstname: "",
     lastname: "",
     section: "",
+    graduate: false,
     status: true,
     subjects: [],
     contact: {
@@ -62,6 +65,7 @@ const StudentInfo = () => {
     firstname: "",
     lastname: "",
     section: "",
+    graduate: false,
     status: true,
     subjects: [],
     contact: {
@@ -126,7 +130,7 @@ const StudentInfo = () => {
     });
 
     try {
-      const res = updateStudent(params.id, student);
+      const res = await updateStudent(params.id, student);
       if (res.status >= 400) {
         setIsSubmit(false);
         return toast.update(toastId, {
@@ -136,7 +140,6 @@ const StudentInfo = () => {
           autoClose: 5000,
         });
       }
-      console.log(student);
       toast.update(toastId, {
         render: "Estudiante Actualizado!",
         type: "success",
@@ -211,11 +214,12 @@ const StudentInfo = () => {
     try {
       isLoading(true);
       //Call all api request
-      const res = await detailStudent(params.id);
-      const reps = await repsList();
-      const codesList = await codesPhones();
-      const chestInfo = await chestStudent(params.id);
-      console.log(chestInfo.data);
+      const [res, reps, codesList, chestInfo] = await Promise.all([
+        await detailStudent(params.id),
+        await repsList(),
+        await codesPhones(),
+        await chestStudent(params.id),
+      ]);
       //Set default state
       let itemReps = [{ label: "Sin asignar", value: "" }];
       let itemsCountries = [{ label: "Sin Asignar", value: "" }];
@@ -223,9 +227,17 @@ const StudentInfo = () => {
       //Assign info codePhones,rep_data, student and chest
       itemsCountries = itemsCountries.concat(codesList);
       setAvalaiblesCountries(itemsCountries);
-      if (res.data.subjects) {
-        setSubjects(res.data.subjects);
+
+      if (res.data.student) {
+        res.data.student.subjects = res.data.student.subjects.map((el) => {
+          return {
+            scores: [el.scores[0] || 0, el.scores[1] || 0, el.scores[2] || 0],
+            subject: el.subject[0].name || "",
+          };
+        });
+        setSubjects(res.data.student.subjects);
       }
+
       if (reps.message) {
         toast.error(reps.message);
       } else {
@@ -250,11 +262,12 @@ const StudentInfo = () => {
       }
       setAvalaiblesReps(itemReps);
       if (chestInfo.data) setChest(chestInfo.data);
-      console.log(res.data);
+
       setStudent({
         ci: res.data.student.ci || "",
         firstname: res.data.student.firstname || "",
         lastname: res.data.student.lastname || "",
+        graduate: res.data.student.graduate || false,
         section: res.data.student.section ? res.data.student.section.name : "",
         status: res.data.student.status,
         subjects: res.data.student.subjects || [],
@@ -308,9 +321,10 @@ const StudentInfo = () => {
         ci: res.data.student.ci || "",
         firstname: res.data.student.firstname || "",
         lastname: res.data.student.lastname || "",
+        graduate: res.data.student.graduate || false,
         section: res.data.student.section ? res.data.student.section.name : "",
         status: res.data.student.status,
-        subjects: res.data.student.subjects || [],
+        subjectsR: res.data.student.subjects || [],
         contact: {
           address_1:
             res.data.student.contact &&
@@ -392,10 +406,10 @@ const StudentInfo = () => {
     });
     try {
       const scoreFormatted = subjects.map((el) => {
-        return el.score;
+        return el.scores;
       });
 
-      const res = await updateScore(student.id, scoreFormatted);
+      const res = await updateScore({ id: params.id, scores: scoreFormatted });
       if (res.status >= 400) {
         return toast.update(toastId, {
           render: res.data.message,
@@ -425,8 +439,7 @@ const StudentInfo = () => {
     return () => clearTimeout(timerRef.current);
   }, [request]);
 
-  console.log("data:", data);
-
+  console.log("chest", chest);
   return (
     <>
       <Navbar />
@@ -445,25 +458,71 @@ const StudentInfo = () => {
             onSubmit={handleSubmit}
           >
             <div className="student-information">
-              <div className="form-check form-switch">
-                <label
-                  className="label-separator"
-                  htmlFor="activator-edit"
-                  style={{ fontSize: "1em" }}
-                >
-                  {" "}
-                  Editar estudiante
-                </label>{" "}
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="activator-edit"
-                  onChange={(e) => {
-                    setActiveForm(e.target.checked);
-                  }}
-                  checked={activeForm}
-                />
+              <div className="form-container-switchs">
+                {activeForm ? (
+                  <div
+                    className="form-check form-switch"
+                    style={{
+                      justifyContent: "flex-end",
+                      flexDirection: "row-reverse",
+                    }}
+                  >
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="graduate-activator"
+                      onChange={(e) =>
+                        setStudent({ ...student, graduate: e.target.checked })
+                      }
+                      checked={student.graduate}
+                    />
+                    <label
+                      className="form-check-label label-separator"
+                      style={{ fontSize: "1em" }}
+                      htmlFor="graduate-activator"
+                    >
+                      Graduar estudiante
+                    </label>
+                  </div>
+                ) : (
+                  <div
+                    className="form-check form-switch"
+                    style={{
+                      justifyContent: "flex-end",
+                      flexDirection: "row-reverse",
+                    }}
+                  >
+                    <label
+                      className="form-check-label label-separator"
+                      style={{ fontSize: "1em", fontWeight: "400" }}
+                      htmlFor="graduate-activator"
+                    >
+                      Actualmente el estudiante esta:{" "}
+                      {data.graduate ? <b>graduado</b> : <b>cursando</b>}
+                    </label>
+                  </div>
+                )}
+
+                <div className="form-check form-switch">
+                  <label
+                    className="label-separator"
+                    htmlFor="activator-edit"
+                    style={{ fontSize: "1em" }}
+                  >
+                    {" "}
+                    Editar estudiante
+                  </label>{" "}
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="activator-edit"
+                    onChange={(e) => {
+                      setActiveForm(e.target.checked);
+                    }}
+                    checked={activeForm}
+                  />
+                </div>
               </div>
               <div className="form-group" style={{ marginBottom: "10px" }}>
                 <label htmlFor="ci">Cedula del estudiante</label>
@@ -588,62 +647,78 @@ const StudentInfo = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {activeForm
-                      ? subjects.map((el, i) => (
+                    {subjects.length > 0 ? (
+                      subjects.map((el, i) => {
+                        if (activeForm) {
+                          return (
+                            <tr key={i}>
+                              <th scope="row">{el.subject}</th>
+                              <td>
+                                <input
+                                  type="number"
+                                  step={1}
+                                  min={0}
+                                  max={20}
+                                  onChange={(e) => {
+                                    let items = [...subjects];
+                                    items[i].scores[0] = Number(e.target.value);
+                                    setSubjects(items);
+                                  }}
+                                  value={subjects[i].scores[0] || 0}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  step={1}
+                                  min={0}
+                                  max={20}
+                                  onChange={(e) => {
+                                    let items = [...subjects];
+                                    items[i].scores[1] = Number(e.target.value);
+                                    setSubjects(items);
+                                  }}
+                                  value={subjects[i].scores[1] || 0}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  step={1}
+                                  min={0}
+                                  max={20}
+                                  onChange={(e) => {
+                                    let items = [...subjects];
+                                    items[i].scores[2] = Number(e.target.value);
+                                    setSubjects(items);
+                                  }}
+                                  value={subjects[i].scores[2] || 0}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        }
+
+                        return <tr key={i}></tr>;
+                      })
+                    ) : (
+                      <></>
+                    )}
+
+                    {activeForm === false ? (
+                      student.subjects.map((el, i) => {
+                        return (
                           <tr key={i}>
                             <th scope="row">{el.subject}</th>
-                            <td>
-                              <input
-                                type="number"
-                                step={1}
-                                min={1}
-                                max={20}
-                                onChange={(e) => {
-                                  let items = [...subjects];
-                                  items[i].score[0] = Number(e.target.value);
-                                  setSubjects(items);
-                                }}
-                                value={subjects[i].score[0]}
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="number"
-                                step={1}
-                                min={1}
-                                max={20}
-                                onChange={(e) => {
-                                  let items = [...subjects];
-                                  items[i].score[1] = Number(e.target.value);
-                                  setSubjects(items);
-                                }}
-                                value={subjects[i].score[1]}
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="number"
-                                step={1}
-                                min={1}
-                                max={20}
-                                onChange={(e) => {
-                                  let items = [...subjects];
-                                  items[i].score[2] = Number(e.target.value);
-                                  setSubjects(items);
-                                }}
-                                value={subjects[i].score[2]}
-                              />
-                            </td>
+                            <td>{el.scores[0] || "No registrado"}</td>
+                            <td>{el.scores[1] || "No registrado"}</td>
+                            <td>{el.scores[2] || "No registrado"}</td>
                           </tr>
-                        ))
-                      : student.subjects.map((el, i) => (
-                          <tr key={i}>
-                            <th scope="row">{el.subject}</th>
-                            <td>{el.score[0]}</td>
-                            <td>{el.score[1]}</td>
-                            <td>{el.score[2]}</td>
-                          </tr>
-                        ))}
+                        );
+                      })
+                    ) : (
+                      <></>
+                    )}
                   </tbody>
                 </table>
                 {activeForm && student.subjects.length > 0 ? (
@@ -659,6 +734,7 @@ const StudentInfo = () => {
                       onClick={(e) => {
                         updateStudentScore();
                       }}
+                      type="button"
                     >
                       Actualizar
                     </button>
@@ -705,11 +781,24 @@ const StudentInfo = () => {
                   : ""
               }`}
             >
-              {chest.length > 0 ? (
-                chest.map((el, i) => {
+              {chest.data.length > 0 ? (
+                chest.data.map((el, i) => {
                   return (
-                    <div className="container-section" key={i}>
-                      <h4>{el.name || "Sin información"}</h4>
+                    <div className={`container-section border rounded ${el.approved ? 'border-primary' : 'border-danger'}`} key={i}>
+                      <h4>{el.section.name || "Sin información"}</h4>
+                      <div className="container-info-header-chest">
+                        <p>
+                          Año: <b>{el.section.year || "N/A"}</b>
+                        </p>{" "}
+                        <p>
+                          Periodo:{" "}
+                          <b>{`${el.period_initial} - ${el.completion_period}`}</b>
+                        </p>{" "}
+                        <p>
+                          Seccion cursada:{" "}
+                          <b>{`${el.approved ? "Aprobada" : "Reprobada"}`}</b>
+                        </p>
+                      </div>
                       <table className="table">
                         <thead className="thead">
                           <tr>
@@ -720,12 +809,12 @@ const StudentInfo = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {el.data.map((el, i) => (
+                          {el.subjects.map((el, i) => (
                             <tr key={i}>
-                              <th scope="row">{el.subject}</th>
-                              <td>{el.score[0]}</td>
-                              <td>{el.score[1]}</td>
-                              <td>{el.score[2]}</td>
+                              <th scope="row">{el.subject[0].name}</th>
+                              <td>{el.scores[0] || "No registrado"}</td>
+                              <td>{el.scores[1] || "No registrado"}</td>
+                              <td>{el.scores[2] || "No registrado"}</td>
                             </tr>
                           ))}
                         </tbody>

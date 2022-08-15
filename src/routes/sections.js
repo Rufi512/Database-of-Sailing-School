@@ -10,7 +10,9 @@ router.get('/list',sectionsCtrl.list)
 router.get('/list/select',sectionsCtrl.listSelects)
 //POST
 router.post('/register',sectionsCtrl.create)
-router.post('/gradue',graduationCtrl.graduate)
+router.post('/gradue/test',graduationCtrl.graduate)
+router.post('/gradue',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isModerator],graduationCtrl.graduate)
+router.post('/students/delete/:section_id',sectionsCtrl.deleteStudentsInSection)
 //PUT
 router.put('/update/:id',sectionsCtrl.update)
 //Delete (required password for user admin to process)

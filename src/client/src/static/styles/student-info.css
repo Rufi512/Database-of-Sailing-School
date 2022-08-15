@@ -52,14 +52,25 @@
     border-color:#6e6e6e;
 }
 
+.container-detail .form-container-switchs, .container-detail .container-info-header-chest{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-detail .student-record-actual tr th{
+    text-transform: capitalize;
+}
+
 .container-detail .message-missings{
     margin-top: 15px;
 }
 
 .container-detail .container-section {
     overflow: auto;
-    border: 2px solid;
-    padding: 10px;
+    padding: 5px;
+    border-width: 2px !important;
+    box-shadow: 0px 3px 7px 2px #577bff24;
     margin-bottom: 15px;
 }
 

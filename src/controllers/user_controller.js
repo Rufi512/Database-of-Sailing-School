@@ -158,6 +158,7 @@ export const updateUser = async (req, res) => {
 //Stats user
 
 export const stats = async (req, res) => {
+    const userFound = await user.findById(req.userId)
     const students = await student.find();
     const students_gradues = await student.find({ graduate: true });
     const frozen_students = await student.find({ status: false });
@@ -168,7 +169,8 @@ export const stats = async (req, res) => {
         graduate_students: students_gradues.length,
         frozen_students: frozen_students.length,
         registered_representatives: representatives.length,
-        registered_sections:sections.length
+        registered_sections:sections.length,
+        user:`${userFound.firstname} ${userFound.lastname}`
     });
 };
 

@@ -81,7 +81,7 @@ const Home = (props) => {
 			<div className="container-body container-home">
 				<div className="container-welcome">
 					<h2>
-						{saluted()} <br /> Pedro Sanchez!
+						{saluted()} <br /> {data.user || ''}
 					</h2>
 				</div>
 

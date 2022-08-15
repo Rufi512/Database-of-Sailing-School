@@ -185,6 +185,34 @@
 	text-align: center;
 }
 
+.container-section .students-new .switch{
+    margin-top: 30px;
+    display: flex;
+    margin-left: auto;
+    width: max-content;
+}
+
+.container-section .table-students .container-search-bar{
+    padding: 10px 20px;
+}
+
+.container-section .table-students .container-search-bar div{
+    display: flex;
+}
+
+.container-section .table-students .container-search-bar input{
+    margin-right: 5px;
+}
+
+.container-section .container-body .container-actions-body{
+    padding: 0 18px;
+}
+
+.container-section .container-buttons-action-table{
+    width: max-content;
+    margin-left: auto;
+}
+
 @media(min-width: 1024px) {
     .container-section .container-buttons-section {
         display: flex;

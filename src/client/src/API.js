@@ -119,7 +119,7 @@ export const sectionDetail = async (id)=>{
       err.response.data.message = "Falla en el servidor :("
       return err.response
     })
-  return res.data
+  return res
 }
 
 //POSTs
@@ -145,6 +145,44 @@ export const deleteSectionFromId = async ({id,password}) =>{
     })
   return res
 }
+
+//PUT
+
+export const updateSection = async ({id,section}) =>{
+   const res = await axios.put(`/api/section/update/${id}`,section,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+//Graduate
+
+export const graduateStudentsSection = async ({id,isTest,password}) =>{
+   const res = await axios.post(`${isTest ? '/api/section/gradue/test' : '/api/section/gradue'}`,{id,isTest,password},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const deleteStudentsInSection = async ({id,students,password}) =>{
+   const res = await axios.post(`/api/section/students/delete/${id}`,{students,password},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
 
 //-------------------section end---------------------------//
 
@@ -185,8 +223,8 @@ export const stats = async () =>{
 
 //List
 
-export const listStudents = async ({limit,page,queryStudent,search}) =>{
-  const res = await axios.get(`/api/students/list?students=${queryStudent}&limit=${limit}&page=${page}&search=${search || ''}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+export const listStudents = async ({limit,page,queryStudent,search,section = false, add = false}) =>{
+  const res = await axios.get(`/api/students/list?students=${queryStudent}&limit=${limit}&page=${page}&search=${search || ''}&section=${section}${add ? `&add=${add}` : ''}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }
@@ -235,8 +273,8 @@ export const registerStudent = async (data) =>{
 
 // PUT Student Score
 
-export const updateScore = async (id,scores) =>{
-  const res = await axios.put(`/api/students/scores/${id}`,scores,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+export const updateScore = async ({id,scores}) =>{
+  const res = await axios.put(`/api/students/scores/${id}`,{scores},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }

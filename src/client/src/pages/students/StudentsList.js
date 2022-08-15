@@ -30,12 +30,12 @@ const StudentsList = () => {
 
 	const queryStudent = (value) => {
 		console.log(searchBar)
-		navigate(`/students/list?status=${value}&search=${searchBar}`);
+		navigate(`/students/list?status=${value}&search=${searchBar || ''}`);
 	};
 
 	const searchBarSubmit = () => {
 		console.log(searchBar)
-		navigate(`/students/list?status=${status}&search=${searchBar}`);
+		navigate(`/students/list?status=${status}&search=${searchBar || ''}`);
 	};
 
 	const request = useCallback(async () => {
@@ -48,8 +48,8 @@ const StudentsList = () => {
 			const res = await listStudents({
 				limit: limit,
 				page: pageActual,
-				queryStudent: searchParams.get("status"),
-				search: searchParams.get("search"),
+				queryStudent: searchParams.get("status") || "activos",
+				search: searchParams.get("search") || '',
 			});
 			setSearchBar(searchParams.get("search") || "");
 			setStatus(searchParams.get("status") || "activos")
@@ -75,8 +75,6 @@ const StudentsList = () => {
 			});
 			setAvalaiblePages(res.data.totalPages);
 			setData(students);
-
-			console.log(students);
 
 			toast.update(toastId, {
 				render: "Lista Cargada",
@@ -251,7 +249,9 @@ const StudentsList = () => {
 									value={searchBar}
 									onInput={(e) => {
 										setSearchBar(e.target.value);
-										if(e.target.value === "") searchBarSubmit()
+										if(e.target.value === ''){
+											request()
+										}
 									}}
 									set
 									className="form-control"

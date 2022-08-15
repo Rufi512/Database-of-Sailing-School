@@ -64,6 +64,10 @@ export const checkPassword = async (req, res, next) => {
     if (!userFound)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
+    if(!req.body.password || req.body.password === ''){
+      return res.status(404).json({message: 'No se ha recibido la contraseña'})
+    }
+    
     const matchPassword = await user.comparePassword(
       req.body.password,
       userFound.password

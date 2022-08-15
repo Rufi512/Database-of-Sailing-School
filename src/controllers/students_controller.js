@@ -1,12 +1,12 @@
 import student from "../models/student";
 import user from "../models/user";
-import section from "../models/section"
+import section from "../models/section";
 import representative from "../models/representative";
 import comment from "../models/comment";
 import mongoose from "mongoose";
 import dateFormat from "dateformat";
 import fs from "fs";
-import { parsePhoneNumber } from 'awesome-phonenumber'
+import { parsePhoneNumber } from "awesome-phonenumber";
 import path from "path";
 import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
@@ -14,7 +14,7 @@ import { date } from "../libs/dateformat";
 import { getComments } from "./comment_controller";
 import { graduate, demote } from "./graduation_controller";
 import { verifyForms } from "../middlewares";
-import {addStudentsSectionRegistered} from '../controllers/sections_controller'
+import { addStudentsSectionRegistered } from "../controllers/sections_controller";
 
 let now = new Date();
 
@@ -46,22 +46,21 @@ export const list = async (req, res) => {
         populate: { path: "section", select: { name: 1 } },
     };
 
-    const optionsSearch = {
-        $or: [
-            { firstname: new RegExp(req.query.search, "gi") },
-            { lastname: new RegExp(req.query.search, "gi") },
-            {
-                $and: [
+    console.log(req.query)
+    const students = await student.paginate(
+        {
+            $or:[
+                { firstname: new RegExp(req.query.search, "gi") },
+                { lastname: new RegExp(req.query.search, "gi") },
+            ],
+            $and:[
                     { status: req.query.students === "activos" ? true : false },
-                    {
-                        graduate:
-                            req.query.students === "graduados" ? true : false,
-                    },
-                ], // and operator body finishes
-            },
-        ],
-    };
-    const students = await student.paginate(optionsSearch, optionsPagination);
+                    { graduate:req.query.students === "graduados" ? true : false},
+                    req.query.section && req.query.add ? { section:{ $exists: req.query.section || false }} : {}
+            ]
+        },
+        optionsPagination
+    );
 
     if (students.totalDocs < 0) {
         return res.status(404).json({ message: "Estudiantes no encontrados" });
@@ -70,138 +69,13 @@ export const list = async (req, res) => {
     return res.json(students);
 };
 
-/*
-export const inactive = async (req, res) => {
-    if (req.query) {
-        const { limit, page } = req.query;
-        if (limit && isNaN(limit))
-            return res
-                .status(400)
-                .json({ message: "query limit is not Number!" });
-        if (page && isNaN(page))
-            return res
-                .status(400)
-                .json({ message: "query page is not Number!" });
-    }
 
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
-        page: req.query && Number(req.query.page) ? req.query.page : 1,
-    };
-
-    const studentsInactive = await student
-        .find(
-            { status: false, school_year: { $ne: "Graduado" } },
-            { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
-        )
-        .sort({ _id: -1 });
-
-    const inactive = studentsInactive.length;
-
-    if (!inactive) {
-        return res
-            .status(404)
-            .json({ message: "Estudiantes inactivos no encontrados" });
-    }
-
-    const list = await student.paginate(
-        { status: false, school_year: { $ne: "Graduado" } },
-        optionsPagination
-    );
-
-    return res.json(list);
-};
-
-export const gradues = async (req, res) => {
-    const studentsGradues = await student
-        .find(
-            { school_year: "Graduado" },
-            { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
-        )
-        .sort({ _id: -1 });
-
-    if (req.query) {
-        const { limit, page } = req.query;
-        if (limit && isNaN(limit))
-            return res
-                .status(400)
-                .json({ message: "query limit is not Number!" });
-        if (page && isNaN(page))
-            return res
-                .status(400)
-                .json({ message: "query page is not Number!" });
-    }
-
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
-        page: req.query && Number(req.query.page) ? req.query.page : 1,
-    };
-
-    const gradues = studentsGradues.length;
-
-    if (!gradues) {
-        return res
-            .status(404)
-            .json({ message: "Estudiantes graduados no encontrados" });
-    }
-
-    const list = await student.paginate(
-        { school_year: "Graduado" },
-        optionsPagination
-    );
-
-    return res.json(list);
-};
-*/
-/*
-//Lista de estudiantes por curso
-export const studentsInSection = async (req, res) => {
-    const studentsSection = await student
-        .find(
-            { status: true, school_year: req.body.school_year },
-            { annual_comments: 0, subjects: 0, record: 0, comments: 0 }
-        )
-        .sort({ _id: -1 });
-    const sections = studentsSection.length;
-    if (!sections) {
-        return res.status(404).json({
-            message: `Estudiantes del curso ${req.body.school_year} no encontrados`,
-        });
-    }
-
-    if (req.query) {
-        const { limit, page } = req.query;
-        if (limit && isNaN(limit))
-            return res
-                .status(400)
-                .json({ message: "query limit is not Number!" });
-        if (page && isNaN(page))
-            return res
-                .status(400)
-                .json({ message: "query page is not Number!" });
-    }
-
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
-        page: req.query && Number(req.query.page) ? req.query.page : 1,
-    };
-
-    const list = await student.paginate(
-        { status: true, school_year: req.body.school_year },
-        optionsPagination
-    );
-
-    return res.json(list);
-};
-*/
 //Saved score from subjects for student
 export const saveScore = async (req, res) => {
     try {
         const id = req.params.id;
         const scores = req.body.scores;
+        console.log(req.body)
         const studentFind = await student.findById(id);
         if (!studentFind)
             return res.status(404).json({ message: "Student No Found" });
@@ -240,17 +114,18 @@ export const showStudent = async (req, res) => {
     const studentFind = await student
         .findById(req.params.id)
         .populate("section", { students: 0, _id: 0, subjects: 0 })
-        .populate("subjects.subject", { fromYears: 0 })
+        .populate("subjects.subject", { fromYears: 0, _id:0 })
         .populate("representative");
     const comments = await getComments(req.params.id);
-    
-    const listPhone = studentFind.contact.phone_numbers
-    studentFind.contact.phone_numbers = listPhone.map((el)=>{
-                return {
-                    countryCode:el.countryCode,
-                    number:el.number,
-                    formatted:parsePhoneNumber(el.number,el.countryCode).getNumber()}
-            })
+
+    const listPhone = studentFind.contact.phone_numbers;
+    studentFind.contact.phone_numbers = listPhone.map((el) => {
+        return {
+            countryCode: el.countryCode,
+            number: el.number,
+            formatted: parsePhoneNumber(el.number, el.countryCode).getNumber(),
+        };
+    });
 
     if (studentFind) {
         res.json({ student: studentFind, comments: comments });
@@ -262,17 +137,20 @@ export const showStudent = async (req, res) => {
 //Crear Estudiante Individual
 export const createStudent = async (req, res) => {
     const { ci, firstname, lastname, contact, rep_data, section_id } = req.body;
-    let validSection = false
-    console.log(req.body)
+    let validSection = false;
+    console.log(req.body);
     const checkRegister = await verifyForms.verifyCreate(req.body);
     let repRegister;
     let newStudentRegister;
     if (checkRegister)
         return res.status(400).json({ message: checkRegister.message });
-    if(section_id || section_id !== "" ){
-        const sectionFound = await section.findById(section_id)
-        if (!sectionFound) return res.status(404).json({ message: 'Seccion no especificada encontrada!' })
-        validSection = true
+    if (section_id || section_id !== "") {
+        const sectionFound = await section.findById(section_id);
+        if (!sectionFound)
+            return res
+                .status(404)
+                .json({ message: "Seccion no especificada encontrada!" });
+        validSection = true;
     }
     if (contact) {
         const listPhone = contact.phone_numbers;
@@ -295,8 +173,9 @@ export const createStudent = async (req, res) => {
         last_modify: dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT"),
     };
 
-    if(section_id && section_id !== "") newStudentRegister.section = section_id
-    
+    if (section_id && section_id !== "")
+        newStudentRegister.section = section_id;
+
     // If exists id verify and register representative on student
     if (rep_data && rep_data.id) {
         const repFound = await representative.findOne({ _id: rep_data.id });
@@ -340,9 +219,11 @@ export const createStudent = async (req, res) => {
     const newStudent = new student(newStudentRegister);
 
     const saveStudent = await newStudent.save();
-    if(validSection){
-        const addToSection = addStudentsSectionRegistered(section_id,[saveStudent.id])
-        console.log(addToSection)
+    if (validSection) {
+        const addToSection = addStudentsSectionRegistered(section_id, [
+            saveStudent.id,
+        ]);
+        console.log(addToSection);
     }
     console.log(saveStudent);
     res.json({ message: "Estudiante registrado" });
@@ -538,10 +419,14 @@ export const createStudents = async (req, res) => {
 
 //Update the student,if pass id in rep_data update the field representative
 export const updateStudent = async (req, res) => {
-    const { _id, ci, firstname, lastname, contact, rep_data } =
-        await student.findById(req.params.id);
-
+    const studentInfo = req.body;
     const studentFind = await student.findOne({ ci: req.body.ci });
+    const sectionFound = await section.findById(studentFind.section)
+    console.log('graduate:',studentInfo.graduate)
+    if(studentInfo.graduate && sectionFound){
+        console.log('pass')
+        return res.status(400).json({message:'No puedes graduar el estudiante ya que actualmente esta cursando una seccion'})
+    }
 
     if (
         !Number(req.body.ci) ||
@@ -561,7 +446,7 @@ export const updateStudent = async (req, res) => {
         return res.status(400).json("Parámetros en Apellido inválidos!");
     }
 
-    if (studentFind && studentFind.ci !== ci) {
+    if (studentFind && studentFind.ci !== studentInfo.ci) {
         return res
             .status(400)
             .json(
@@ -573,12 +458,13 @@ export const updateStudent = async (req, res) => {
         { _id: req.params.id },
         {
             $set: {
-                ci: req.body.ci ? req.body.ci : ci,
-                firstname: req.body.firstname ? req.body.firstname : firstname,
-                lastname: req.body.lastname ? req.body.lastname : lastname,
+                ci: req.body.ci ? req.body.ci : studentInfo.ci,
+                firstname: req.body.firstname ? req.body.firstname : studentInfo.firstname,
+                lastname: req.body.lastname ? req.body.lastname : studentInfo.lastname,
+                graduate:studentInfo.graduate || false,
                 status: req.body.status,
-                contact: req.body.contact || contact,
-                representative: rep_data && rep_data.id,
+                contact: req.body.contact ||studentInfo.contact,
+                representative: studentFind.rep_data && studentFind.rep_data.id,
                 last_modify: dateFormat(
                     now,
                     "dddd, d De mmmm , yyyy, h:MM:ss TT"
@@ -587,76 +473,9 @@ export const updateStudent = async (req, res) => {
         },
         { upsert: true }
     );
-    res.json({message:"Estudiante Actualizado!"});
+    res.json({ message: "Estudiante Actualizado!" });
 };
 
-//Graduar estudiante/s
-
-export const graduateStudent = async (req, res) => {
-    const ids = req.body;
-    let gradues = [];
-    for (const id of ids) {
-        const res = await graduate(id);
-        gradues.push(res);
-    }
-
-    if (ids.length === 1 && gradues[0] === true) {
-        res.json("Estudiante graduado");
-    }
-
-    if (ids.length === 1 && gradues[0] === false) {
-        res.status(400).json(
-            "El estudiante no se puede graduar por no cumplir el minimo en la asignaturas (10 o mas en su promedio) o por estar inactivo"
-        );
-    }
-
-    if (ids.length > 1) {
-        const notGradues = gradues.filter((el) => {
-            return el === false;
-        });
-        if (notGradues.length > 0) {
-            res.status(400).json(
-                "Algunos estudiantes no pudieron ser graduados por no cumplir el minimo en las asignaturas"
-            );
-        } else {
-            res.json("Estudiantes graduados");
-        }
-    }
-};
-
-//Degrada estudiante/s
-
-export const demoteStudent = async (req, res) => {
-    const ids = req.body;
-    let demotes = [];
-    for (const id of ids) {
-        const res = await demote(id);
-        demotes.push(res);
-    }
-
-    if (ids.length === 1 && demotes[0] === true) {
-        res.json("Estudiante reprobrado");
-    }
-
-    if (ids.length === 1 && demotes[0] === false) {
-        res.status(400).json(
-            "El estudiante no se puede reprobar por estar inactivo o ha alcanzado el minimo!"
-        );
-    }
-
-    if (ids.length > 1) {
-        const notDemotes = demotes.filter((el) => {
-            return el === false;
-        });
-        if (notDemotes.length > 0) {
-            res.status(400).json(
-                "Algunos estudiantes no pudieron ser reprobrados por estar inactivos o han alcanzado el minimo!"
-            );
-        } else {
-            res.json("Estudiantes reprobrados");
-        }
-    }
-};
 
 //Borrar estudiante/s
 

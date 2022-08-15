@@ -10,16 +10,10 @@ const router = Router()
 
 router.get('/list',  studentCtrl.list) //Active Student List
 
-/*
-router.get('/inactives',  studentCtrl.inactive) //Inactive Student List
-
-router.get('/gradues',  studentCtrl.gradues) // List of graduating students
-*/
 router.get('/info/:id',   studentCtrl.showStudent) //Show student information
 
 //POST
 
-//router.post('/section',  studentCtrl.section) // List of students by sections
 
 router.post('/register',  studentCtrl.createStudent) //Receive form
 

@@ -204,12 +204,10 @@ export const updateSubjectsBySection = async (req, res) => {
                 message: "Materia registradas a seccion y estudiantes",
             });
         } else {
-            return res
-                .status(400)
-                .json({
-                    message:
-                        "No se pudieron registrar las materias a los estudiantes",
-                });
+            return res.status(400).json({
+                message:
+                    "No se pudieron registrar las materias a los estudiantes",
+            });
         }
     } catch (e) {
         console.log(e);
@@ -231,10 +229,12 @@ export const addSubjectsNewStudentsSection = async (id) => {
             const studentFind = await student.findOne({ _id: studentRegister });
             let subjectToStudent = listSubject;
             // Verify if subject is already exists
-            for (const oldSubjects of studentFind.subjects) {
-                subjectToStudent = subjectToStudent.filter(
-                    (el) => el.subject == oldSubjects.subject
-                );
+            if (studentFind.subjects) {
+                for (const oldSubjects of studentFind.subjects) {
+                    subjectToStudent = subjectToStudent.filter(
+                        (el) => el.subject == oldSubjects.subject
+                    );
+                }
             }
             // Add if not subjects in student and is register and push to saved
             await student.updateOne(
@@ -270,11 +270,9 @@ export const deleteSubject = async (req, res) => {
                 } eliminada`,
             });
         }
-        return res
-            .status(404)
-            .json({
-                message: "No se ha podido eliminar la materia especificada",
-            });
+        return res.status(404).json({
+            message: "No se ha podido eliminar la materia especificada",
+        });
     } catch (err) {
         console.log(err);
         res.status(500).json({

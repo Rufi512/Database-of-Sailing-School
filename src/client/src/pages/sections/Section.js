@@ -4,6 +4,10 @@ import {
   sectionDetail,
   subjectsForSection,
   assingSubjectsForSection,
+  listStudents,
+  updateSection,
+  graduateStudentsSection,
+  deleteStudentsInSection,
 } from "../../API";
 import Navbar from "../../components/Navbar";
 import Select from "react-select";
@@ -11,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../../static/styles/section.css";
 import TableList from "../../components/TableList";
+import NavigationOptionsList from "../../components/NavigationOptionsList";
 const Section = () => {
   const timerRef = useRef(null);
   const params = useParams();
@@ -39,44 +44,257 @@ const Section = () => {
 
   const [showSubjects, setShowSubjects] = useState(false);
   const [editSection, setEditSection] = useState(false);
-  const [showAddSubjects, setShowAddSubjects] = useState(false);
-  const [avalaibleSubjects, setAvalaibleSubjects] = useState([]);
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
+
   const [modalConfirm, setModalConfirm] = useState(false);
   const [defaultSubjects, setDefaultSubjects] = useState(false);
-  const [password, setPassword] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
-  const [selectedStudentsSection,setSelectedStudentsSection] = useState([])
+  const [newStudentsList, setNewStudentsList] = useState(false);
 
+  const [studentsList, setStudentsList] = useState([]);
+  const [newStudents, setNewStudents] = useState([]);
+  const [avalaibleSubjects, setAvalaibleSubjects] = useState([]);
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [selectedStudentsSection, setSelectedStudentsSection] = useState([]);
 
+  //For pagination new students
+  const [pageActual, setActualPage] = useState(1);
+  const [avalaiblePages, setAvalaiblePages] = useState(0);
+  const [limit, setLimit] = useState(15);
+  const [searchBar, setSearchBar] = useState("");
+  const [queryStudent, setQueryStudent] = useState("activos");
+
+  // Confirmation
+  const [addStudents, setAddStudents] = useState(false);
+  const [deleteStudents, setDeleteStudents] = useState(false);
+  const [customSubjects, setCustomSubjects] = useState(false);
+  const [graduateSection, setGraduateSection] = useState(false);
+  const [studentsPreview, setStudentsPreview] = useState({
+    status: false,
+    studentsApproves: [],
+    studentsRejects: [],
+  });
+  const [password, setPassword] = useState("");
 
   let navigate = useNavigate();
+
   let dt = new Date();
-  console.log(data);
   const sendForm = async (e) => {
     e.preventDefault();
     console.log(section);
     console.log("send");
+    if (isSubmit) return;
+    setIsSubmit(true);
+    const toastId = toast.loading("Enviando datos...", {
+      closeOnClick: true,
+    });
+    try {
+      const res = await updateSection({
+        id: params.id,
+        section: {
+          name: section.name,
+          year: section.year,
+          period_initial: section.period_initial,
+          completion_period: section.completion_period,
+        },
+      });
+      setIsSubmit(false);
+      if (res.status >= 400) {
+        return toast.update(toastId, {
+          render: res.data.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+      setModalConfirm(false);
+      setDefaultSubjects(false);
+      setAddStudents(false);
+      setNewStudents([]);
+      toast.update(toastId, {
+        render: res.data.message,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      request();
+      requestList();
+    } catch (e) {
+      setIsSubmit(false);
+      console.log(e);
+      return toast.update(toastId, {
+        render: "Ah ocurrido un error al enviar información al servidor",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
   };
 
-  const selectCheck = (id,isAdded,place) =>{
-
-    let items = [...selectedStudentsSection]
-    if(place === "section"){
-      items = [...selectedStudentsSection]
+  const selectCheck = (id, isAdded, place) => {
+    let items;
+    if (place === "section") {
+      items = [...selectedStudentsSection];
+    } else {
+      items = [...newStudents];
     }
 
-    if(isAdded){
-      items.push(id)
-    }else{
-      items = items.filter((el)=> el !== id)
+    if (isAdded) {
+      items.push(id);
+    } else {
+      items = items.filter((el) => el !== id);
     }
-    
-    setSelectedStudentsSection(items)    
 
-  }
+    if (place === "section") {
+      setSelectedStudentsSection(items);
+    } else {
+      setNewStudents(items);
+    }
+  };
 
-  console.log(selectedStudentsSection)
+  console.log(selectedStudentsSection);
+  // for graduate students resgistered
+  const graduateStudentsRegistered = async (isTest) => {
+    if (isSubmit) return;
+    setIsSubmit(true);
+    const toastId = toast.loading("Consultando datos...", {
+      closeOnClick: true,
+    });
+    try {
+      const res = await graduateStudentsSection({
+        id: params.id,
+        isTest,
+        password,
+      });
+
+      setIsSubmit(false);
+
+      if(isTest === false){
+       return navigate('/sections')
+      }
+      
+      if (res.status >= 400) {
+        return toast.update(toastId, {
+          render: "No se ha podido hacer la consulta",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+
+      setStudentsPreview({
+        status: true,
+        studentsApproves: res.data.studentsApproves,
+        studentsRejects: res.data.studentsRejects,
+      });
+      toast.update(toastId, {
+        render: "Lista previa obtenida",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+
+
+    } catch (e) {
+      setIsSubmit(false);
+      console.log(e);
+      return toast.update(toastId, {
+        render: "Ah ocurrido un error al enviar información al servidor",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  //Update data general section
+  const updateSectionStudents = async () => {
+    if (isSubmit) return;
+    setIsSubmit(true);
+    const toastId = toast.loading("Enviando datos...", {
+      closeOnClick: true,
+    });
+    try {
+      const res = await updateSection({
+        id: params.id,
+        section: { students: newStudents },
+      });
+      setIsSubmit(false);
+      if (res.status >= 400) {
+        return toast.update(toastId, {
+          render: res.data.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+      setModalConfirm(false);
+      setDefaultSubjects(false);
+      setAddStudents(false);
+      setNewStudents([]);
+      toast.update(toastId, {
+        render: res.data.message,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      request();
+      requestList();
+    } catch (e) {
+      setIsSubmit(false);
+      console.log(e);
+      return toast.update(toastId, {
+        render: "Ah ocurrido un error al enviar información al servidor",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  //Delete Students selected from section
+
+  const deleteStudentsSelected = async () => {
+    if (isSubmit) return;
+    setIsSubmit(true);
+    const toastId = toast.loading("Enviando datos...", {
+      closeOnClick: true,
+    });
+    try {
+      const res = await deleteStudentsInSection({
+        id: params.id,
+        students: selectedStudentsSection,
+      });
+      setIsSubmit(false);
+      if (res.status >= 400) {
+        return toast.update(toastId, {
+          render: res.data.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+      setModalConfirm(false);
+      setDefaultSubjects(false);
+      setDeleteStudents(false);
+      toast.update(toastId, {
+        render: res.data.message,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      request();
+      requestList();
+    } catch (e) {
+      setIsSubmit(false);
+      console.log(e);
+      return toast.update(toastId, {
+        render: "Ah ocurrido un error al enviar información al servidor",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
 
   const sendSubjectsChange = async () => {
     if (isSubmit) return;
@@ -136,15 +354,26 @@ const Section = () => {
   };
 
   const request = useCallback(async () => {
+    setPassword("");
     const toastId = toast.loading("Cargando datos...", {
       closeOnClick: true,
     });
     try {
-      console.log(params);
       const [sectionData, subjectsListAvalaibles] = await Promise.all([
         sectionDetail(params.id),
         subjectsForSection(params.id),
       ]);
+
+      if (sectionData.status === 404) {
+        toast.update(toastId, {
+          render: "Seccion no encontrada",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+
+        return navigate("/sections");
+      }
 
       if (sectionData.status >= 400) {
         return toast.update(toastId, {
@@ -166,20 +395,43 @@ const Section = () => {
       setAvalaibleSubjects(subjectsListAvalaibles.data);
 
       //Selected all subjects already registered
-      const subjectsFinds = subjectsListAvalaibles.data
-        .map((elm) => {
-          let findSubject = sectionData.subjects.filter(
-            (el) => el._id === elm.value
-          )[0];
-          if (findSubject) return elm;
-          return null;
-        })
-        .filter((el) => el !== null);
+      console.log("sectionData", sectionData);
+      if (sectionData.subjects) {
+        const subjectsFinds = subjectsListAvalaibles.data
+          .map((elm) => {
+            let findSubject = sectionData.subjects.filter(
+              (el) => el._id === elm.value
+            )[0];
+            if (findSubject) return elm;
+            return null;
+          })
+          .filter((el) => el !== null);
 
-      setSelectedSubjects(subjectsFinds);
+        setSelectedSubjects(subjectsFinds);
+      }
 
-      setSection(sectionData);
-      setData(sectionData);
+      setSection({
+        name: sectionData.data.name || "",
+        year: sectionData.data.year || 0,
+        period_initial: sectionData.data.period_initial || "",
+        completion_period: sectionData.data.completion_period || "",
+        created_at: sectionData.data.created_at || "",
+        last_modify: sectionData.data.last_modify || "",
+        students: sectionData.data.students || [],
+        subjects: sectionData.data.subjects || [],
+      });
+
+      setData({
+        name: sectionData.data.name || "",
+        year: sectionData.data.year || 0,
+        period_initial: sectionData.data.period_initial || "",
+        completion_period: sectionData.data.completion_period || "",
+        created_at: sectionData.data.created_at || "",
+        last_modify: sectionData.data.last_modify || "",
+        students: sectionData.data.students || [],
+        subjects: sectionData.data.subjects || [],
+      });
+
       setDefaultSubjects(false);
 
       toast.update(toastId, {
@@ -195,16 +447,80 @@ const Section = () => {
         isLoading: false,
         autoClose: 3000,
       });
-     timerRef.current = setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         request();
       }, 3000);
       console.log(e);
     }
-  }, [params]);
+  }, [params, navigate]);
+
+  const requestList = useCallback(
+    async (search = "") => {
+      const toastId = toast.loading("Cargando datos...", {
+        closeOnClick: true,
+      });
+      try {
+        const res = await listStudents({
+          limit: limit,
+          page: pageActual,
+          queryStudent: queryStudent,
+          search: search,
+          section: false,
+          add: true,
+        });
+        //setSearchBar(searchParams.get("search") || "");
+        //setStatus(searchParams.get("status") || "activos")
+        //console.log(res);
+
+        if (res.status >= 400) {
+          return toast.update(toastId, {
+            render: res.data.message,
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+          });
+        }
+        const students = res.data.docs.map((el) => {
+          let { _id, ci, firstname, lastname, status } = el;
+          return Object({
+            id: _id,
+            ci,
+            firstname,
+            lastname,
+            status,
+          });
+        });
+        setAvalaiblePages(res.data.totalPages);
+        setStudentsList(students);
+
+        toast.update(toastId, {
+          render: "Lista Cargada",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } catch (e) {
+        console.log(e);
+
+        toast.update(toastId, {
+          render: "Error al enviar informacion, intentando de nuevo",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+
+        timerRef.current = setTimeout(() => {
+          requestList();
+        }, 3000);
+      }
+    },
+    [queryStudent, limit, pageActual]
+  );
 
   useEffect(() => {
     request();
-  }, [request]);
+    requestList();
+  }, [request, requestList]);
 
   return (
     <>
@@ -223,11 +539,111 @@ const Section = () => {
 
               <div>
                 <p className="card-text">
-                  Estas seguro de modificar las materias registradas{" "}
-                  {defaultSubjects ? "por las materias por defecto" : ""}?{" "}
+                  {addStudents
+                    ? "Estas seguro de agregar a los estudiantes seleccionados?"
+                    : ""}
+                  {deleteStudents
+                    ? "Estas seguro de eliminar a los estudiantes selecionados?"
+                    : ""}
+                  {defaultSubjects
+                    ? "Estas seguro de modificar las materias registradas por las materias por defecto"
+                    : ""}{" "}
+                  {customSubjects
+                    ? "Estas seguro de modificar las materias registradas?"
+                    : ""}{" "}
+                  {graduateSection
+                    ? "Estas seguro de graduar a la seccion? aqui hay una lista previa de los que podran graduarse y los que son rechazados"
+                    : ""}
                 </p>
 
-                <p className="card-text">
+                {graduateSection ? (
+                  <div className="list-previews">
+                    {studentsPreview.status ? (
+                      <>
+                        <div className="list-students-previous">
+                          <h5 style={{ fontWeight: "bold" }}>
+                            {studentsPreview.studentsApproves.length === 0
+                              ? "Ningun estudiante aprueba el curso"
+                              : `Estudiantes aprobados a graduarse (${studentsPreview.studentsApproves.length})`}
+                          </h5>
+                          <div
+                            style={{
+                              overflow: "auto",
+                              maxHeight: "500px",
+                              marginBottom: "20px",
+                            }}
+                          >
+                            {studentsPreview.studentsApproves.map((el, i) => {
+                              return (
+                                <div
+                                  className="student card card-body border-primary"
+                                  style={{ marginTop: "10px" }}
+                                  key={i}
+                                >
+                                  <p style={{ margin: "5px 0" }}>
+                                    <span style={{ fontWeight: "700" }}>
+                                      Cedula:{" "}
+                                    </span>
+                                    {`${el.ci}`}
+                                  </p>
+                                  <p style={{ margin: "5px 0" }}>
+                                    <span style={{ fontWeight: "700" }}>
+                                      Nombre y apellido:{" "}
+                                    </span>
+                                    {`${el.firstname} ${el.lastname}`}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="list-students-previous">
+                          <h5 style={{ fontWeight: "600" }}>
+                            Estudiantes Rechazados a graduarse (
+                            {studentsPreview.studentsRejects.length})
+                          </h5>
+                          <div style={{ overflow: "auto", maxHeight: "500px" }}>
+                            {studentsPreview.studentsRejects.map((el, i) => {
+                              return (
+                                <div
+                                  className="student card card-body border-danger"
+                                  key={i}
+                                  style={{ marginTop: "10px" }}
+                                >
+                                  <p style={{ margin: "5px 0" }}>
+                                    <span style={{ fontWeight: "700" }}>
+                                      Cedula:{" "}
+                                    </span>
+                                    {`${el.ci}`}
+                                  </p>
+                                  <p style={{ margin: "5px 0" }}>
+                                    <span style={{ fontWeight: "700" }}>
+                                      Nombre y apellido:{" "}
+                                    </span>
+                                    {`${el.firstname} ${el.lastname}`}
+                                  </p>
+                                  <p style={{ margin: "5px 0" }}>
+                                    <span style={{ fontWeight: "700" }}>
+                                      Razón:{" "}
+                                    </span>
+                                    {`${el.reason}`}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                ) : (
+                  ""
+                )}
+
+                <p className="card-text" style={{ marginTop: "20px" }}>
                   De ser asi introduzca su contraseña y confirma la accion
                 </p>
               </div>
@@ -246,7 +662,21 @@ const Section = () => {
                 <button
                   className="btn btn-primary"
                   onClick={(e) => {
-                    sendSubjectsChange();
+                    if (addStudents) {
+                      return updateSectionStudents();
+                    }
+
+                    if (deleteStudents) {
+                      return deleteStudentsSelected();
+                    }
+
+                    if (customSubjects) {
+                      return sendSubjectsChange();
+                    }
+
+                    if (studentsPreview.status) {
+                      return graduateStudentsRegistered(false);
+                    }
                   }}
                 >
                   Confirmar Accion
@@ -256,9 +686,14 @@ const Section = () => {
                   onClick={(e) => {
                     setModalConfirm(false);
                     setDefaultSubjects(false);
+                    setDeleteStudents(false);
+                    setAddStudents(false);
+                    setGraduateSection(false);
+                    setCustomSubjects(false);
+                    setPassword("");
                   }}
                 >
-                  Regresar
+                  Cerrar
                 </button>
               </div>
             </div>
@@ -336,6 +771,16 @@ const Section = () => {
                   }}
                 >
                   Añadir materias correspondiente al año escolar
+                </button>
+                <button
+                  className="btn btn-success"
+                  onClick={(e) => {
+                    setModalConfirm(true);
+                    setGraduateSection(true);
+                    graduateStudentsRegistered(true);
+                  }}
+                >
+                  Graduar estudiantes de la seccion
                 </button>
               </div>
             </div>
@@ -415,7 +860,7 @@ const Section = () => {
                   }}
                 />
               </div>
-              <div className="form-group">
+              <div className="form-group" style={{ height: "230px" }}>
                 <label>Materias actualmentes registradas</label>
                 {editSection
                   ? listSelect({
@@ -431,8 +876,10 @@ const Section = () => {
                     display: "flex",
                   }}
                   className="btn btn-danger"
+                  type="button"
                   onClick={(e) => {
                     setModalConfirm(true);
+                    setCustomSubjects(true);
                   }}
                 >
                   Actualizar lista de materias
@@ -448,7 +895,7 @@ const Section = () => {
               showSubjects ? "container-subjects-list-show" : ""
             }`}
           >
-            {section.subjects.length > 0 ? (
+            {section.subjects && section.subjects.length > 0 ? (
               <>
                 <h4>Materias registradas en esta seccion</h4>
                 <TableList
@@ -463,6 +910,22 @@ const Section = () => {
           {data.students.length > 0 ? (
             <div className="container-table table-students">
               <h4>Estudiantes actualmente registrados</h4>
+              <div className="container-buttons-action-table">
+                {selectedStudentsSection.length > 0 ? (
+                  <button
+                    style={{ margin: "5px 20px" }}
+                    className="btn btn-danger"
+                    onClick={(e) => {
+                      setModalConfirm(true);
+                      setDeleteStudents(true);
+                    }}
+                  >
+                    Eliminar estudiantes
+                  </button>
+                ) : (
+                  ""
+                )}
+              </div>
               <TableList
                 data={data.students}
                 checks={selectedStudentsSection}
@@ -473,13 +936,144 @@ const Section = () => {
                   { field: "status", nameField: "Estado" },
                   { field: "actions", nameField: "Seleccion" },
                 ]}
-                actions={[{type:"checkbox",name:"select",func:(id,isAdded)=>{selectCheck(id,isAdded,"section")}}]}
+                actions={[
+                  {
+                    type: "button",
+                    name: "edit",
+                    func: (id) => {
+                      navigate(`/student/detail/${id}`);
+                    },
+                  },
+                  {
+                    type: "checkbox",
+                    name: "select",
+                    func: (id, isAdded) => {
+                      selectCheck(id, isAdded, "section");
+                    },
+                  },
+                ]}
               />
             </div>
           ) : (
             <h3 style={{ padding: "20px" }}>
               Actualmente no hay estudiantes registrados en la seccion!
             </h3>
+          )}
+        </div>
+        <div className="container students-new">
+          <div className="switch">
+            <div className="form-check form-switch">
+              <label className="label-separator" htmlFor="new-students">
+                {" "}
+                Registrar nuevos estudiantes
+              </label>{" "}
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="new-students"
+                onChange={(e) => {
+                  setNewStudentsList(e.target.checked);
+                }}
+              />
+            </div>
+          </div>
+          {newStudentsList ? (
+            <div className="container-table table-students">
+              <h4>Lista de estudiantes</h4>
+              <div
+                className="container-actions-body"
+                style={{ justifyContent: "space-between" }}
+              >
+                <div className="container-label-select">
+                  <label>Lista de estudiantes</label>
+                  <select
+                    className="form-select form-select-lg mb-3"
+                    aria-label=".form-select-lg example"
+                    onChange={(e) => {
+                      setQueryStudent(e.target.value);
+                    }}
+                  >
+                    <option value="activos">Activos</option>
+                    <option value="inactivos">Inactivos</option>
+                  </select>
+                </div>
+              </div>
+              <div className="container-search-bar">
+                <label htmlFor="searchBar">
+                  Introduce nombre o apellido para buscar
+                </label>
+                <div>
+                  <input
+                    type="text"
+                    onInput={(e) => {
+                      setSearchBar(e.target.value);
+                    }}
+                    value={searchBar}
+                    className="form-control"
+                    id="searchBar"
+                    placeholder="Fulano y tal"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={(e) => requestList(searchBar)}
+                  >
+                    Buscar
+                  </button>
+                </div>
+              </div>
+
+              <NavigationOptionsList
+                changeActualPage={(e) => {
+                  setActualPage(e);
+                }}
+                avalaiblePages={avalaiblePages}
+                pageActual={pageActual}
+                limit={limit}
+                changeLimit={(e) => {
+                  setLimit(e);
+                }}
+              />
+
+              {newStudents.length > 0 ? (
+                <button
+                  style={{ margin: "5px 20px" }}
+                  className="btn btn-primary"
+                  onClick={(e) => {
+                    setAddStudents(true);
+                    setModalConfirm(true);
+                  }}
+                >
+                  Agregar nuevos estudiantes
+                </button>
+              ) : (
+                ""
+              )}
+              <TableList
+                data={studentsList}
+                checks={newStudents}
+                labels={[
+                  { field: "ci", nameField: "Cedula" },
+                  { field: "firstname", nameField: "Nombre", linked: true },
+                  { field: "lastname", nameField: "Apellido" },
+                  { field: "status", nameField: "Estado" },
+                  { field: "actions", nameField: "Seleccion" },
+                ]}
+                actions={[
+                  {
+                    type: "checkbox",
+                    name: "select",
+                    func: (id, isAdded) => {
+                      console.log(id, isAdded);
+                      selectCheck(id, isAdded, "new");
+                    },
+                  },
+                ]}
+              />
+            </div>
+          ) : (
+            ""
           )}
         </div>
       </div>

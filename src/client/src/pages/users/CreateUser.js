@@ -13,7 +13,7 @@ const CreateUser = () => {
 		email: "",
 		password: "",
 		password2: "",
-		rol: "teacher",
+		rol: "Teacher",
 	});
 
 	const [isSubmit, setIsSubmit] = useState(false);
@@ -59,7 +59,7 @@ const CreateUser = () => {
 				isLoading: false,
 				autoClose: 5000,
 			});
-			setUser({ci: "",firstname: "",lastname: "",email: "",password: "",password2: "",rol: "teacher"})
+			setUser({ci: "",firstname: "",lastname: "",email: "",password: "",password2: "",rol: "Teacher"})
 		} catch (e) {
 			console.log(e);
 			setIsSubmit(false);

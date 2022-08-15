@@ -248,7 +248,7 @@ const SubjectList = () => {
 
 							<div>
 								<p className="card-text">
-									Estas seguro de borrar la sección?{" "}
+									Estas seguro de borrar la materia?{" "}
 								</p>
 								<p className="card-text">
 									<span style={{ fontWeight: "bold" }}>

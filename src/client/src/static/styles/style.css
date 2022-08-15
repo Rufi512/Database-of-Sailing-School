@@ -141,6 +141,11 @@ font-weight: 600;
     z-index: 100;
 }
 
+.modal-request-admin .container-modal{
+    margin: 20px 0;
+    overflow: auto;
+}
+
 .modal-request-admin .container-modal .container-buttons {
     margin: 15px auto;
     display: flex;

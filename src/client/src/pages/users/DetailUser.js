@@ -554,9 +554,9 @@ const DetailUser = () => {
 										<div className="card-body">
 											<p className="card-text">
 												{listQuestions.length > 0
-													? `Actualmente posees ${listQuestions.length} preguntas
+													? `Actualmente posee ${listQuestions.length} preguntas
 												de seguridad`
-													: "No posees preguntas de seguridad "}
+													: "No posee preguntas de seguridad "}
 											</p>
 											<ul className="list-group">
 												{listQuestions.map((el, i) => {
