@@ -1,18 +1,18 @@
-Cedula,Nombre,Apellido
-213712312,Salomon,Ramon
-4537345,Pedro,Guanipa
-737357,Manuel,Emanuel
-34465453,Tulio,Menendez
-234562423,Hugo,delavela
+Cedula,Nombre,Apellido,Seccion
+213712312,Salomon,Ramon,spok
+4537345,Pedro,Guanipa,fork
+737357,Manuel,Emanuel,spok
+34465453,Tulio,Menendez,fork
+234562423,Hugo,delavela,spok
 1231162332,Rodrigo,Fernando
 1231234332,Santiago,Manuel
 1233716232,Melasuda,Medina
-737357,Ramon,Emanuel
+730097357,Ramon,Emanuel,fork
 12146282,Victor,Menendez
-123951332,Bergara,Takataka
-123112732,Patricio,Rodillo
-5434546343,Jason,Brody
+123951332,Bergara,Takataka,fe
+123112732,Patricio,Rodillo,dks
+5434546343,Jason,Brody,la peña
 543546343,Emanuel lateo,Fernandez
-5464454,Loco lateo,Morillo
-67863434,Perez lateo,Dabajuro de la vela
-7867322,Sara Laila,Dabajuro Gutierezz
+5464454,Loco lateo,Morillo,spok
+67863434,Perez lateo,Dabajuro de la vela,spok
+7867322,Sara Laila,Dabajuro Gutierezz,la peña

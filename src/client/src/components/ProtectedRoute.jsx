@@ -4,9 +4,9 @@ import {Navigate, Outlet} from "react-router-dom"
 import {verifyToken} from '../API'
 const ProtectedRoute = () => {
  useEffect(()=>{
-    //verifyToken()
+    verifyToken()
  },[])
- const auth = Cookies.get("token") || true
+ const auth = Cookies.get("token") || false
  return auth ? <Outlet/> : <Navigate to="/"/>
 };
 

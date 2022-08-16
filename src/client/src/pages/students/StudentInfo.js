@@ -261,7 +261,10 @@ const StudentInfo = () => {
         });
       }
       setAvalaiblesReps(itemReps);
-      if (chestInfo.data) setChest(chestInfo.data);
+      console.log('chestInfo',chestInfo)
+      if(chestInfo.status < 400){
+          setChest(chestInfo.data);
+      }
 
       setStudent({
         ci: res.data.student.ci || "",

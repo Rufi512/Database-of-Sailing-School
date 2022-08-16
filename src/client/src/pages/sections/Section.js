@@ -396,10 +396,10 @@ const Section = () => {
 
       //Selected all subjects already registered
       console.log("sectionData", sectionData);
-      if (sectionData.subjects) {
+      if (sectionData.data.subjects) {
         const subjectsFinds = subjectsListAvalaibles.data
           .map((elm) => {
-            let findSubject = sectionData.subjects.filter(
+            let findSubject = sectionData.data.subjects.filter(
               (el) => el._id === elm.value
             )[0];
             if (findSubject) return elm;
@@ -676,6 +676,10 @@ const Section = () => {
 
                     if (studentsPreview.status) {
                       return graduateStudentsRegistered(false);
+                    }
+
+                    if(defaultSubjects){
+                      return sendSubjectsChange()
                     }
                   }}
                 >

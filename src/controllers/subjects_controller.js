@@ -168,6 +168,7 @@ export const assign = async (req, res) => {
 export const updateSubjectsBySection = async (req, res) => {
     try {
         const { subjects, applyYearSubjects } = req.body;
+        console.log(req.body)
         const sectionFound = await section.findById(req.params.id);
 
         if (!sectionFound) {
@@ -198,7 +199,7 @@ export const updateSubjectsBySection = async (req, res) => {
         );
 
         const studentsApply = await applySubjectsRegistered(req.params.id);
-
+        console.log('studentsApply', studentsApply)
         if (studentsApply) {
             return res.json({
                 message: "Materia registradas a seccion y estudiantes",
@@ -216,18 +217,25 @@ export const updateSubjectsBySection = async (req, res) => {
 };
 
 // Called if every student is registered and add subjects for the section
-
+/*
 export const addSubjectsNewStudentsSection = async (id) => {
     try {
         let sectionFound = await section.findOne({ _id: id });
         let listSubject = sectionFound.subjects.map((el) => {
             return { subject: el, scores: [] };
         });
-        if (!listSubject)
-            return res.status(400).json({ message: "Seccion no encontrada" });
+        console.log('add subjects new call',sectionFound.students)
+
+        console.log(listSubject)
+
+        if (!listSubject)return false
+
         for (const studentRegister of sectionFound.students) {
+            console.log('estudents', studentRegister)
             const studentFind = await student.findOne({ _id: studentRegister });
+            if(!studentFind) return true
             let subjectToStudent = listSubject;
+            console.log('materias a registrar a', studentFind.ci, 'lista',subjectToStudent)
             // Verify if subject is already exists
             if (studentFind.subjects) {
                 for (const oldSubjects of studentFind.subjects) {
@@ -247,7 +255,7 @@ export const addSubjectsNewStudentsSection = async (id) => {
         console.log(err);
         return false;
     }
-};
+};*/
 
 export const deleteSubject = async (req, res) => {
     try {

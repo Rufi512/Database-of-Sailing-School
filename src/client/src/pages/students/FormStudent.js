@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { toast } from "react-toastify";
-import { sectionList, codesPhones, repsList, registerStudent } from "../../API";
+import {
+  sectionList,
+  codesPhones,
+  repsList,
+  registerStudent,
+  registerStudents,
+} from "../../API";
 import "../../static/styles/forms.css";
 import "../../static/styles/form-student.css";
 import Select from "react-select";
@@ -21,6 +27,7 @@ const FormStudent = () => {
   ]);
   const [avalaibleCountries, setAvalaiblesCountries] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [fileToSave, setFileToSave] = useState(null);
   const [student, setStudent] = useState({
     ci: "",
     firstname: "",
@@ -120,7 +127,7 @@ const FormStudent = () => {
         ci: "",
         firstname: "",
         lastname: "",
-        section_id: "",
+        section_id: student.section_id || "",
         contact: {
           address_1: "",
           address_2: "",
@@ -159,6 +166,46 @@ const FormStudent = () => {
 
     console.log(data);
   }
+
+  const submitFile = async (e) => {
+    e.preventDefault();
+    if (isSubmit) return;
+    const toastId = toast.loading("Verificando datos...", {
+      closeOnClick: true,
+    });
+    setIsSubmit(true);
+    try {
+      const file = fileToSave;
+      let formData = new FormData();
+      formData.append("students", file);
+      const res = await registerStudents(formData);
+      setIsSubmit(false);
+      if (res.status >= 400) {
+        return toast.update(toastId, {
+          render: "Error al procesar el archivo",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+
+      toast.update(toastId, {
+        render: "Archivo procesado",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    } catch (e) {
+      setIsSubmit(false);
+      toast.update(toastId, {
+        render: "Error al enviar informacion",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      console.log(e);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -562,18 +609,27 @@ const FormStudent = () => {
               <h4>Registro de estudiante archivos</h4>
               <div className="row container-actions">
                 <div className="container-input-file">
-                  <label htmlFor="formFileMultiple" className="form-label">
-                    Selecciona los archivo(s) a procesar
+                  <label htmlFor="formFile" className="form-label">
+                    Selecciona el archivo a procesar
                   </label>
                   <input
                     className="form-control"
                     type="file"
-                    id="formFileMultiple"
-                    multiple
+                    id="formFile"
+                    accept=".csv"
+                    onChange={(e) => {
+                      setFileToSave(e.target.files[0]);
+                    }}
                   />
                 </div>
                 <div className="container-buttons">
-                  <button type="button" className="btn btn-warning" disabled>
+                  <button
+                    type="button"
+                    className="btn btn-warning"
+                    onClick={(e) => {
+                      submitFile(e);
+                    }}
+                  >
                     Subir archivos
                   </button>
                   <button type="submit" className="btn btn-primary">

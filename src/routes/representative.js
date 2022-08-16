@@ -11,7 +11,7 @@ router.post('/register',[authJwt.verifyToken,authJwt.isTeacher],repCtrl.register
 //PUT
 router.put('/update/:id',[authJwt.verifyToken,authJwt.isTeacher],repCtrl.update)
 //DELETE
-router.post('/delete/:id',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isAdmin],repCtrl.deleteRep)
+router.post('/delete/:id',[authJwt.verifyToken,authJwt.checkPassword,authJwt.isTeacher],repCtrl.deleteRep)
 
 
 export default router

@@ -240,7 +240,7 @@ const StudentsList = () => {
 							</div>
 						</div>
 						<div className="container-search-bar">
-							<label for="searchBar">
+							<label htmlFor="searchBar">
 								Introduce nombre o apellido para buscar
 							</label>
 							<div>
@@ -253,14 +253,13 @@ const StudentsList = () => {
 											request()
 										}
 									}}
-									set
 									className="form-control"
 									id="searchBar"
 									placeholder="Fulano y tal"
 								/>
 								<button
 									type="button"
-									class="btn btn-primary"
+									className="btn btn-primary"
 									onClick={(e) => searchBarSubmit()}
 								>
 									Buscar

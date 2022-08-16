@@ -12,7 +12,6 @@ import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
 import { date } from "../libs/dateformat";
 import { getComments } from "./comment_controller";
-import { graduate, demote } from "./graduation_controller";
 import { verifyForms } from "../middlewares";
 import { addStudentsSectionRegistered } from "../controllers/sections_controller";
 
@@ -46,18 +45,20 @@ export const list = async (req, res) => {
         populate: { path: "section", select: { name: 1 } },
     };
 
-    console.log(req.query)
+    console.log(req.query);
     const students = await student.paginate(
         {
-            $or:[
+            $or: [
                 { firstname: new RegExp(req.query.search, "gi") },
                 { lastname: new RegExp(req.query.search, "gi") },
             ],
-            $and:[
-                    { status: req.query.students === "activos" ? true : false },
-                    { graduate:req.query.students === "graduados" ? true : false},
-                    req.query.section && req.query.add ? { section:{ $exists: req.query.section || false }} : {}
-            ]
+            $and: [
+                { status: req.query.students === "activos" ? true : false },
+                { graduate: req.query.students === "graduados" ? true : false },
+                req.query.section && req.query.add
+                    ? { section: { $exists: req.query.section || false } }
+                    : {},
+            ],
         },
         optionsPagination
     );
@@ -69,13 +70,12 @@ export const list = async (req, res) => {
     return res.json(students);
 };
 
-
 //Saved score from subjects for student
 export const saveScore = async (req, res) => {
     try {
         const id = req.params.id;
         const scores = req.body.scores;
-        console.log(req.body)
+        console.log(req.body);
         const studentFind = await student.findById(id);
         if (!studentFind)
             return res.status(404).json({ message: "Student No Found" });
@@ -114,8 +114,13 @@ export const showStudent = async (req, res) => {
     const studentFind = await student
         .findById(req.params.id)
         .populate("section", { students: 0, _id: 0, subjects: 0 })
-        .populate("subjects.subject", { fromYears: 0, _id:0 })
+        .populate("subjects.subject", { fromYears: 0, _id: 0 })
         .populate("representative");
+
+    if(!studentFind){
+        return res.status(404).json("Estudiante no encontrado o eliminado");
+    }
+
     const comments = await getComments(req.params.id);
 
     const listPhone = studentFind.contact.phone_numbers;
@@ -127,11 +132,9 @@ export const showStudent = async (req, res) => {
         };
     });
 
-    if (studentFind) {
-        res.json({ student: studentFind, comments: comments });
-    } else {
-        res.status(404).json("Estudiante no encontrado o eliminado");
-    }
+    res.json({ student: studentFind, comments: comments });
+    
+
 };
 
 //Crear Estudiante Individual
@@ -220,7 +223,7 @@ export const createStudent = async (req, res) => {
 
     const saveStudent = await newStudent.save();
     if (validSection) {
-        const addToSection = addStudentsSectionRegistered(section_id, [
+        const addToSection = await addStudentsSectionRegistered(section_id, [
             saveStudent.id,
         ]);
         console.log(addToSection);
@@ -260,7 +263,17 @@ export const createStudents = async (req, res) => {
                 if (headerError.exist) {
                     return;
                 }
-                if (!Number(row[Object.keys(row)[0]])) {
+
+                const ci = row[Object.keys(row)[0]];
+
+                console.log(ci);
+
+                if (
+                    !Number(ci) ||
+                    !Number.isInteger(Number(ci)) ||
+                    Number(ci) < 0 ||
+                    ci.length < 4
+                ) {
                     return rowErrors.push(
                         `La cedula del estudiante en la fila ${rowsCount} es invalida`
                     );
@@ -291,7 +304,7 @@ export const createStudents = async (req, res) => {
                 }
 
                 const studentFind = await student.findOne({
-                    ci: Number(row[Object.keys(row)[0]]),
+                    ci: ci,
                 });
 
                 if (studentFind) {
@@ -302,10 +315,12 @@ export const createStudents = async (req, res) => {
 
                 if (
                     studentsRegister.find(
-                        (el) => el === Number(row[Object.keys(row)[0]])
+                        (el) => el === ci
                     )
                 ) {
-                    return;
+                    return rowErrors.push(
+                        `El estudiante de la fila: ${rowsCount} tiene una cedula que ya esta registrada `
+                    );
                 }
 
                 const newStudent = new student({
@@ -319,16 +334,28 @@ export const createStudents = async (req, res) => {
                 });
 
                 await newStudent.save();
-                studentsRegister.push(Number(row[Object.keys(row)[0]]));
+
+                studentsRegister.push(ci);
+
+                //if exist section row process to check and register
+                let nameSection = row[Object.keys(row)[3]] || "";
+
+                const sectionFound = await section.findOne({
+                    name: nameSection,
+                })
+
+                if (sectionFound) {
+                    const addToSection = await addStudentsSectionRegistered(
+                        sectionFound.id,
+                        [newStudent.id]
+                    );
+                }
             })
 
             .on("end", async () => {
-                await fs.unlink(
-                    "./public/csv/" + req.file.originalname,
-                    (err) => {
-                        console.log(err);
-                    }
-                );
+                fs.unlink("./public/csv/" + req.file.originalname, (err) => {
+                    console.log(err);
+                });
 
                 if (headerError.exist) {
                     return res.status(400).json({
@@ -337,15 +364,15 @@ export const createStudents = async (req, res) => {
                             headerError.description,
                     });
                 }
-
+                console.log("RowErros:", rowErrors);
                 if (rowErrors.length !== 0) {
                     return res.json({
                         message:
-                            "Algunos estudiantes no pudieron ser añadidos!",
+                            "Se presentaron algunos problemas al añadir estudiantes!",
                         errors: rowErrors,
                     });
                 }
-                res.json({
+                return res.json({
                     message: "Todos los estudiantes del archivo CSV añadidos",
                 });
             });
@@ -421,11 +448,14 @@ export const createStudents = async (req, res) => {
 export const updateStudent = async (req, res) => {
     const studentInfo = req.body;
     const studentFind = await student.findOne({ ci: req.body.ci });
-    const sectionFound = await section.findById(studentFind.section)
-    console.log('graduate:',studentInfo.graduate)
-    if(studentInfo.graduate && sectionFound){
-        console.log('pass')
-        return res.status(400).json({message:'No puedes graduar el estudiante ya que actualmente esta cursando una seccion'})
+    const sectionFound = await section.findById(studentFind.section);
+    console.log("graduate:", studentInfo.graduate);
+    if (studentInfo.graduate && sectionFound) {
+        console.log("pass");
+        return res.status(400).json({
+            message:
+                "No puedes graduar el estudiante ya que actualmente esta cursando una seccion",
+        });
     }
 
     if (
@@ -459,11 +489,15 @@ export const updateStudent = async (req, res) => {
         {
             $set: {
                 ci: req.body.ci ? req.body.ci : studentInfo.ci,
-                firstname: req.body.firstname ? req.body.firstname : studentInfo.firstname,
-                lastname: req.body.lastname ? req.body.lastname : studentInfo.lastname,
-                graduate:studentInfo.graduate || false,
+                firstname: req.body.firstname
+                    ? req.body.firstname
+                    : studentInfo.firstname,
+                lastname: req.body.lastname
+                    ? req.body.lastname
+                    : studentInfo.lastname,
+                graduate: studentInfo.graduate || false,
                 status: req.body.status,
-                contact: req.body.contact ||studentInfo.contact,
+                contact: req.body.contact || studentInfo.contact,
                 representative: studentFind.rep_data && studentFind.rep_data.id,
                 last_modify: dateFormat(
                     now,
@@ -475,7 +509,6 @@ export const updateStudent = async (req, res) => {
     );
     res.json({ message: "Estudiante Actualizado!" });
 };
-
 
 //Borrar estudiante/s
 

@@ -594,21 +594,13 @@ export const registerUser = async (user) => {
 }
 
 export const registerStudents = async (archive) => {
+  console.log(archive)
   const res = await axios.post("/api/students/register/file", archive, {
       headers: { "x-access-token": Cookies.get("token") },
     }).catch((err) => {
       console.log(err)
       return err.response
     })
-
-  
-  if (res.status === 401) {
-    alert("Token vencido o perdido")
-    Cookies.remove("token")
-    Cookies.remove("rol")
-    window.location.href = "/"
-    return
-  }
   return res
 }
 

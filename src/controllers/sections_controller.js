@@ -212,6 +212,7 @@ export const list = async (req, res) => {
         lean: false,
         limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
         page: req.query && Number(req.query.page) ? req.query.page : 1,
+        populate: { path: "students", select: { _id: 1 } },
     };
 
     const sections = await section.paginate({}, optionsPagination);
@@ -223,8 +224,14 @@ export const list = async (req, res) => {
 export const update = async (req, res) => {
     let now = new Date();
     dateFormat.i18n = date;
-    const { name, year, students, period_initial, completion_period, isUpdate } =
-        req.body;
+    const {
+        name,
+        year,
+        students,
+        period_initial,
+        completion_period,
+        isUpdate,
+    } = req.body;
     console.log(req.body);
     let arrayStudentsIds = [];
     let arrayStudentsInvalid = [];
@@ -284,7 +291,9 @@ export const update = async (req, res) => {
         },
         {
             $set: {
-                name: name ? name.toLowerCase() : sectionFound.name.toLowerCase(),
+                name: name
+                    ? name.toLowerCase()
+                    : sectionFound.name.toLowerCase(),
                 year: year || sectionFound.year,
                 period_initial: period_initial || sectionFound.period_initial,
                 completion_period:
@@ -314,6 +323,7 @@ export const update = async (req, res) => {
 //Add student to section if every register
 
 export const addStudentsSectionRegistered = async (section_id, students) => {
+    console.log("register section call", section_id);
     let now = new Date();
     dateFormat.i18n = date;
     let arrayStudentsIds = [];
@@ -323,12 +333,14 @@ export const addStudentsSectionRegistered = async (section_id, students) => {
     const sectionFound = await section.findById(section_id);
     if (sectionFound) {
         oldArrayStudentsIds = sectionFound.students;
-        for (const id of students) {
-            const res = await requestIds(id, sectionFound, false);
-            if (res === true) {
-                arrayStudentsIds.push(id);
-            } else {
-                arrayStudentsInvalid.push(res);
+        if (students) {
+            for (const id of students) {
+                const res = await requestIds(id, sectionFound, false);
+                if (res === true) {
+                    arrayStudentsIds.push(id);
+                } else {
+                    arrayStudentsInvalid.push(res);
+                }
             }
         }
     }
@@ -360,7 +372,7 @@ export const addStudentsSectionRegistered = async (section_id, students) => {
         { upsert: true }
     );
 
-    const stateSubjects = await addSubjectsNewStudentsSection(section_id);
+    const stateSubjects = await applySubjectsRegistered(section_id);
 
     if (arrayStudentsInvalid.length > 0) {
         return {
@@ -380,38 +392,41 @@ export const applySubjectsRegistered = async (id) => {
     try {
         let sectionFound = await section.findOne({ _id: id });
 
-        if (!sectionFound)
-            return res.status(400).json({ message: "Seccion no encontrada" });
+        if (!sectionFound) return false;
 
         let listSubject = sectionFound.subjects.map((el) => {
             return { subject: el, scores: [] };
         });
 
+        console.log("Array de estudiantes:", sectionFound.students);
+
         for (const studentRegister of sectionFound.students) {
             const studentFind = await student.findOne({ _id: studentRegister });
-            let subjectsFromStudents = studentFind.subjects;
-            // preserve the subjects not remove
-            const subjectToStudent = listSubject.map((elm) => {
+            console.log("Estudiante requerido", studentFind);
+            if (studentFind) {
+                let subjectsFromStudents = studentFind.subjects;
+                // preserve the subjects not remove
+                const subjectToStudent = listSubject.map((elm) => {
+                    const prevSubject = subjectsFromStudents.find((item) => {
+                        return (
+                            item.subject.toString() == elm.subject.toString()
+                        );
+                    });
 
-                const prevSubject = subjectsFromStudents.find((item) => {
-                    return item.subject.toString() == elm.subject.toString();
+                    if (prevSubject) {
+                        return prevSubject;
+                    }
+
+                    return elm;
                 });
-
-                if (prevSubject) {
-                    return prevSubject;
-                }
-                
-                return elm;
-                
-            });
-
-            console.log("subjects registradas", subjectToStudent);
-            // Add if not subjects in student and is register and push to saved
-            await student.updateOne(
-                { _id: studentFind.id },
-                { $set: { subjects: subjectToStudent } },
-                { upsert: true }
-            );
+                console.log("subjects registradas", subjectToStudent);
+                // Add if not subjects in student and is register and push to saved
+                await student.updateOne(
+                    { _id: studentFind.id },
+                    { $set: { subjects: subjectToStudent } },
+                    { upsert: true }
+                );
+            }
         }
         return true;
     } catch (err) {
