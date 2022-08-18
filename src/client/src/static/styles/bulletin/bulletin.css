@@ -1,0 +1,17 @@
+.bulletin .card-header h2, .bulletin .card-header h3 {
+	text-align: center;
+}
+
+.bulletin .form-group label{
+	padding: 2px 5px;
+}
+
+ .bulletin .form-group p{
+ 	padding: 2px 3px;
+ }
+
+.bulletin .form-container{
+	width: 100%;
+    margin: 40px auto;
+    max-width: 780px;
+}

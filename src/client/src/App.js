@@ -55,6 +55,7 @@ const App = () => (
           path="/reset-password/questions/"
           element={<Questions />}
         />
+
         {/*Logout*/}
 
         <Route exact path="logout" element={<Logout />} />

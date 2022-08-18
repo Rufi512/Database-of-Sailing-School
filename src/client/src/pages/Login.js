@@ -62,11 +62,18 @@ const Login = (props) => {
         type: "success",
         isLoading: false,
         closeOnClick: true,
-        autoClose: 5000,
+        autoClose: 3000,
       });
 
       navigate('/home')
     } catch(e) {
+      toast.update(toastId, {
+        render: "Fallo al verificar informacion",
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+        autoClose: 3000,
+      });
       setIsSubmit(false)
       console.log(e)
     }

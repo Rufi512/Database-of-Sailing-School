@@ -6,6 +6,9 @@ import "../../static/styles/student-info.css";
 import { fieldTest } from "../../components/SomethingFunctions";
 import { toast } from "react-toastify";
 import Select from "react-select";
+import AcademicBulletin from "../../components/AcademicBulletin";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import {
   codesPhones,
   repsList,
@@ -30,12 +33,14 @@ const StudentInfo = () => {
   const [avalaibleCountries, setAvalaiblesCountries] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [subjects, setSubjects] = useState([]);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const [student, setStudent] = useState({
     ci: "",
     firstname: "",
     lastname: "",
     section: "",
+    deleteSection: false,
     graduate: false,
     status: true,
     subjects: [],
@@ -102,6 +107,18 @@ const StudentInfo = () => {
   });
 
   const params = useParams();
+
+  const generatePDF = async () => {
+    const pdf = new jsPDF("portrait", "pt", "a4");
+    const data = await html2canvas(document.getElementById("to-pdf"),{allowTaint: true,useCORS: false})
+    const img = data.toDataURL("image/png");  
+    const imgProperties = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+    pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`Boleta informativa - ${student.ci} - ${student.firstname} ${student.lastname}.pdf`);
+  };
+
   const index = avalaibleCountries.findIndex((object) => {
     if (student.contact.phone_numbers[0]) {
       return object.value === student.contact.phone_numbers[0].countryCode;
@@ -140,12 +157,15 @@ const StudentInfo = () => {
           autoClose: 5000,
         });
       }
+
       toast.update(toastId, {
         render: "Estudiante Actualizado!",
         type: "success",
         isLoading: false,
         autoClose: 5000,
       });
+      setStudent({ ...student, deleteSection: false });
+      setDeleteModal(false);
       setActiveForm(false);
       setIsSubmit(false);
       request();
@@ -243,7 +263,7 @@ const StudentInfo = () => {
       } else {
         itemReps = itemReps.concat(reps);
       }
-      const rep = res.data.rep_data;
+      const rep = res.data.student.representative;
       if (rep) {
         setRep({
           id: rep._id || "",
@@ -261,9 +281,8 @@ const StudentInfo = () => {
         });
       }
       setAvalaiblesReps(itemReps);
-      console.log('chestInfo',chestInfo)
-      if(chestInfo.status < 400){
-          setChest(chestInfo.data);
+      if (chestInfo.status < 400) {
+        setChest(chestInfo.data);
       }
 
       setStudent({
@@ -327,7 +346,7 @@ const StudentInfo = () => {
         graduate: res.data.student.graduate || false,
         section: res.data.student.section ? res.data.student.section.name : "",
         status: res.data.student.status,
-        subjectsR: res.data.student.subjects || [],
+        subjects: res.data.student.subjects || [],
         contact: {
           address_1:
             res.data.student.contact &&
@@ -442,14 +461,69 @@ const StudentInfo = () => {
     return () => clearTimeout(timerRef.current);
   }, [request]);
 
-  console.log("chest", chest);
   return (
     <>
       <Navbar />
       <div
+        style={{
+          position: "absolute",
+          zIndex: -10000000,
+          width: "100%",
+        }}
+      >
+        <AcademicBulletin student={data} chest={chest} />
+      </div>
+
+      <div
         className="container-body container-detail"
         style={{ overflow: "hidden" }}
       >
+        <div
+          className={`modal-request-admin ${
+            deleteModal ? "modal-request-admin-active" : ""
+          }`}
+        >
+          <div className="container-modal card">
+            <h5 className="card-header">Advertencia</h5>
+            <div className="card-body">
+              <h5 className="card-title">Confirmacion de accion</h5>
+
+              <div>
+                <p className="card-text">
+                  Estas seguro de borrar al estudiante de la seccion actual?{" "}
+                </p>
+                <p className="card-text">
+                  <span style={{ fontWeight: "bold" }}>Cedula:</span>
+                  {data.ci}
+                  <br />
+                  <span style={{ fontWeight: "bold" }}>
+                    Nombre y Apellido:
+                  </span>{" "}
+                  {`${data.firstname} ${data.lastname}`}
+                </p>
+                <p className="card-text">
+                  De ser asi haga click en confirmar accion
+                </p>
+              </div>
+
+              <div className="container-buttons">
+                <button className="btn btn-primary" onClick={handleSubmit}>
+                  Confirmar Accion
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={(e) => {
+                    setStudent({ ...student, deleteSection: false });
+                    setDeleteModal(false);
+                  }}
+                >
+                  Regresar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="card card-container">
           <div className="card-header">
             <h2>Informacion del estudiante</h2>
@@ -527,6 +601,39 @@ const StudentInfo = () => {
                   />
                 </div>
               </div>
+
+              <div
+                className="form-container-switchs"
+                style={{
+                  justifyContent: "space-between",
+                  marginBottom: "25px",
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={(e) => {
+                    generatePDF();
+                  }}
+                >
+                  Descargar información academica
+                </button>
+                {data.section && activeForm ? (
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={(e) => {
+                      setStudent({ ...student, deleteSection: true });
+                      setDeleteModal(true);
+                    }}
+                  >
+                    Eliminar de la seccion
+                  </button>
+                ) : (
+                  ""
+                )}
+              </div>
+
               <div className="form-group" style={{ marginBottom: "10px" }}>
                 <label htmlFor="ci">Cedula del estudiante</label>
                 {activeForm ? (
@@ -787,7 +894,12 @@ const StudentInfo = () => {
               {chest.data.length > 0 ? (
                 chest.data.map((el, i) => {
                   return (
-                    <div className={`container-section border rounded ${el.approved ? 'border-primary' : 'border-danger'}`} key={i}>
+                    <div
+                      className={`container-section border rounded ${
+                        el.approved ? "border-primary" : "border-danger"
+                      }`}
+                      key={i}
+                    >
                       <h4>{el.section.name || "Sin información"}</h4>
                       <div className="container-info-header-chest">
                         <p>

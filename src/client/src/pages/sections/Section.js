@@ -154,21 +154,29 @@ const Section = () => {
   console.log(selectedStudentsSection);
   // for graduate students resgistered
   const graduateStudentsRegistered = async (isTest) => {
-    if (isSubmit) return;
-    setIsSubmit(true);
+    console.log('call')
     const toastId = toast.loading("Consultando datos...", {
       closeOnClick: true,
     });
     try {
+      console.log('push')
       const res = await graduateStudentsSection({
         id: params.id,
         isTest,
         password,
       });
 
+      console.log('graduacion',res)
+
       setIsSubmit(false);
 
       if(isTest === false){
+        toast.update(toastId, {
+        render: "Seccion graduada y eliminada",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
        return navigate('/sections')
       }
       

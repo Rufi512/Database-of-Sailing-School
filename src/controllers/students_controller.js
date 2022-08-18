@@ -333,7 +333,9 @@ export const createStudents = async (req, res) => {
                     ),
                 });
 
-                await newStudent.save();
+                const saveStudent = await newStudent.save();
+
+                console.log('Estudiante graduardo', rowsCount, 'Es:', saveStudent)
 
                 studentsRegister.push(ci);
 
@@ -347,7 +349,7 @@ export const createStudents = async (req, res) => {
                 if (sectionFound) {
                     const addToSection = await addStudentsSectionRegistered(
                         sectionFound.id,
-                        [newStudent.id]
+                        [newStudent._id]
                     );
                 }
             })
@@ -447,6 +449,9 @@ export const createStudents = async (req, res) => {
 //Update the student,if pass id in rep_data update the field representative
 export const updateStudent = async (req, res) => {
     const studentInfo = req.body;
+    const studentInfoActual = await student.findById(req.params.id)
+    console.log('localdb', studentInfoActual)
+    console.log(req.body)
     const studentFind = await student.findOne({ ci: req.body.ci });
     const sectionFound = await section.findById(studentFind.section);
     console.log("graduate:", studentInfo.graduate);
@@ -488,25 +493,27 @@ export const updateStudent = async (req, res) => {
         { _id: req.params.id },
         {
             $set: {
-                ci: req.body.ci ? req.body.ci : studentInfo.ci,
+                ci: req.body.ci ? req.body.ci : studentInfoActual.ci,
                 firstname: req.body.firstname
                     ? req.body.firstname
-                    : studentInfo.firstname,
+                    : studentInfoActual.firstname,
                 lastname: req.body.lastname
                     ? req.body.lastname
-                    : studentInfo.lastname,
-                graduate: studentInfo.graduate || false,
+                    : studentInfoActual.lastname,
+                graduate: studentInfo.graduate || studentInfoActual.graduate,
                 status: req.body.status,
-                contact: req.body.contact || studentInfo.contact,
-                representative: studentFind.rep_data && studentFind.rep_data.id,
+                contact: req.body.contact || studentInfoActual.contact,
+                representative: studentInfo.rep_data && studentInfo.rep_data._id,
                 last_modify: dateFormat(
                     now,
                     "dddd, d De mmmm , yyyy, h:MM:ss TT"
                 ),
             },
+            $unset:studentInfo.deleteSection ? {section:1} : {}
         },
         { upsert: true }
     );
+
     res.json({ message: "Estudiante Actualizado!" });
 };
 

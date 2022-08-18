@@ -1,15 +1,13 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 export const verifyToken = async ()=>{
     const res = axios.get('/api/auth/verify/token',{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       toast.error('Sesion expirada')
       Cookies.remove("token")
       Cookies.remove("rol")
-      let navigate = useNavigate();
-      navigate('/')
+      window.location.href = "/"
       if(err.response.status <= 500){
         return err.response
       }
@@ -162,6 +160,7 @@ export const updateSection = async ({id,section}) =>{
 //Graduate
 
 export const graduateStudentsSection = async ({id,isTest,password}) =>{
+  console.log(isTest)
    const res = await axios.post(`${isTest ? '/api/section/gradue/test' : '/api/section/gradue'}`,{id,isTest,password},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
