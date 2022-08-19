@@ -217,6 +217,7 @@ const StudentInfo = () => {
         isLoading: false,
         autoClose: 3000,
       });
+      console.log(res.data)
       setStudent({ ...student, rep_data: res.data });
       setRep({ ...res.data, id: res.data._id });
     } catch (e) {
@@ -285,6 +286,8 @@ const StudentInfo = () => {
         setChest(chestInfo.data);
       }
 
+      console.log(res.data.student.representative)
+
       setStudent({
         ci: res.data.student.ci || "",
         firstname: res.data.student.firstname || "",
@@ -310,31 +313,31 @@ const StudentInfo = () => {
         },
         rep_data: {
           id:
-            res.data.student.rep_data && res.data.student.rep_data.id
-              ? res.data.student.rep_data.id
+            res.data.student.representative && res.data.student.representative._id
+              ? res.data.student.representative._id
               : "",
-          ci: res.data.student.rep_data && (res.data.student.rep_data.ci || ""),
+          ci: res.data.student.representative && (res.data.student.representative.ci || ""),
           firstname:
-            res.data.student.rep_data &&
-            (res.data.student.rep_data.firstname || ""),
+            res.data.student.representative &&
+            (res.data.student.representative.firstname || ""),
           lastname:
-            res.data.student.rep_data &&
-            (res.data.student.rep_data.lastname || ""),
+            res.data.student.representative &&
+            (res.data.student.representative.lastname || ""),
           contact: {
             address_1:
-              res.data.student.rep_data &&
-              (res.data.student.rep_data.contact.address_1 || ""),
+              res.data.student.representative &&
+              (res.data.student.representative.contact.address_1 || ""),
             address_2:
-              res.data.student.rep_data &&
-              (res.data.student.rep_data.contact.address_2 || ""),
+              res.data.student.representative &&
+              (res.data.student.representative.contact.address_2 || ""),
             phone_numbers:
-              res.data.student.rep_data &&
-              (res.data.student.rep_data.contact.phone_numbers || [
+              res.data.student.representative &&
+              (res.data.student.representative.contact.phone_numbers || [
                 { number: "", countryCode: "", formatted: "" },
               ]),
             emails:
-              res.data.student.rep_data &&
-              (res.data.student.rep_data.contact.emails || [""]),
+              res.data.student.representative &&
+              (res.data.student.representative.contact.emails || [""]),
           },
         },
       });
@@ -364,8 +367,8 @@ const StudentInfo = () => {
         },
         rep_data: {
           id:
-            res.data.student.rep_data && res.data.student.rep_data.id
-              ? res.data.student.rep_data.id
+            res.data.student.rep_data && res.data.student.rep_data._id
+              ? res.data.student.rep_data._id
               : "",
           ci:
             res.data.student.rep_data && res.data.student.rep_data.ci
@@ -961,6 +964,7 @@ const StudentInfo = () => {
                       type="text"
                       className="form-control"
                       id="address"
+                      autoComplete="off"
                       placeholder="Introduce la direccion del estudiante"
                       onInput={(e) => {
                         let items = student;
@@ -982,6 +986,7 @@ const StudentInfo = () => {
                       type="text"
                       className="form-control"
                       id="address2-student"
+                      autoComplete="off"
                       placeholder="Introduce direccion de referencia del estudiante"
                       onInput={(e) => {
                         let items = student;

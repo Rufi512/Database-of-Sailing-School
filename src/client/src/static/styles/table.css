@@ -53,10 +53,6 @@
 	justify-content: space-between;
 }
 
-.table .data p{
-	margin: 0;
-}
-
 .pagination-info{
 	display: flex;
     align-items: center;

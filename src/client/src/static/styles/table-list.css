@@ -26,8 +26,14 @@
     border: 2px solid black;
 }
 
-.table-general .data-body p {
+
+.table-general .data-body p{
+    display: block;
     margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-top: 10px;
 }
 
 .table-general .container-actions {
@@ -100,7 +106,8 @@
     }
 
     .table-general .data-body p {
-        display: flex;
+        padding-top: 10px;
+        display: block;
         justify-content: center;
         align-items: center;
     }

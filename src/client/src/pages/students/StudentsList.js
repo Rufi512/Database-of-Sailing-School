@@ -249,9 +249,6 @@ const StudentsList = () => {
 									value={searchBar}
 									onInput={(e) => {
 										setSearchBar(e.target.value);
-										if(e.target.value === ''){
-											request()
-										}
 									}}
 									className="form-control"
 									id="searchBar"

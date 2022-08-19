@@ -45,7 +45,6 @@ export const list = async (req, res) => {
         populate: { path: "section", select: { name: 1 } },
     };
 
-    console.log(req.query);
     const students = await student.paginate(
         {
             $or: [
@@ -75,7 +74,6 @@ export const saveScore = async (req, res) => {
     try {
         const id = req.params.id;
         const scores = req.body.scores;
-        console.log(req.body);
         const studentFind = await student.findById(id);
         if (!studentFind)
             return res.status(404).json({ message: "Student No Found" });
@@ -141,7 +139,6 @@ export const showStudent = async (req, res) => {
 export const createStudent = async (req, res) => {
     const { ci, firstname, lastname, contact, rep_data, section_id } = req.body;
     let validSection = false;
-    console.log(req.body);
     const checkRegister = await verifyForms.verifyCreate(req.body);
     let repRegister;
     let newStudentRegister;
@@ -189,9 +186,7 @@ export const createStudent = async (req, res) => {
         newStudentRegister.representative = repFound.id;
     }
     if (rep_data && !rep_data.id) {
-        console.log(rep_data);
         const checkRep = await verifyForms.verifyRep(rep_data);
-        console.log(checkRep);
         if (checkRep === true) {
             const listPhone = rep_data.contact.phone_numbers;
             rep_data.contact.phone_numbers = listPhone.map((el) => {
@@ -212,7 +207,6 @@ export const createStudent = async (req, res) => {
                 contact: rep_data.contact,
             });
             const savedRep = await newRep.save();
-            console.log(savedRep);
             newStudentRegister.representative = savedRep.id;
         } else {
             return res.status(400).json({ message: checkRep.message });
@@ -226,9 +220,7 @@ export const createStudent = async (req, res) => {
         const addToSection = await addStudentsSectionRegistered(section_id, [
             saveStudent.id,
         ]);
-        console.log(addToSection);
     }
-    console.log(saveStudent);
     res.json({ message: "Estudiante registrado" });
 };
 
@@ -265,8 +257,6 @@ export const createStudents = async (req, res) => {
                 }
 
                 const ci = row[Object.keys(row)[0]];
-
-                console.log(ci);
 
                 if (
                     !Number(ci) ||
@@ -335,8 +325,6 @@ export const createStudents = async (req, res) => {
 
                 const saveStudent = await newStudent.save();
 
-                console.log('Estudiante graduardo', rowsCount, 'Es:', saveStudent)
-
                 studentsRegister.push(ci);
 
                 //if exist section row process to check and register
@@ -366,7 +354,7 @@ export const createStudents = async (req, res) => {
                             headerError.description,
                     });
                 }
-                console.log("RowErros:", rowErrors);
+
                 if (rowErrors.length !== 0) {
                     return res.json({
                         message:
@@ -450,13 +438,10 @@ export const createStudents = async (req, res) => {
 export const updateStudent = async (req, res) => {
     const studentInfo = req.body;
     const studentInfoActual = await student.findById(req.params.id)
-    console.log('localdb', studentInfoActual)
-    console.log(req.body)
     const studentFind = await student.findOne({ ci: req.body.ci });
     const sectionFound = await section.findById(studentFind.section);
-    console.log("graduate:", studentInfo.graduate);
+
     if (studentInfo.graduate && sectionFound) {
-        console.log("pass");
         return res.status(400).json({
             message:
                 "No puedes graduar el estudiante ya que actualmente esta cursando una seccion",
@@ -509,7 +494,7 @@ export const updateStudent = async (req, res) => {
                     "dddd, d De mmmm , yyyy, h:MM:ss TT"
                 ),
             },
-            $unset:studentInfo.deleteSection ? {section:1} : {}
+            $unset:studentInfo.deleteSection ? {section:1} : {} && studentInfo.rep_data.id ? {representative:1} : {} 
         },
         { upsert: true }
     );
