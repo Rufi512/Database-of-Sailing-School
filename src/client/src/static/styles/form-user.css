@@ -31,6 +31,16 @@
     margin: 10px 0;
 }
 
+.container-create-user .questions-update-user .list-group .list-group-item p {
+    width: 310px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-top: 14px;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
 /*modal creator questions*/
 .questions-creator-user-modal {
     position: fixed;
@@ -50,7 +60,7 @@
     transition: all 0.3s ease;
 }
 
-.show-creator-questions{
+.show-creator-questions {
     opacity: 1;
     z-index: 100;
 }
@@ -60,7 +70,7 @@
     padding: 5px;
 }
 
-.questions-creator-user-modal .questions-creator-container label{
+.questions-creator-user-modal .questions-creator-container label {
     width: 100%;
     font-weight: 600;
 }

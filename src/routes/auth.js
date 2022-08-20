@@ -13,21 +13,19 @@ router.get('/codes/phones',(req,res)=>{
 	}
 	res.json(newList)
 })
-
 router.get('/questions/user/:id',[authJwt.verifyToken],recoveryCtrl.getQuestionsOnLogin) //list question from user registered
-
+router.get('/questions/user/',[authJwt.verifyToken],recoveryCtrl.getQuestionsOnLogin)
 router.get('/verify/token',[authJwt.verifyToken],authCtrl.verifyTokenConfirm)
 
 //POST
 router.post('/login',[validateCaptcha],authCtrl.signIn)
-
 router.post('/questions',[validateCaptcha],recoveryCtrl.getQuestions) //list question from user registered
-router.post('/register/questions/:id',[authJwt.verifyToken],recoveryCtrl.setQuestions) //set list question from user registered
+router.post('/register/questions/:id',[authJwt.verifyToken,authJwt.isUserOrAdmin],recoveryCtrl.setQuestions) //set list question from user registered
+router.post('/register/questions/',[authJwt.verifyToken,authJwt.isUserOrAdmin],recoveryCtrl.setQuestions)
 router.post('/questions/check',recoveryCtrl.checkQuestions)
-
-
 router.post('/forgot-password',[validateCaptcha],recoveryCtrl.forgotPassword)
-
 router.post('/reset-password/:id/:token',recoveryCtrl.resetPassword)
+
+router.delete('/question/delete/:id',[authJwt.verifyToken,authJwt.isUserOrAdmin],recoveryCtrl.deleteQuestionUser)
 
 export default router

@@ -71,6 +71,7 @@ const App = () => (
           <Route exact path="users" element={<ListUser />} />
           <Route exact path="user/create" element={<CreateUser />} />
           <Route exact path="user/detail/:id" element={<DetailUser />} />
+          <Route exact path="user/detail/" element={<DetailUser />} />
           <Route exact path="reps" element={<ListRep />} />
           <Route exact path="reps/create" element={<CreateRep />} />
           <Route exact path="reps/detail/:id" element={<DetailRep />} />

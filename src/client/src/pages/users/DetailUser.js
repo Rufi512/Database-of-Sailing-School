@@ -9,6 +9,7 @@ import {
 	detailUser,
 	getQuestionsOnLogin,
 	registerQuests,
+	deleteQuestionFromUser
 } from "../../API";
 import "../../static/styles/form-user.css";
 const DetailUser = () => {
@@ -38,6 +39,7 @@ const DetailUser = () => {
 	const params = useParams();
 
 	const request = useCallback(async () => {
+		setShowChangePassword(false)
 		try {
 			const res = await detailUser(params.id);
 			const questions = await getQuestionsOnLogin(params.id);
@@ -51,8 +53,12 @@ const DetailUser = () => {
 				email,
 				rol: rol ? rol.name : "teacher",
 			});
-			if (questions.status >= 400)
+
+			if (questions.status >= 400){
+				setListQuestions([])
 				return toast.error(res.data.message, { autoClose: false });
+			}
+			
 			if (questions.data && questions.status < 400)
 				setListQuestions(questions.data);
 		} catch (e) {
@@ -78,7 +84,7 @@ const DetailUser = () => {
 			return toast.error("El campo cedula no puede quedar vacio");
 		if (firstname === "" || lastname === "")
 			return toast.error(
-				"Los campos de nombre yd apellido no pueden quedar vacios"
+				"Los campos de nombre y apellido no pueden quedar vacios"
 			);
 		if (email === "")
 			return toast.error("El campo email no puede quedar vacio");
@@ -176,10 +182,49 @@ const DetailUser = () => {
 		}
 	};
 
+	const deleteQuestion = async (id) =>{
+		const toastId = toast.loading("Verificando datos...", {
+			closeOnClick: true,
+		});
+		if (isSubmit) return;
+		setIsSubmit(true);
+		try{
+			const res = await deleteQuestionFromUser(id)
+			setIsSubmit(false);
+
+			if (res.status >= 400) {
+				return toast.update(toastId, {
+					render: res.data.message,
+					type: "error",
+					isLoading: false,
+					autoClose: 5000,
+				});
+			}
+
+			toast.update(toastId, {
+				render: res.data.message,
+				type: "success",
+				isLoading: false,
+				autoClose: 5000,
+			});
+			setRegisterQuestions([{ question: "", answer: "", confirm: "" }]);
+			request()
+		}catch(e){
+			setIsSubmit(false);
+			console.log(e);
+			return toast.update(toastId, {
+				render: "Error al enviar informacion, intente de nuevo",
+				type: "error",
+				isLoading: false,
+				autoClose: 5000,
+			});
+		}
+	}
+
 
 	return (
 		<>
-			<Navbar />
+			<Navbar actualPage={'profile'}/>
 			<div
 				className={`questions-creator-user-modal ${
 					showQuestionsModal ? "show-creator-questions" : ""
@@ -305,6 +350,7 @@ const DetailUser = () => {
 								onChange={(e) => {
 									setShowEdit(e.target.checked);
 								}}
+								checked={showEdit}
 							/>
 							<label
 								className="form-check-label"
@@ -481,7 +527,9 @@ const DetailUser = () => {
 											setShowChangePassword(
 												e.target.checked
 											);
+											setUser({...user,allowPassword:e.target.checked})
 										}}
+										checked={showChangePassword}
 									/>
 									<label
 										className="form-check-label"
@@ -563,10 +611,13 @@ const DetailUser = () => {
 													console.log(i)
 													return(
 														<li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-														{el.question}
+														<p style={{width:'250px'}}>{el.question}</p>
 														<span style={{zIndex: 1,color: '#2800e8',fontSize:'16px'}}className="badge badge-primary badge-pill">
 															{i+1}
 														</span>
+														<button type="button" className="btn btn-danger" style={{height:'32px'}} onClick={(e)=>{deleteQuestion(el._id)}}>
+															Borrar pregunta
+														</button>
 													</li>
 													);
 												})}

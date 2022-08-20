@@ -10,6 +10,7 @@ import { ReactComponent as RepIcon } from "../static/icons/navbar/rep.svg";
 import { ReactComponent as ListIcon } from "../static/icons/navbar/table-list-solid.svg";
 import { ReactComponent as SectionIcon } from "../static/icons/navbar/section.svg";
 import { ReactComponent as SubjectListIcon } from "../static/icons/navbar/subject-list.svg"
+import { ReactComponent as ProfileIcon } from "../static/icons/navbar/profile.svg"
 import "../static/styles/nav.css";
 const Navbar = (props) => {
   const [navActive, setNavActive] = useState(false);
@@ -72,6 +73,15 @@ const Navbar = (props) => {
           >
             <HomeIcon />
             Inicio
+          </Link>
+          <Link
+            to="/user/detail/"
+            className={`link ${
+              props.actualPage === "profile" ? "link-active" : ""
+            }`}
+          >
+            <ProfileIcon />
+            Perfil
           </Link>
         </div>
         <p className="indicator-text">Estudiantes y secciones</p>

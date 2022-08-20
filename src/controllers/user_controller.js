@@ -80,13 +80,21 @@ export const createUser = async (req, res) => {
 //Actualiza la información de usuario
 
 export const updateUser = async (req, res) => {
-    const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+    const validId = mongoose.Types.ObjectId.isValid(
+        req.params.id || req.userId
+    );
 
     if (!validId) {
         return res.status(404).json({ message: "ID invalido" });
     }
 
-    const foundUser = await user.findById(req.params.id);
+    const foundUser = await user.findById(req.params.id || req.userId);
+
+    if (req.params.id && req.rolUser !== "Admin") {
+        return res
+            .status(404)
+            .json({ message: "No se ha encontrado al usuario" });
+    }
 
     // Check if email or ci is in used to other user
     const userFind = await user.findOne({
@@ -102,7 +110,7 @@ export const updateUser = async (req, res) => {
     if (!foundUser)
         return res.status(404).json({ message: "Usuario no encontrado" });
 
-    if (userFind && userFind.id !== req.params.id) {
+    if (userFind && userFind.id !== (req.params.id || req.userId)) {
         return res.status(400).json({
             message: "Cambio de email rechazado,el email esta en uso!",
         });
@@ -114,11 +122,9 @@ export const updateUser = async (req, res) => {
     //Verify if the user is admin or is the same
     if (rolUserRequest[0].name != "Admin") {
         if (foundUser.id != req.userId) {
-            return res
-                .status(401)
-                .json({
-                    message: "No tienes permisos para modificar al usuario",
-                });
+            return res.status(401).json({
+                message: "No tienes permisos para modificar al usuario",
+            });
         }
     }
 
@@ -126,7 +132,7 @@ export const updateUser = async (req, res) => {
 
     if (req.body.password && req.body.allowPassword) {
         await user.updateOne(
-            { _id: req.params.id },
+            { _id: req.params.id || req.userId },
             {
                 $set: {
                     ci: req.body.ci,
@@ -140,7 +146,7 @@ export const updateUser = async (req, res) => {
         );
     } else {
         await user.updateOne(
-            { _id: req.params.id },
+            { _id: req.params.id || req.userId },
             {
                 $set: {
                     ci: req.body.ci,
@@ -158,7 +164,7 @@ export const updateUser = async (req, res) => {
 //Stats user
 
 export const stats = async (req, res) => {
-    const userFound = await user.findById(req.userId)
+    const userFound = await user.findById(req.userId);
     const students = await student.find();
     const students_gradues = await student.find({ graduate: true });
     const frozen_students = await student.find({ status: false });
@@ -169,24 +175,25 @@ export const stats = async (req, res) => {
         graduate_students: students_gradues.length,
         frozen_students: frozen_students.length,
         registered_representatives: representatives.length,
-        registered_sections:sections.length,
-        user:`${userFound.firstname} ${userFound.lastname}`
+        registered_sections: sections.length,
+        user: `${userFound.firstname} ${userFound.lastname}`,
     });
 };
 
 //Detail user
 
 export const getUser = async (req, res) => {
-    const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+    if (req.params.id) {
+        const validId = mongoose.Types.ObjectId.isValid(req.params.id);
 
-    if (!validId) {
-        return res
-            .status(404)
-            .json({ message: "El identificador no es valido!" });
+        if (!validId) {
+            return res
+                .status(404)
+                .json({ message: "El identificador no es valido!" });
+        }
     }
-
     const foundUser = await user
-        .findById(req.params.id)
+        .findById(req.params.id || req.userId)
         .populate("rol", { name: 1, _id: 0 });
 
     const userFind = await user.findById(req.userId);
@@ -195,11 +202,10 @@ export const getUser = async (req, res) => {
     if (!foundUser)
         return res.status(404).json({ message: "Usuario no encontrado" });
     if (rol[0].name === "Admin" || foundUser.id === req.userId) {
-        console.log(foundUser);
         return res.json(foundUser);
     } else {
         return res
-            .status(401)
+            .status(403)
             .json({ message: "No tienes permisos para requerir al usuario" });
     }
 };

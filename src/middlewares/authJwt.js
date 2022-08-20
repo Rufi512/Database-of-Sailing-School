@@ -50,7 +50,6 @@ export const verifyTokenExpire = async (req, res, next) => {
 
 export const checkPassword = async (req, res, next) => {
   try {
-    console.log(req.body);
     const token = req.headers["x-access-token"];
 
     if (!token)
@@ -129,6 +128,20 @@ export const isModerator = async (req, res, next) => {
     .status(403)
     .json({ message: "Debes ser Moderador para completa la acción!" });
 };
+
+export const isUserOrAdmin = async (req,res,next) =>{
+  const userFind = await user.findById(req.userId)
+  if(!userFind) return res.status(404).json({message:'No se ha encontrado al usuario'})
+
+  const rol = await roles.find({ _id: { $in: userFind.rol } });
+  
+  if (rol[0].name === "Admin") {
+    req.rolUser = rol[0].name
+  }
+
+  next()
+
+}
 
 export const isAdmin = async (req, res, next) => {
   const userFind = await user.findById(req.userId);

@@ -386,7 +386,7 @@ export const createUser = async (data) =>{
 }
 
 export const updateUser = async ({data,id}) =>{
-  const res = await axios.put(`/api/user/update/${id}`,data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+  const res = await axios.put(`${id ? `/api/user/update/${id}` : `/api/user/update`}`,data,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }
@@ -397,7 +397,7 @@ export const updateUser = async ({data,id}) =>{
 }
 
 export const detailUser = async (id) =>{
-  const res = await axios.get(`/api/user/detail/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+  const res = await axios.get(`${id ? `/api/user/detail/${id}` : `/api/user/detail`}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }
@@ -408,7 +408,7 @@ export const detailUser = async (id) =>{
 }
 
 export const registerQuests = async ({id,questions}) =>{
-  const res = await axios.post(`/api/auth/register/questions/${id}`,{quests:questions},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+  const res = await axios.post(`${id ? `/api/auth/register/questions/${id}` : `/api/auth/register/questions/`}`,{quests:questions},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }
@@ -419,7 +419,18 @@ export const registerQuests = async ({id,questions}) =>{
 }
 
 export const getQuestionsOnLogin = async (id) =>{
-  const res = await axios.get(`/api/auth/questions/user/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+  const res = await axios.get(`${id ? `/api/auth/questions/user/${id}` : `/api/auth/questions/user/`}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  return res
+}
+
+export const deleteQuestionFromUser = async (id) =>{
+  const res = await axios.delete(`/api/auth/question/delete/${id}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }
