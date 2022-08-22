@@ -216,46 +216,7 @@ export const updateSubjectsBySection = async (req, res) => {
     }
 };
 
-// Called if every student is registered and add subjects for the section
-/*
-export const addSubjectsNewStudentsSection = async (id) => {
-    try {
-        let sectionFound = await section.findOne({ _id: id });
-        let listSubject = sectionFound.subjects.map((el) => {
-            return { subject: el, scores: [] };
-        });
-        console.log('add subjects new call',sectionFound.students)
 
-        console.log(listSubject)
-
-        if (!listSubject)return false
-
-        for (const studentRegister of sectionFound.students) {
-            console.log('estudents', studentRegister)
-            const studentFind = await student.findOne({ _id: studentRegister });
-            if(!studentFind) return true
-            let subjectToStudent = listSubject;
-            console.log('materias a registrar a', studentFind.ci, 'lista',subjectToStudent)
-            // Verify if subject is already exists
-            if (studentFind.subjects) {
-                for (const oldSubjects of studentFind.subjects) {
-                    subjectToStudent = subjectToStudent.filter(
-                        (el) => el.subject == oldSubjects.subject
-                    );
-                }
-            }
-            // Add if not subjects in student and is register and push to saved
-            await student.updateOne(
-                { _id: studentFind.id },
-                { $addToSet: { subjects: { $each: subjectToStudent } } }
-            );
-        }
-        return true;
-    } catch (err) {
-        console.log(err);
-        return false;
-    }
-};*/
 
 export const deleteSubject = async (req, res) => {
     try {

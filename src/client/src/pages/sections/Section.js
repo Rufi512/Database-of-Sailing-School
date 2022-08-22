@@ -577,7 +577,7 @@ const Section = () => {
                           <div
                             style={{
                               overflow: "auto",
-                              maxHeight: "500px",
+                              maxHeight: "300px",
                               marginBottom: "20px",
                             }}
                           >
@@ -611,7 +611,7 @@ const Section = () => {
                             Estudiantes Rechazados a graduarse (
                             {studentsPreview.studentsRejects.length})
                           </h5>
-                          <div style={{ overflow: "auto", maxHeight: "500px" }}>
+                          <div style={{ overflow: "auto", maxHeight: "300px" }}>
                             {studentsPreview.studentsRejects.map((el, i) => {
                               return (
                                 <div

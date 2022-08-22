@@ -15,7 +15,7 @@ router.get('/codes/phones',(req,res)=>{
 })
 router.get('/questions/user/:id',[authJwt.verifyToken],recoveryCtrl.getQuestionsOnLogin) //list question from user registered
 router.get('/questions/user/',[authJwt.verifyToken],recoveryCtrl.getQuestionsOnLogin)
-router.get('/verify/token',[authJwt.verifyToken],authCtrl.verifyTokenConfirm)
+router.get('/verify/token',[authJwt.verifyToken,authJwt.isUserOrAdmin],authCtrl.verifyTokenConfirm)
 
 //POST
 router.post('/login',[validateCaptcha],authCtrl.signIn)

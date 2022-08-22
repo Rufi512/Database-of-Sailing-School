@@ -74,6 +74,10 @@
     margin-bottom: 15px;
 }
 
+.container-detail .container-section table tbody th{
+    text-transform: capitalize;
+}
+
 .container-detail .container-section h4{
     background: #284d9b;
     color: white;

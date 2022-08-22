@@ -884,6 +884,7 @@ const StudentInfo = () => {
                   onChange={(e) => {
                     setShowChest(e.target.checked);
                   }}
+                  checked={showChest}
                 />
               </div>
             )}

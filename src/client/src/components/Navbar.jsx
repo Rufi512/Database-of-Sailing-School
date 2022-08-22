@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as HomeIcon } from "../static/icons/navbar/home.svg";
 import { ReactComponent as CloseIcon } from "../static/icons/navbar/close.svg";
@@ -9,9 +9,11 @@ import { ReactComponent as FormStudentsIcon } from "../static/icons/navbar/form-
 import { ReactComponent as RepIcon } from "../static/icons/navbar/rep.svg";
 import { ReactComponent as ListIcon } from "../static/icons/navbar/table-list-solid.svg";
 import { ReactComponent as SectionIcon } from "../static/icons/navbar/section.svg";
-import { ReactComponent as SubjectListIcon } from "../static/icons/navbar/subject-list.svg"
-import { ReactComponent as ProfileIcon } from "../static/icons/navbar/profile.svg"
+import { ReactComponent as SubjectListIcon } from "../static/icons/navbar/subject-list.svg";
+import { ReactComponent as ProfileIcon } from "../static/icons/navbar/profile.svg";
 import "../static/styles/nav.css";
+import Cookies from "js-cookie";
+
 const Navbar = (props) => {
   const [navActive, setNavActive] = useState(false);
   const [screenSize, setScreenSize] = useState({
@@ -22,11 +24,11 @@ const Navbar = (props) => {
     setNavActive(false);
   };
 
-  if(screenSize.current >= 900 || !navActive){
-    document.body.style.overflow = "auto"
-  }else{
-    if(navActive){
-      document.body.style.overflow = "hidden"
+  if (screenSize.current >= 900 || !navActive) {
+    document.body.style.overflow = "auto";
+  } else {
+    if (navActive) {
+      document.body.style.overflow = "hidden";
     }
   }
 
@@ -99,15 +101,23 @@ const Navbar = (props) => {
             <SectionIcon style={{ width: "48px", height: "32px" }} />
             Lista de secciones
           </Link>
-           <Link
-            to="/subject/list"
-            className={`link ${
-              props.actualPage === "subject-list" ? "link-active" : ""
-            }`}
-          >
-            <SubjectListIcon />
-            Lista de materias
-          </Link>
+          {Cookies.get("rol") === "Admin" ||
+          Cookies.get("rol") === "Moderator" ? (
+            <>
+              <Link
+                to="/subject/list"
+                className={`link ${
+                  props.actualPage === "subject-list" ? "link-active" : ""
+                }`}
+              >
+                <SubjectListIcon />
+                Lista de materias
+              </Link>
+            </>
+          ) : (
+            ""
+          )}
+
           <Link
             to="/register/students"
             className={`link ${
@@ -117,19 +127,25 @@ const Navbar = (props) => {
             <FormStudentsIcon />
             Registrar estudiantes
           </Link>
-        </div>
-        <p className="indicator-text">Administrativo</p>
-        <div className="links-container">
-          <Link to="/users" className={`link`}>
-            <UsersIcon />
-            Gestion de usuarios
-          </Link>
           <Link to="/reps" className={`link`}>
             <RepIcon style={{ width: "47px" }} />
             Gestion de representantes
           </Link>
         </div>
-        
+        {Cookies.get("rol") === "Admin" ? (
+          <>
+            <p className="indicator-text">Administrativo</p>
+            <div className="links-container">
+              <Link to="/users" className={`link`}>
+                <UsersIcon />
+                Gestion de usuarios
+              </Link>
+            </div>
+          </>
+        ) : (
+          ""
+        )}
+
         <div className="links-container">
           <Link to="/logout" className={`link`}>
             <LogoutIcon />
