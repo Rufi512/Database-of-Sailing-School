@@ -616,7 +616,7 @@ const FormStudent = () => {
                     className="form-control"
                     type="file"
                     id="formFile"
-                    accept=".csv"
+                    accept=".csv, .xlsx"
                     onChange={(e) => {
                       setFileToSave(e.target.files[0]);
                     }}

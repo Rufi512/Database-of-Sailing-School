@@ -1,13 +1,11 @@
 import student from "../models/student";
-import user from "../models/user";
 import section from "../models/section";
 import representative from "../models/representative";
 import comment from "../models/comment";
 import mongoose from "mongoose";
 import dateFormat from "dateformat";
-import fs from "fs";
+import fs from "fs/promises";
 import { parsePhoneNumber } from "awesome-phonenumber";
-import path from "path";
 import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
 import { date } from "../libs/dateformat";
@@ -76,17 +74,17 @@ export const saveScore = async (req, res) => {
         const scores = req.body.scores;
         const studentFind = await student.findById(id);
         if (!studentFind)
-            return res.status(404).json({ message: "Student No Found" });
+            return res.status(404).json({ message: "Estudiante no encontrado" });
         if (studentFind.subjects.length !== scores.length)
             return res
                 .status(400)
-                .json({ message: "Scores length is not the same" });
+                .json({ message: "No se pudo procesar las notas del estudiante" });
         const invalidScores = scores.filter((el) => el.length !== 3);
 
         if (invalidScores.length > 0)
             return res
-                .status(400)
-                .json({ message: "The Array element in scores not is valid" });
+                .status(500)
+                .json({ message: "No se pudo procesar las notas del estudiante" });
 
         const scoreUpdate = studentFind.subjects.map((el, i) => {
             return { subject: el.subject, scores: scores[i] };
@@ -140,7 +138,6 @@ export const createStudent = async (req, res) => {
     const { ci, firstname, lastname, contact, rep_data, section_id } = req.body;
     let validSection = false;
     const checkRegister = await verifyForms.verifyCreate(req.body);
-    let repRegister;
     let newStudentRegister;
     if (checkRegister)
         return res.status(400).json({ message: checkRegister.message });
@@ -185,6 +182,7 @@ export const createStudent = async (req, res) => {
                 .json({ message: "Representante no encontrado" });
         newStudentRegister.representative = repFound.id;
     }
+
     if (rep_data && !rep_data.id) {
         const checkRep = await verifyForms.verifyRep(rep_data);
         if (checkRep === true) {
@@ -217,7 +215,7 @@ export const createStudent = async (req, res) => {
 
     const saveStudent = await newStudent.save();
     if (validSection) {
-        const addToSection = await addStudentsSectionRegistered(section_id, [
+        await addStudentsSectionRegistered(section_id, [
             saveStudent.id,
         ]);
     }
@@ -247,7 +245,8 @@ export const createStudents = async (req, res) => {
                 }
             })
             .on("error", (err) => {
-                return;
+                console.log(err)
+                return res.status(500).json({message:'No se pudo procesar el archivo'});
             })
             .on("data", async (row) => {
                 rowsCount += 1;
@@ -323,7 +322,7 @@ export const createStudents = async (req, res) => {
                     ),
                 });
 
-                const saveStudent = await newStudent.save();
+                await newStudent.save();
 
                 studentsRegister.push(ci);
 
@@ -335,7 +334,7 @@ export const createStudents = async (req, res) => {
                 })
 
                 if (sectionFound) {
-                    const addToSection = await addStudentsSectionRegistered(
+                    await addStudentsSectionRegistered(
                         sectionFound.id,
                         [newStudent._id]
                     );
@@ -343,7 +342,7 @@ export const createStudents = async (req, res) => {
             })
 
             .on("end", async () => {
-                fs.unlink("./public/csv/" + req.file.originalname, (err) => {
+                await fs.unlink("./public/csv/" + req.file.originalname, (err) => {
                     console.log(err);
                 });
 
@@ -391,6 +390,7 @@ export const createStudents = async (req, res) => {
             list = rows;
         });
         for (const row of list) {
+            console.log(row)
             rowsCount += 1;
             //Verify and register
             verify = await verifyForms.verifyXls(
@@ -413,6 +413,18 @@ export const createStudents = async (req, res) => {
                 });
 
                 await newStudent.save();
+
+                const sectionFound = await section.findOne({
+                    name: row[3],
+                })
+
+                if (sectionFound) {
+                    await addStudentsSectionRegistered(
+                        sectionFound.id,
+                        [newStudent._id]
+                    );
+                }
+
                 studentsRegister.push(Number(row[0]));
             }
         }
@@ -422,7 +434,7 @@ export const createStudents = async (req, res) => {
         });
 
         if (rowErrors.length !== 0) {
-            return res.json({
+            console.log({
                 message: "Algunos estudiantes no pudieron ser añadidos!",
                 errors: rowErrors,
             });
