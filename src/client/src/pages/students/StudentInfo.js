@@ -757,6 +757,7 @@ const StudentInfo = () => {
                       <th scope="col">Lapso 1</th>
                       <th scope="col">Lapso 2</th>
                       <th scope="col">Lapso 3</th>
+                      { !activeForm ? <th scope="col">Nota final</th> : ''}
                     </tr>
                   </thead>
                   <tbody>
@@ -826,6 +827,7 @@ const StudentInfo = () => {
                             <td>{el.scores[0] || "No registrado"}</td>
                             <td>{el.scores[1] || "No registrado"}</td>
                             <td>{el.scores[2] || "No registrado"}</td>
+                            <td>{Math.round((el.scores[0] + el.scores[1] + el.scores[2]) / 3) || '0'}</td>
                           </tr>
                         );
                       })
@@ -925,6 +927,7 @@ const StudentInfo = () => {
                             <th scope="col">Lapso 1</th>
                             <th scope="col">Lapso 2</th>
                             <th scope="col">Lapso 3</th>
+                            { !activeForm ? <th scope="col">Nota final</th> : ''}
                           </tr>
                         </thead>
                         <tbody>
@@ -934,6 +937,7 @@ const StudentInfo = () => {
                               <td>{el.scores[0] || "No registrado"}</td>
                               <td>{el.scores[1] || "No registrado"}</td>
                               <td>{el.scores[2] || "No registrado"}</td>
+                              <td>{Math.round((el.scores[0] + el.scores[1] + el.scores[2]) / 3) || '0'}</td>
                             </tr>
                           ))}
                         </tbody>

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import stampImg from "../static/logos/stamp.jpg";
 import stamp2Img from "../static/logos/stamp2.jpg";
 import "../static/styles/bulletin/bulletin.css";
@@ -29,10 +29,10 @@ const AcademicBulletin = (props) => {
     },
   });
 
-  useEffect(()=>{
-    setStudent(props.student)
-    setChest(props.chest)
-  },[props])
+  useEffect(() => {
+    setStudent(props.student);
+    setChest(props.chest);
+  }, [props]);
 
   return (
     <div
@@ -104,7 +104,7 @@ const AcademicBulletin = (props) => {
         </div>
 
         {student.section && student.subjects.length > 0 ? (
-          <div className="student-record-actual" style={{margin:'30px 0px'}}>
+          <div className="student-record-actual" style={{ margin: "30px 0px" }}>
             <h4 className="card-text center" style={{ textAlign: "center" }}>
               Informacion academica de la seccion actual
             </h4>
@@ -165,56 +165,82 @@ const AcademicBulletin = (props) => {
               </tbody>
             </table>
           </div>
-        ) : ('')}
+        ) : (
+          ""
+        )}
 
-        <div className={`container-chest container-chest-active`} style={{marginTop:'30px'}}>
-        <h3 className="card-text">Secciones del estudiante cursadas</h3>
+        <div
+          className={`container-chest container-chest-active`}
+          style={{ marginTop: "30px" }}
+        >
           {chest.data.length > 0 ? (
-            chest.data.map((el, i) => {
-              return (
-                <div
-                  className={`container-section border rounded ${
-                    el.approved ? "border-primary" : "border-danger"
-                  }`}
-                  key={i}
-                >
-                  <h4 className="bg-primary text-white border" style={{padding:'5px'}}>{el.section.name || "Sin información"}</h4>
-                  <div className="container-info-header-chest" style={{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center', padding:'5px'}}>
-                    <p>
-                      Año: <b>{el.section.year || "N/A"}</b>
-                    </p>{" "}
-                    <p>
-                      Periodo:{" "}
-                      <b>{`${el.period_initial} - ${el.completion_period}`}</b>
-                    </p>{" "}
-                    <p>
-                      Seccion cursada:{" "}
-                      <b>{`${el.approved ? "Aprobada" : "Reprobada"}`}</b>
-                    </p>
-                  </div>
-                  <table className="table">
-                    <thead className="thead">
-                      <tr>
-                        <th scope="col">Materia</th>
-                        <th scope="col">Lapso 1</th>
-                        <th scope="col">Lapso 2</th>
-                        <th scope="col">Lapso 3</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {el.subjects.map((el, i) => (
-                        <tr key={i}>
-                          <th scope="row">{el.subject[0].name}</th>
-                          <td>{el.scores[0] || "No registrado"}</td>
-                          <td>{el.scores[1] || "No registrado"}</td>
-                          <td>{el.scores[2] || "No registrado"}</td>
+            <>
+              <h3 className="card-text">Secciones del estudiante cursadas</h3>
+              {chest.data.map((el, i) => {
+                return (
+                  <div
+                    className={`container-section border rounded ${
+                      el.approved ? "border-primary" : "border-danger"
+                    }`}
+                    key={i}
+                  >
+                    <h4
+                      className="bg-primary text-white border"
+                      style={{ padding: "5px" }}
+                    >
+                      {el.section.name || "Sin información"}
+                    </h4>
+                    <div
+                      className="container-info-header-chest"
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "5px",
+                      }}
+                    >
+                      <p>
+                        Año: <b>{el.section.year || "N/A"}</b>
+                      </p>{" "}
+                      <p>
+                        Periodo:{" "}
+                        <b>{`${el.period_initial} - ${el.completion_period}`}</b>
+                      </p>{" "}
+                      <p>
+                        Seccion cursada:{" "}
+                        <b>{`${el.approved ? "Aprobada" : "Reprobada"}`}</b>
+                      </p>
+                    </div>
+                    <table className="table">
+                      <thead className="thead">
+                        <tr>
+                          <th scope="col">Materia</th>
+                          <th scope="col">Lapso 1</th>
+                          <th scope="col">Lapso 2</th>
+                          <th scope="col">Lapso 3</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })
+                      </thead>
+                      <tbody>
+                        {el.subjects.map((el, i) => (
+                          <tr key={i}>
+                            <th scope="row">{el.subject[0].name}</th>
+                            <td>{el.scores[0] || "No registrado"}</td>
+                            <td>{el.scores[1] || "No registrado"}</td>
+                            <td>{el.scores[2] || "No registrado"}</td>
+                            <td>
+                              {Math.round(
+                                (el.scores[0] + el.scores[1] + el.scores[2]) / 3
+                              ) || "0"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })}
+            </>
           ) : (
             <></>
           )}
