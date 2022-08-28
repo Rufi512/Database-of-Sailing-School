@@ -78,9 +78,9 @@ export const getQuestions = async (req, res) => {
 
     if (!userFound)
         return res.status(404).json({ message: "Usuario no encontrado" });
-
+    console.log(userFound)
     const quests = await quest.find({ user: userFound.id }, { answer: 0 });
-
+    console.log(quests)
     if (quests.length < 1)
         return res
             .status(400)
@@ -183,30 +183,7 @@ export const checkQuestions = async (req, res) => {
             }
         );
 
-        ejs.renderFile(
-            path.join(__dirname, "../templates/forgotPassword.ejs"),
-            {
-                link: `http://localhost:3000/reset-password/${userFound.id}/${token}`,
-            },
-            async (err, data) => {
-                if (err) {
-                    console.log(err);
-                    return res
-                        .status(500)
-                        .json({ message: "Error fatal en servidor" });
-                }
-                // send mail with defined transport object
-                let info = await transporter.sendMail({
-                    from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
-                    to: [userFound.email], // list of receivers
-                    subject: "Recuperación de contraseña", // Subject line
-                    text: "Recuperar contraseña", // plain text body
-                    html: data, // html body
-                });
-                console.log(info);
-                res.json({ message: "Email enviado!" });
-            }
-        );
+        res.json({token, id:userFound.id})
     } catch (err) {
         res.status(500).json({
             message: "Error fatal al revisar respuestas de seguridad",

@@ -90,12 +90,13 @@ export const updateUser = async (req, res) => {
 
     const foundUser = await user.findById(req.params.id || req.userId);
 
-    if (req.params.id && req.rolUser !== "Admin") {
-        return res
-            .status(404)
-            .json({ message: "No se ha encontrado al usuario" });
+    if (req.rolUser) {
+        if (req.params.id && req.rolUser !== "Admin") {
+            return res
+                .status(404)
+                .json({ message: "No se ha encontrado al usuario" });
+        }
     }
-
     // Check if email or ci is in used to other user
     const userFind = await user.findOne({
         $or: [{ email: req.body.email }, { ci: req.body.ci }],
@@ -107,6 +108,7 @@ export const updateUser = async (req, res) => {
     const rolUserRequest = await roles.find({
         _id: { $in: userRequestFind.rol },
     });
+    
     if (!foundUser)
         return res.status(404).json({ message: "Usuario no encontrado" });
 

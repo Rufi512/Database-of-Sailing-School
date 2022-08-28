@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
-import {Link} from 'react-router-dom'
 import "../static/styles/form-reset.css";
 import { forgotLinkQuestions } from "../API";
 const Questions = (props) => {
@@ -11,7 +10,6 @@ const Questions = (props) => {
   const [questions,setQuestions] = useState([])
   const [answers, setAnswers] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false)
-  const [sendEmail,setSendEmail] = useState(false)
   useEffect(() => {
     setQuestions(data.state.questions);
     setUser(data.state.user)
@@ -34,37 +32,26 @@ const Questions = (props) => {
       });
       }
 
-    } catch(e) {
-      setIsSubmit(false)
-      console.log(e)
-    }
-
-    toast.update(toastId, {
+      toast.update(toastId, {
         render: "",
         type: "success",
         isLoading: false,
         closeOnClick: true,
         autoClose: 1,
       });
-    setSendEmail(true)
+
+    navigate(`/reset-password/${res.data.id}/${res.data.token}`)
+
+    } catch(e) {
+      setIsSubmit(false)
+      console.log(e)
+    }
+
+    
   };
   return (
     <>
-    {
-        // If option is send email
-        <div
-          className={`email-confirm ${sendEmail ? "email-confirm-fade" : ""}`}>
-          {" "}
-          <h1>Correo de recuperacion enviado!</h1>{" "}
-          <p>
-            Hemos enviado un link en el que podras recuperar tu contraseña! ve y
-            revisa tu correo por favor, tienes 15 minutos antes del que correo
-            enviado sea invalido para la recuperacion{" "}
-          </p>
-          <Link to="/" className="btn btn-primary">Volver al inicio</Link>
-        </div>
-      }
-    <div className={`container-user-reset ${sendEmail ? "fade-container-form" : ''}`}>
+    <div className={`container-user-reset`}>
       <h2>Contesta las preguntas para continuar</h2>
       <form className="form" onSubmit={handleSubmit}>
         {questions.map((el, i) => (
@@ -76,6 +63,7 @@ const Questions = (props) => {
               <input
                 type="text"
                 placeholder="Escribe tu respuesta"
+                style={{width:'100%'}}
                 onInput={(e) => {
                   let items = [...answers];
                   let item = { ...answers[i] };

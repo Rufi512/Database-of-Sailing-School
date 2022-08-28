@@ -59,13 +59,13 @@ const ResetPasswordUser = (props) =>{
             <label className="field">
               <p>Nueva Contraseña</p>
               <div className="field-content">
-              <input type="text" placeholder="Introduce tu nueva contraseña" onInput={(e)=>{setPass({...pass,password:e.target.value})}}/>
+              <input type="text" style={{width:'100%'}} placeholder="Introduce tu nueva contraseña" onInput={(e)=>{setPass({...pass,password:e.target.value})}}/>
               </div>
             </label>
             <label className="field">
             <p>Confirme la contraseña</p>
             <div className="field-content">
-              <input type="password" placeholder="Confirme la contraseña" onInput={(e)=>{setPass({...pass,cPassword:e.target.value})}}/>
+              <input type="password" style={{width:'100%'}} placeholder="Confirme la contraseña" onInput={(e)=>{setPass({...pass,cPassword:e.target.value})}}/>
               </div>
             </label>
             <button type="submit" className="button-submit">Cambiar Contraseña</button>
