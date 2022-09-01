@@ -214,10 +214,10 @@ export const forgotPassword = async (req, res) => {
                         <h2 style="border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0">Unidad educativa colegio Juan Bosco</h2>
                         <div>
                             <h5 style="font-size: 1.25rem;">Recuperación de contraseña</h5>
-                            <p><b>Haga clic en el botón para comenzar a cambiar de contraseña</b></p> <br/> <a class="btn btn-primary" style="margin-bottom: 25px;padding: 10px 20px; color: #fff;background-color: #0069d9;border-color: #0062cc; border-radius:5px;" href="http://localhost:3000/reset-password/${userFound.id}/${token}">Click aqui!</a> 
+                            <p><b>Haga clic en el botón para comenzar a cambiar de contraseña</b></p> <br/> <a class="btn btn-primary" style="margin-bottom: 25px;padding: 10px 20px; color: #fff;background-color: #0069d9;border-color: #0062cc; border-radius:5px;" href="${req.protocol}://${req.hostname}/reset-password/${userFound.id}/${token}">Click aqui!</a> 
                             <br/>
                             <p>O copie y pegue el siguiente enlace</p>
-                            <a href="http://localhost:3000/reset-password/${userFound.id}/${token}">http://localhost:3000/reset-password/${userFound.id}/${token}<a/>
+                            <a href="${req.protocol}://${req.hostname}/reset-password/${userFound.id}/${token}">${req.protocol}://${req.hostname}/reset-password/${userFound.id}/${token}<a/>
                         </div>
                     </div>
     `;
