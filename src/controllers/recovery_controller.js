@@ -1,7 +1,6 @@
 //Recovery from security questions
 import user from "../models/user";
 import quest from "../models/quest";
-import ejs from "ejs";
 import path from "path";
 import { validateEmail } from "../middlewares/verifyForms";
 import dotenv from "dotenv";
@@ -15,17 +14,17 @@ export const setQuestions = async (req, res) => {
         const userFound = await user.findById(req.params.id || req.userId);
         if (!userFound)
             return res.status(404).json({ message: "Usuario no encontrado" });
-        if(req.params.id & req.rolUser !== "Admin"){
-            return res.status(404).json({message:'No se ha encontrado al usuario'})
+        if (req.params.id & (req.rolUser !== "Admin")) {
+            return res
+                .status(404)
+                .json({ message: "No se ha encontrado al usuario" });
         }
 
         const quests = await quest.find({ user: userFound.id }, { answer: 0 });
         if (quests.length >= 4)
-            return res
-                .status(400)
-                .json({
-                    message: "Ya tienes el maximo de 4 preguntas de seguridad",
-                });
+            return res.status(400).json({
+                message: "Ya tienes el maximo de 4 preguntas de seguridad",
+            });
         const questsRegistered = await quest.find(
             { user: userFound.id },
             { answer: 0 }
@@ -40,11 +39,9 @@ export const setQuestions = async (req, res) => {
                     answer: 0,
                 });
                 if (foundQuestionId.id === elm.id)
-                    return res
-                        .status(400)
-                        .json({
-                            message: "Las preguntas no se pueden repetir",
-                        });
+                    return res.status(400).json({
+                        message: "Las preguntas no se pueden repetir",
+                    });
             }
 
             if (elm.question == "" || elm.answer == "")
@@ -78,9 +75,9 @@ export const getQuestions = async (req, res) => {
 
     if (!userFound)
         return res.status(404).json({ message: "Usuario no encontrado" });
-    console.log(userFound)
+    console.log(userFound);
     const quests = await quest.find({ user: userFound.id }, { answer: 0 });
-    console.log(quests)
+    console.log(quests);
     if (quests.length < 1)
         return res
             .status(400)
@@ -92,20 +89,22 @@ export const getQuestions = async (req, res) => {
 export const getQuestionsOnLogin = async (req, res) => {
     const userFound = await user.findById(req.params.id || req.userId);
 
-    if(!userFound) return res.status(404).json({message:'No se ha encontrado al usuario'})
+    if (!userFound)
+        return res
+            .status(404)
+            .json({ message: "No se ha encontrado al usuario" });
 
-    if(req.params.id & req.rolUser !== "Admin"){
-        return res.status(404).json({message:'No se ha encontrado al usuario'})
+    if (req.params.id & (req.rolUser !== "Admin")) {
+        return res
+            .status(404)
+            .json({ message: "No se ha encontrado al usuario" });
     }
     const quests = await quest.find({ user: userFound.id }, { answer: 0 });
 
     if (quests.length < 1)
-        return res
-            .status(404)
-            .json({
-                message:
-                    "Actualmente no hay preguntas de seguridad registradas :(",
-            });
+        return res.status(404).json({
+            message: "Actualmente no hay preguntas de seguridad registradas :(",
+        });
 
     res.json(quests);
 };
@@ -119,20 +118,20 @@ export const deleteQuestionUser = async (req, res) => {
                 .status(404)
                 .json({ message: "No se ha podido encontrar la pregunta" });
 
-        if(!req.rolUser || req.rolUser !== "Admin"){
-            if(questionFound.user.toString() !== req.userId){
-                return res.status(404).json({message:'No se ha podido encontrar la pregunta'})
+        if (!req.rolUser || req.rolUser !== "Admin") {
+            if (questionFound.user.toString() !== req.userId) {
+                return res
+                    .status(404)
+                    .json({ message: "No se ha podido encontrar la pregunta" });
             }
         }
 
         await quest.findByIdAndDelete(req.params.id);
         return res.json({ message: "Pregunta eliminada" });
     } catch (e) {
-        return res
-            .status(404)
-            .json({
-                message: "La pregunta no ha podido ser eliminada o no existe",
-            });
+        return res.status(404).json({
+            message: "La pregunta no ha podido ser eliminada o no existe",
+        });
     }
 };
 
@@ -151,11 +150,9 @@ export const checkQuestions = async (req, res) => {
         const quests = await quest.find({ user: userFound.id });
 
         if (quests.length < 1)
-            return res
-                .status(400)
-                .json({
-                    message: "No hay preguntas de seguridad registradas :(",
-                });
+            return res.status(400).json({
+                message: "No hay preguntas de seguridad registradas :(",
+            });
 
         //Compare Answers
 
@@ -183,7 +180,7 @@ export const checkQuestions = async (req, res) => {
             }
         );
 
-        res.json({token, id:userFound.id})
+        res.json({ token, id: userFound.id });
     } catch (err) {
         res.status(500).json({
             message: "Error fatal al revisar respuestas de seguridad",
@@ -200,12 +197,10 @@ export const forgotPassword = async (req, res) => {
         });
 
         if (!userFound)
-            return res
-                .status(404)
-                .json({
-                    message:
-                        "Usuario no registrado en el sistema, verifique los datos",
-                });
+            return res.status(404).json({
+                message:
+                    "Usuario no registrado en el sistema, verifique los datos",
+            });
 
         const token = jwt.sign(
             { id: userFound.id },
@@ -215,30 +210,27 @@ export const forgotPassword = async (req, res) => {
             }
         );
 
-        ejs.renderFile(
-            path.join(__dirname, "../templates/forgotPassword.ejs"),
-            {
-                link: `http://localhost:3000/reset-password/${userFound.id}/${token}`,
-            },
-            async (err, data) => {
-                if (err) {
-                    console.log(err);
-                    return res
-                        .status(500)
-                        .json({ message: "Error fatal en servidor" });
-                }
-                // send mail with defined transport object
-                let info = await transporter.sendMail({
-                    from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
-                    to: [userFound.email], // list of receivers
-                    subject: "Recuperación de contraseña", // Subject line
-                    text: "Recuperar contraseña", // plain text body
-                    html: data, // html body
-                });
-                console.log(info);
-                res.json({ message: "Email enviado!" });
-            }
-        );
+        let data = `<div style="position: relative;display: -webkit-box;display: -ms-flexbox;display: flex;-webkit-box-orient: vertical;-webkit-box-direction: normal;-ms-flex-direction: column;flex-direction: column;min-width: 0;word-wrap: break-word;background-color: #fff;background-clip: border-box;border: 1px solid rgba(0,0,0,.125);border-radius: .25rem;">
+                        <h2 style="border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0">Unidad educativa colegio Juan Bosco</h2>
+                        <div>
+                            <h5 style="font-size: 1.25rem;">Recuperación de contraseña</h5>
+                            <p><b>Haga clic en el botón para comenzar a cambiar de contraseña</b></p> <br/> <a class="btn btn-primary" style="margin-bottom: 25px;padding: 10px 20px; color: #fff;background-color: #0069d9;border-color: #0062cc; border-radius:5px;" href="http://localhost:3000/reset-password/${userFound.id}/${token}">Click aqui!</a> 
+                            <br/>
+                            <p>O copie y pegue el siguiente enlace</p>
+                            <a href="http://localhost:3000/reset-password/${userFound.id}/${token}">http://localhost:3000/reset-password/${userFound.id}/${token}<a/>
+                        </div>
+                    </div>
+    `;
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+            from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
+            to: [userFound.email], // list of receivers
+            subject: "Recuperación de contraseña", // Subject line
+            text: "Recuperar contraseña", // plain text body
+            html: data, // html body
+        });
+        console.log(info);
+        res.json({ message: "Email enviado!" });
     } catch (err) {
         res.status(500).json({ message: "Error fatal en servidor" });
         console.log(err);
