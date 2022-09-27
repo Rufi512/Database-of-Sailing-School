@@ -20,7 +20,6 @@
     bottom: 0;
     width: 100%;
     max-width: 305px;
-    min-height: 100vh;
     background: #2e55c7;
     z-index: 100;
     transform: translateX(-100%);
@@ -45,6 +44,7 @@
 }
 
 .nav-bar .indicator-text{
+    margin-top: 25px;
     margin-left: 7px;
     font-size: 1em;
     font-weight: 600;

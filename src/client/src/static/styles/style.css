@@ -39,6 +39,7 @@ font-weight: 600;
 }
 
 .container-body .container-actions-body button {
+    margin-left: 15px;
     height: 37px;
     display: flex;
     justify-content: center;
@@ -105,7 +106,7 @@ font-weight: 600;
 
 .container-options-list {
     display: flex;
-    flex-flow: wrap;
+    flex-flow: wrap-reverse;
     align-items: baseline;
     justify-content: space-between;
 }
@@ -158,12 +159,20 @@ font-weight: 600;
 }
 
 @media(min-width: 768px) {
+    .container-body .container-actions-body button{
+        margin-left: 0px;
+    }
+    
     .container-body .container-actions-body {
         justify-content: flex-end;
     }
 
     .modal-request-admin .container-modal .container-buttons {
         flex-direction: row-reverse;
+    }
+
+    .container-options-list{
+        flex-flow: wrap;
     }
 }
 

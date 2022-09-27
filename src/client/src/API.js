@@ -511,7 +511,7 @@ export const registerSubject = async (data) =>{
 }
 
 export const modifySubject = async (id,data) =>{
-  const res = await axios.post(`/api/subject/update/${id}`,data,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
+  const res = await axios.put(`/api/subject/update/${id}`,data,{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
       }

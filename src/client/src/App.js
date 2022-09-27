@@ -56,9 +56,9 @@ const App = () => (
         />
 
         {/*Logout*/}
-
         <Route exact path="logout" element={<Logout />} />
         <Route path="/*" element={<NotFound />} />
+        
         {/*Protected routes*/}
         <Route exact path="/*" element={<ProtectedRoute />}>
           <Route exact path="home" element={<Home />} />

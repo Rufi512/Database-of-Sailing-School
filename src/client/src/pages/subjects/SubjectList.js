@@ -64,7 +64,7 @@ const SubjectList = () => {
 			return elm.id === el;
 		});
 
-		setNewSubject({ name: subj[0].name });
+		setNewSubject({ id:subj[0].id, name:subj[0].name });
 
 		const subjectsFinds = avalaibleYears.filter((elm) => {
 			return subj[0].fromYears
@@ -184,6 +184,9 @@ const SubjectList = () => {
 				fromYears: yearsSelected,
 			};
 
+			setIsSubmit(false);
+
+			console.log(subject)
 			if (!isEdit) {
 				res = await registerSubject(subjectToSubmit);
 			} else {
@@ -192,7 +195,7 @@ const SubjectList = () => {
 
 			if (res.status >= 400) {
 				return toast.update(toastId, {
-					render: res.data.message,
+					render: res.data.message || 'Error al procesar peticion',
 					type: "error",
 					isLoading: false,
 					autoClose: 5000,
@@ -349,6 +352,7 @@ const SubjectList = () => {
 									className="btn btn-warning"
 									type="button"
 									onClick={(e) => {
+										setIsSubmit(false);
 										setShowCreator(false);
 										setIsEdit(false);
 										setSelectedOptions([]);
@@ -366,7 +370,7 @@ const SubjectList = () => {
 				}
 				<div className="card card-container">
 					<div className="card-header">
-						<h2>Lista de secciones disponibles</h2>
+						<h2>Lista de materias disponibles</h2>
 					</div>
 					<div className="container-actions-body actions-section-list">
 						<button
@@ -395,7 +399,7 @@ const SubjectList = () => {
 						<TableList
 							data={list}
 							labels={[
-								{ field: "name", nameField: "Seccion" },
+								{ field: "name", nameField: "Materia" },
 								{
 									field: "fromYears",
 									nameField: "Disponible en año",

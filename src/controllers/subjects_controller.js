@@ -32,6 +32,9 @@ const checkSubject = async (data, res, update) => {
 export const register = async (req, res) => {
     const data = await checkSubject(req.body, res, false);
     if (!data.status) return res.status(404).json(data.message);
+    if(!data.fromYears || data.fromYears.length === 0){
+        return res.status(404).json({message: 'Especifique el año para la materia'})
+    }
     const newSubject = new subject({
         name: data.name,
         fromYears: data.fromYears,
@@ -89,6 +92,9 @@ export const listAvalaibleSection = async (req, res) => {
 export const update = async (req, res) => {
     const data = await checkSubject(req.body, res, true);
     if (!data.status) return res.status(404).json(data.message);
+    if(!data.fromYears || data.fromYears.length === 0){
+        return res.status(404).json({message: 'Especifique el año para la materia'})
+    }
 
     const newSubject = await subject.updateOne(
         { _id: req.params.id },

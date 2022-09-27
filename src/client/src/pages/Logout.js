@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Logout = () => {
 	const navigate = useNavigate();
 	useEffect(() => {
+		document.body.style.overflow = "auto";
 		Cookies.remove("token");
 		Cookies.remove("rol");
 		console.log("All removed");
