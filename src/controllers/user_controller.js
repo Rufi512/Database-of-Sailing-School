@@ -218,17 +218,21 @@ export const deleteUser = async (req, res) => {
     if (!validId) return res.status(404).json({ message: "ID invalido" });
 
     const userFind = await user.findById(req.params.id);
-    const userAdmin = await user.find()[0];
+    const listUsers = await user.paginate({}, {});
+    const userAdmin = listUsers.docs[0]
+
     if (userAdmin.id === userFind.id)
         return res
             .status(400)
             .json({ message: "No esta permitido borrar al usuario" });
+
     if (userFind) {
         await user.findByIdAndDelete(req.params.id);
         await comment.deleteMany({ user: req.params.id });
     } else {
         return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
     res.json("Usuario Eliminado");
 };
 
