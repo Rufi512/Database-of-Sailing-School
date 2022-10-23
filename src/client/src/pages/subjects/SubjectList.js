@@ -112,7 +112,7 @@ const SubjectList = () => {
 				render: "Lista cargada!",
 				type: "success",
 				isLoading: false,
-				autoClose: 5000,
+				autoClose: 800,
 			});
 		} catch (e) {
 			console.log(e);

@@ -71,10 +71,10 @@ const SectionList = () => {
 
 			setAvalaiblePages(res.totalPages);
 			toast.update(toastId, {
-				render: "Lista cargada!",
+				render: "Lista cargada",
 				type: "success",
 				isLoading: false,
-				autoClose: 5000,
+				autoClose: 800,
 			});
 
 			setList(sectionsList);

@@ -80,8 +80,6 @@ const Section = () => {
   let dt = new Date();
   const sendForm = async (e) => {
     e.preventDefault();
-    console.log(section);
-    console.log("send");
     if (isSubmit) return;
     setIsSubmit(true);
     const toastId = toast.loading("Enviando datos...", {
@@ -114,7 +112,7 @@ const Section = () => {
         render: res.data.message,
         type: "success",
         isLoading: false,
-        autoClose: 5000,
+        autoClose: 3000,
       });
       request();
       requestList();
@@ -130,7 +128,7 @@ const Section = () => {
     }
   };
 
-  const selectCheck = (id, isAdded, place) => {
+  const selectCheck = (student, isAdded, place) => {
     let items;
     if (place === "section") {
       items = [...selectedStudentsSection];
@@ -139,9 +137,9 @@ const Section = () => {
     }
 
     if (isAdded) {
-      items.push(id);
+      items.push(student);
     } else {
-      items = items.filter((el) => el !== id);
+      items = items.filter((el) => el !== student);
     }
 
     if (place === "section") {
@@ -151,43 +149,39 @@ const Section = () => {
     }
   };
 
-  console.log(selectedStudentsSection);
   // for graduate students resgistered
   const graduateStudentsRegistered = async (isTest) => {
-    console.log('call')
     const toastId = toast.loading("Consultando datos...", {
       closeOnClick: true,
     });
     try {
-      console.log('push')
       const res = await graduateStudentsSection({
         id: params.id,
         isTest,
         password,
       });
 
-      console.log('graduacion',res)
-
       setIsSubmit(false);
 
-      if(isTest === false){
-        toast.update(toastId, {
-        render: "Seccion graduada y eliminada",
-        type: "success",
-        isLoading: false,
-        autoClose: 5000,
-      });
-       return navigate('/sections')
-      }
-      
       if (res.status >= 400) {
         return toast.update(toastId, {
-          render: "No se ha podido hacer la consulta",
+          render: res.data.message || "No se ha podido hacer la consulta",
           type: "error",
           isLoading: false,
           autoClose: 5000,
         });
       }
+
+      if (isTest === false) {
+        toast.update(toastId, {
+          render: "Seccion graduada y eliminada",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        return navigate("/sections");
+      }
+
 
       setStudentsPreview({
         status: true,
@@ -200,8 +194,6 @@ const Section = () => {
         isLoading: false,
         autoClose: 5000,
       });
-
-
     } catch (e) {
       setIsSubmit(false);
       console.log(e);
@@ -224,7 +216,7 @@ const Section = () => {
     try {
       const res = await updateSection({
         id: params.id,
-        section: { students: newStudents },
+        section: { students: newStudents.map((el)=> {return el.id}) },
       });
       setIsSubmit(false);
       if (res.status >= 400) {
@@ -270,7 +262,8 @@ const Section = () => {
     try {
       const res = await deleteStudentsInSection({
         id: params.id,
-        students: selectedStudentsSection,
+        students: selectedStudentsSection.map((el)=>{return el._id}),
+        password:password
       });
       setIsSubmit(false);
       if (res.status >= 400) {
@@ -349,7 +342,6 @@ const Section = () => {
   };
 
   const listSelect = (props) => {
-    console.log("props", props);
     return (
       <Select
         options={props.avalaibleSubjects}
@@ -403,7 +395,6 @@ const Section = () => {
       setAvalaibleSubjects(subjectsListAvalaibles.data);
 
       //Selected all subjects already registered
-      console.log("sectionData", sectionData);
       if (sectionData.data.subjects) {
         const subjectsFinds = subjectsListAvalaibles.data
           .map((elm) => {
@@ -564,6 +555,82 @@ const Section = () => {
                     : ""}
                 </p>
 
+                {addStudents && newStudents.length > 0 ? (
+                  <>
+                    <div
+                      style={{
+                        overflow: "auto",
+                        maxHeight: "250px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      {" "}
+                      {newStudents.map((el, i) => {
+                        return (
+                          <div
+                            className="student card card-body border-primary"
+                            style={{ marginTop: "10px" }}
+                            key={i}
+                          >
+                            <p style={{ margin: "5px 0" }}>
+                              <span style={{ fontWeight: "700" }}>
+                                Cedula:{" "}
+                              </span>
+                              {`${el.ci}`}
+                            </p>
+                            <p style={{ margin: "5px 0" }}>
+                              <span style={{ fontWeight: "700" }}>
+                                Nombre y apellido:{" "}
+                              </span>
+                              {`${el.firstname} ${el.lastname}`}
+                            </p>
+                          </div>
+                        );
+                      })}{" "}
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
+
+                {deleteStudents && selectedStudentsSection.length > 0 ? (
+                  <>
+                    <div
+                      style={{
+                        overflow: "auto",
+                        maxHeight: "250px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      {" "}
+                      {selectedStudentsSection.map((el, i) => {
+                        return (
+                          <div
+                            className="student card card-body border-danger"
+                            style={{ marginTop: "10px" }}
+                            key={i}
+                          >
+                            <p style={{ margin: "5px 0" }}>
+                              <span style={{ fontWeight: "700" }}>
+                                Cedula:{" "}
+                              </span>
+                              {`${el.ci}`}
+                            </p>
+                            <p style={{ margin: "5px 0" }}>
+                              <span style={{ fontWeight: "700" }}>
+                                Nombre y apellido:{" "}
+                              </span>
+                              {`${el.firstname} ${el.lastname}`}
+                            </p>
+                          </div>
+                        );
+                      })}{" "}
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
+
                 {graduateSection ? (
                   <div className="list-previews">
                     {studentsPreview.status ? (
@@ -686,8 +753,8 @@ const Section = () => {
                       return graduateStudentsRegistered(false);
                     }
 
-                    if(defaultSubjects){
-                      return sendSubjectsChange()
+                    if (defaultSubjects) {
+                      return sendSubjectsChange();
                     }
                   }}
                 >
@@ -921,8 +988,9 @@ const Section = () => {
           </div>
           {data.students.length > 0 ? (
             <div className="container-table table-students">
+              <div className="container-buttons-action-table" style={{display: 'flex',justifyContent: 'space-between',width:'100%', alignItems: 'center', height:'50px'}}>
               <h4>Estudiantes actualmente registrados</h4>
-              <div className="container-buttons-action-table">
+
                 {selectedStudentsSection.length > 0 ? (
                   <button
                     style={{ margin: "5px 20px" }}
@@ -959,8 +1027,8 @@ const Section = () => {
                   {
                     type: "checkbox",
                     name: "select",
-                    func: (id, isAdded) => {
-                      selectCheck(id, isAdded, "section");
+                    func: (student, isAdded) => {
+                      selectCheck(student, isAdded, "section");
                     },
                   },
                 ]}
@@ -972,10 +1040,10 @@ const Section = () => {
             </h3>
           )}
         </div>
-        <div className="container students-new">
+        <div className="students-new">
           <div className="switch">
             <div className="form-check form-switch">
-              <label className="label-separator" htmlFor="new-students">
+              <label className="label-separator" htmlFor="new-students" style={{fontWeight:'600'}}>
                 {" "}
                 Registrar nuevos estudiantes
               </label>{" "}
@@ -1076,9 +1144,8 @@ const Section = () => {
                   {
                     type: "checkbox",
                     name: "select",
-                    func: (id, isAdded) => {
-                      console.log(id, isAdded);
-                      selectCheck(id, isAdded, "new");
+                    func: (student, isAdded) => {
+                      selectCheck(student, isAdded, "new");
                     },
                   },
                 ]}

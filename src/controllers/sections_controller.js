@@ -115,69 +115,82 @@ const requestIds = async (id, sectionNew, isUpdated) => {
 };
 
 export const create = async (req, res) => {
-    const isInvalid = verifyFields(req, res);
-    if (isInvalid) {
-        return res.status(400).json({ message: isInvalid.message });
-    }
-    const { name, year, students, period_initial, completion_period } =
-        req.body;
-    const sectionCheck = await section.find({ name: name.toLowerCase() });
-    if (sectionCheck.length > 0)
-        return res
-            .status(400)
-            .json({ message: "Seccion con el mismo nombre ya existe!" });
+    try {
+        const isInvalid = verifyFields(req, res);
+        if (isInvalid) {
+            return res.status(400).json({ message: isInvalid.message });
+        }
+        const { name, year, students, period_initial, completion_period } =
+            req.body;
+        const sectionCheck = await section.find({ name: name.toLowerCase() });
+        if (sectionCheck.length > 0)
+            return res
+                .status(400)
+                .json({ message: "Seccion con el mismo nombre ya existe!" });
 
-    //Create the section
+        //Create the section
 
-    const newSection = new section({
-        name: name.toLowerCase(),
-        year: year,
-        period_initial,
-        completion_period,
-    });
+        const newSection = new section({
+            name: name.toLowerCase(),
+            year: year,
+            period_initial,
+            completion_period,
+        });
 
-    const savedSection = await newSection.save();
-    //Saved students for the section
-    let arrayStudentsIds = [];
-    let arrayStudentsInvalid = [];
-    if (students) {
-        for (const id of students) {
-            const res = await requestIds(id, savedSection, false);
-            if (res === true) {
-                arrayStudentsIds.push(id);
-            } else {
-                arrayStudentsInvalid.push(res);
+        const savedSection = await newSection.save();
+        //Saved students for the section
+        let arrayStudentsIds = [];
+        let arrayStudentsInvalid = [];
+        if (students) {
+            for (const id of students) {
+                const res = await requestIds(id, savedSection, false);
+                if (res === true) {
+                    arrayStudentsIds.push(id);
+                } else {
+                    arrayStudentsInvalid.push(res);
+                }
+            }
+
+            await section.updateOne(
+                { _id: savedSection.id },
+                {
+                    $set: {
+                        students: arrayStudentsIds,
+                    },
+                }
+            );
+
+            if (arrayStudentsInvalid) {
+                return res.json({
+                    section: savedSection,
+                    invalids: arrayStudentsInvalid,
+                });
             }
         }
 
-        await section.updateOne(
-            { _id: savedSection.id },
-            {
-                $set: {
-                    students: arrayStudentsIds,
-                },
-            }
-        );
-
-        if (arrayStudentsInvalid) {
-            return res.json({
-                section: savedSection,
-                invalids: arrayStudentsInvalid,
-            });
-        }
+        return res.json({
+            section: savedSection,
+            message: "Seccíon actualizada",
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-
-    return res.json({ section: savedSection, message: "Seccíon actualizada" });
 };
 
 export const sectionInfo = async (req, res) => {
-    const sectionFound = await section
-        .findById(req.params.id)
-        .populate("students", { subjects: 0, record: 0 })
-        .populate("subjects", { fromYears: 0, score: 0 });
-    if (!sectionFound)
-        return res.status(404).json({ message: "Seccion no encontrada!" });
-    res.json(sectionFound);
+    try {
+        const sectionFound = await section
+            .findById(req.params.id)
+            .populate("students", { subjects: 0, record: 0 })
+            .populate("subjects", { fromYears: 0, score: 0 });
+        if (!sectionFound)
+            return res.status(404).json({ message: "Seccion no encontrada!" });
+        res.json(sectionFound);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };
 
 export const listSelects = async (req, res) => {
@@ -196,71 +209,172 @@ export const listSelects = async (req, res) => {
 };
 
 export const list = async (req, res) => {
-    if (req.query) {
-        const { limit, page } = req.query;
-        if (limit && isNaN(limit))
-            return res
-                .status(400)
-                .json({ message: "El limite de elementos no es un numero!" });
-        if (page && isNaN(page))
-            return res
-                .status(400)
-                .json({ message: "El limite de paginas no es un numero!" });
+    try {
+        if (req.query) {
+            const { limit, page } = req.query;
+            if (limit && isNaN(limit))
+                return res.status(400).json({
+                    message: "El limite de elementos no es un numero!",
+                });
+            if (page && isNaN(page))
+                return res
+                    .status(400)
+                    .json({ message: "El limite de paginas no es un numero!" });
+        }
+
+        let optionsPagination = {
+            lean: false,
+            limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+            page: req.query && Number(req.query.page) ? req.query.page : 1,
+            populate: { path: "students", select: { _id: 1 } },
+        };
+
+        const sections = await section.paginate({}, optionsPagination);
+
+        res.json(sections);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
-        page: req.query && Number(req.query.page) ? req.query.page : 1,
-        populate: { path: "students", select: { _id: 1 } },
-    };
-
-    const sections = await section.paginate({}, optionsPagination);
-
-    res.json(sections);
 };
 
 // Update info for students in section
 export const update = async (req, res) => {
-    let now = new Date();
-    dateFormat.i18n = date;
-    const {
-        name,
-        year,
-        students,
-        period_initial,
-        completion_period,
-        isUpdate,
-    } = req.body;
-    console.log(req.body);
-    let arrayStudentsIds = [];
-    let arrayStudentsInvalid = [];
-    let oldArrayStudentsIds = [];
-    const sectionFound = await section.findById(req.params.id);
-    if (!sectionFound) {
-        res.status(404).json({
-            message: "No se ha podido encontrar la seccion",
-        });
+    try {
+        let now = new Date();
+        dateFormat.i18n = date;
+        const {
+            name,
+            year,
+            students,
+            period_initial,
+            completion_period,
+            isUpdate,
+        } = req.body;
+        console.log(req.body);
+        let arrayStudentsIds = [];
+        let arrayStudentsInvalid = [];
+        let oldArrayStudentsIds = [];
+        const sectionFound = await section.findById(req.params.id);
+        if (!sectionFound) {
+            res.status(404).json({
+                message: "No se ha podido encontrar la seccion",
+            });
+        }
+
+        if (name && sectionFound.name !== name.toLowerCase()) {
+            const sectionCheck = await section.find({
+                name: name.toLowerCase(),
+            });
+            if (sectionCheck.length > 0)
+                return res
+                    .status(400)
+                    .json({
+                        message: "Seccion con el mismo nombre ya existe!",
+                    });
+        }
+
+        oldArrayStudentsIds = sectionFound.students;
+
+        //Reach olds students and see for new students
+        if (sectionFound && students) {
+            for (const id of students) {
+                const res = await requestIds(
+                    id,
+                    sectionFound,
+                    isUpdate || false
+                );
+                if (res === true) {
+                    arrayStudentsIds.push(id);
+                } else {
+                    arrayStudentsInvalid.push(res);
+                }
+            }
+
+            for (const id of arrayStudentsIds) {
+                const prevRegister = oldArrayStudentsIds.find((el) => {
+                    return el == id;
+                });
+                if (prevRegister) {
+                    arrayStudentsIds = arrayStudentsIds.filter((el) => {
+                        return el != id;
+                    });
+                }
+            }
+        }
+
+        //To edit data from section general
+
+        if (name || year || period_initial || completion_period) {
+            const isInvalid = verifyFields(req, res);
+            if (isInvalid) {
+                return res.status(400).json({ message: isInvalid.message });
+            }
+        }
+
+        const savedSection = await section.updateOne(
+            {
+                _id: req.params.id,
+            },
+            {
+                $set: {
+                    name: name
+                        ? name.toLowerCase()
+                        : sectionFound.name.toLowerCase(),
+                    year: year || sectionFound.year,
+                    period_initial:
+                        period_initial || sectionFound.period_initial,
+                    completion_period:
+                        completion_period || sectionFound.completion_period,
+                    last_modify: dateFormat(
+                        now,
+                        "dddd, d De mmmm , yyyy, h:MM:ss TT"
+                    ),
+                    students: oldArrayStudentsIds.concat(arrayStudentsIds),
+                },
+            },
+            { upsert: true }
+        );
+
+        await applySubjectsRegistered(req.params.id);
+
+        if (arrayStudentsInvalid.length > 0) {
+            return res.json({
+                section: sectionFound,
+                invalids: arrayStudentsInvalid,
+            });
+        }
+
+        return res.json({ section: savedSection });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
+};
 
-    if (name && sectionFound.name !== name.toLowerCase()) {
-        const sectionCheck = await section.find({ name: name.toLowerCase() });
-        if (sectionCheck.length > 0)
-            return res
-                .status(400)
-                .json({ message: "Seccion con el mismo nombre ya existe!" });
-    }
+//Add student to section if every register
 
-    oldArrayStudentsIds = sectionFound.students;
+export const addStudentsSectionRegistered = async (section_id, students) => {
+    try {
+        console.log("register section call", section_id);
+        let now = new Date();
+        dateFormat.i18n = date;
+        let arrayStudentsIds = [];
+        let arrayStudentsInvalid = [];
+        let oldArrayStudentsIds = [];
 
-    //Reach olds students and see for new students
-    if (sectionFound && students) {
-        for (const id of students) {
-            const res = await requestIds(id, sectionFound, isUpdate || false);
-            if (res === true) {
-                arrayStudentsIds.push(id);
-            } else {
-                arrayStudentsInvalid.push(res);
+        const sectionFound = await section.findById(section_id);
+        if (sectionFound) {
+            oldArrayStudentsIds = sectionFound.students;
+            if (students) {
+                for (const id of students) {
+                    const res = await requestIds(id, sectionFound, false);
+                    if (res === true) {
+                        arrayStudentsIds.push(id);
+                    } else {
+                        arrayStudentsInvalid.push(res);
+                    }
+                }
             }
         }
 
@@ -274,115 +388,38 @@ export const update = async (req, res) => {
                 });
             }
         }
-    }
 
-    //To edit data from section general
-
-    if (name || year || period_initial || completion_period) {
-        const isInvalid = verifyFields(req, res);
-        if (isInvalid) {
-            return res.status(400).json({ message: isInvalid.message });
-        }
-    }
-
-    const savedSection = await section.updateOne(
-        {
-            _id: req.params.id,
-        },
-        {
-            $set: {
-                name: name
-                    ? name.toLowerCase()
-                    : sectionFound.name.toLowerCase(),
-                year: year || sectionFound.year,
-                period_initial: period_initial || sectionFound.period_initial,
-                completion_period:
-                    completion_period || sectionFound.completion_period,
-                last_modify: dateFormat(
-                    now,
-                    "dddd, d De mmmm , yyyy, h:MM:ss TT"
-                ),
-                students: oldArrayStudentsIds.concat(arrayStudentsIds),
+        const savedSection = await section.updateOne(
+            {
+                _id: section_id,
             },
-        },
-        { upsert: true }
-    );
-
-    await applySubjectsRegistered(req.params.id);
-
-    if (arrayStudentsInvalid.length > 0) {
-        return res.json({
-            section: sectionFound,
-            invalids: arrayStudentsInvalid,
-        });
-    }
-
-    return res.json({ section: savedSection });
-};
-
-//Add student to section if every register
-
-export const addStudentsSectionRegistered = async (section_id, students) => {
-    console.log("register section call", section_id);
-    let now = new Date();
-    dateFormat.i18n = date;
-    let arrayStudentsIds = [];
-    let arrayStudentsInvalid = [];
-    let oldArrayStudentsIds = [];
-
-    const sectionFound = await section.findById(section_id);
-    if (sectionFound) {
-        oldArrayStudentsIds = sectionFound.students;
-        if (students) {
-            for (const id of students) {
-                const res = await requestIds(id, sectionFound, false);
-                if (res === true) {
-                    arrayStudentsIds.push(id);
-                } else {
-                    arrayStudentsInvalid.push(res);
-                }
-            }
-        }
-    }
-
-    for (const id of arrayStudentsIds) {
-        const prevRegister = oldArrayStudentsIds.find((el) => {
-            return el == id;
-        });
-        if (prevRegister) {
-            arrayStudentsIds = arrayStudentsIds.filter((el) => {
-                return el != id;
-            });
-        }
-    }
-
-    const savedSection = await section.updateOne(
-        {
-            _id: section_id,
-        },
-        {
-            $set: {
-                last_modify: dateFormat(
-                    now,
-                    "dddd, d De mmmm , yyyy, h:MM:ss TT"
-                ),
-                students: oldArrayStudentsIds.concat(arrayStudentsIds),
+            {
+                $set: {
+                    last_modify: dateFormat(
+                        now,
+                        "dddd, d De mmmm , yyyy, h:MM:ss TT"
+                    ),
+                    students: oldArrayStudentsIds.concat(arrayStudentsIds),
+                },
             },
-        },
-        { upsert: true }
-    );
+            { upsert: true }
+        );
 
-    const stateSubjects = await applySubjectsRegistered(section_id);
+        const stateSubjects = await applySubjectsRegistered(section_id);
 
-    if (arrayStudentsInvalid.length > 0) {
-        return {
-            section: sectionFound,
-            invalids: arrayStudentsInvalid,
-            checked_subjects: stateSubjects,
-        };
+        if (arrayStudentsInvalid.length > 0) {
+            return {
+                section: sectionFound,
+                invalids: arrayStudentsInvalid,
+                checked_subjects: stateSubjects,
+            };
+        }
+
+        return { section: savedSection, checked_subjects: stateSubjects };
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-
-    return { section: savedSection, checked_subjects: stateSubjects };
 };
 
 //Subjects
@@ -436,39 +473,49 @@ export const applySubjectsRegistered = async (id) => {
 };
 
 export const deleteSection = async (req, res) => {
-    const { section_id } = req.params;
-    const sectionFound = section.findOne({ _id: section_id });
-    if (!sectionFound)
-        return res.status(404).json({ message: "Seccion no encontrada" });
-    await section.deleteOne({ _id: mongoose.Types.ObjectId(section_id) });
-    await student.updateMany({
-        _id: sectionFound.students,
-        $unset: { section: 1 },
-        $set: { subjects: [] },
-    });
-    res.json({ message: "Seccion Eliminada" });
+    try {
+        const { section_id } = req.params;
+        const sectionFound = section.findOne({ _id: section_id });
+        if (!sectionFound)
+            return res.status(404).json({ message: "Seccion no encontrada" });
+        await section.deleteOne({ _id: mongoose.Types.ObjectId(section_id) });
+        await student.updateMany({
+            _id: sectionFound.students,
+            $unset: { section: 1 },
+            $set: { subjects: [] },
+        });
+        res.json({ message: "Seccion Eliminada" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };
 
 export const deleteStudentsInSection = async (req, res) => {
-    const { section_id } = req.params;
-    let ObjectId = mongoose.Types.ObjectId;
-    const { students } = req.body;
+    try {
+        const { section_id } = req.params;
+        let ObjectId = mongoose.Types.ObjectId;
+        const { students } = req.body;
 
-    let format = students.map((el) => ObjectId(el));
-    const sectionFound = section.findOne({ _id: section_id });
+        let format = students.map((el) => ObjectId(el));
+        const sectionFound = section.findOne({ _id: section_id });
 
-    if (!sectionFound)
-        return res.status(404).json({ message: "Seccion no encontrada" });
+        if (!sectionFound)
+            return res.status(404).json({ message: "Seccion no encontrada" });
 
-    await student.updateMany(
-        { _id: { $in: format } },
-        { $unset: { section: 1 }, $set: { subjects: [] } }
-    );
+        await student.updateMany(
+            { _id: { $in: format } },
+            { $unset: { section: 1 }, $set: { subjects: [] } }
+        );
 
-    await section.updateOne(
-        { _id: section_id },
-        { $pullAll: { students: format } }
-    );
+        await section.updateOne(
+            { _id: section_id },
+            { $pullAll: { students: format } }
+        );
 
-    res.json({ message: "Estudiantes eliminados de la seccion" });
+        res.json({ message: "Estudiante/s eliminados de la seccion" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };

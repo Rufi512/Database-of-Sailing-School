@@ -1,4 +1,6 @@
 import React from "react";
+import { ToastContainer } from "react-toastify";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPasswordUser from "./pages/ResetPasswordUser";
@@ -21,9 +23,9 @@ import SubjectList from "./pages/subjects/SubjectList";
 import CreateUser from "./pages/users/CreateUser";
 import DetailUser from "./pages/users/DetailUser";
 import ListUser from "./pages/users/ListUser";
+
+import CheckLogin from './components/CheckLogin'
 import ProtectedRoute from "./components/ProtectedRoute";
-import { ToastContainer } from "react-toastify";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -42,7 +44,7 @@ const App = () => (
     />
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<Login />} />
+        <Route exact path="/" element={<CheckLogin><Login /></CheckLogin>} />
         <Route exact path="/forgot-password" element={<ForgotPassword />} />
         <Route
           exact

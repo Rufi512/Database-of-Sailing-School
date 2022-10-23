@@ -248,7 +248,7 @@ const TableList = (props) => {
 										);
 									}
 									if(act.type === "checkbox"){
-										return(<input key={i} className="form-check-input" type="checkbox" onChange={(e)=>{act.func(el.id || el._id ,e.target.checked)}} checked={props.checks.includes(el._id || el.id) || false}/>)
+										return(<input key={i} className="form-check-input" type="checkbox" onChange={(e)=>{act.func(el || el ,e.target.checked)}} checked={props.checks.includes(el || el) || false}/>)
 									}
 									return(<p key={i}>No disponible</p>)
 									})}

@@ -50,7 +50,7 @@ const ListRep = () => {
 				render: "Lista Cargada",
 				type: "success",
 				isLoading: false,
-				autoClose: 3000,
+				autoClose: 800,
 			});
 		} catch (e) {
 			console.log(e);
@@ -91,7 +91,7 @@ const ListRep = () => {
 				render: "Usuario eliminado",
 				type: "success",
 				isLoading: false,
-				autoClose: 3000,
+				autoClose: 800,
 			});
 			request();
 		} catch (e) {

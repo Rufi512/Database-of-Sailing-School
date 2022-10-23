@@ -2,19 +2,20 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
-export const verifyToken = async ()=>{
+export const verifyToken = async (checkLogin)=>{
     const res = await axios.get('/api/auth/verify/token',{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
-      toast.error('Sesion expirada')
       Cookies.remove("token")
       Cookies.remove("rol")
-      window.location.href = "/"
+      if(!checkLogin){ 
+        toast.error('Sesion expirada')
+        window.location.href = "/"
+      }
       if(err.response.status <= 500){
         return err.response
       }
       err.response.message = "Falla en el servidor :("
       return err.response
     })
-    console.log(res)
     Cookies.set("rol",res.data.rol)
     return res
 }

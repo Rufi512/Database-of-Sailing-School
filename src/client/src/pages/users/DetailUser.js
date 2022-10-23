@@ -355,6 +355,7 @@ const DetailUser = () => {
 							<label
 								className="form-check-label"
 								htmlFor="flexSwitchCheckDefault"
+								style={{fontWeight:'600'}}
 							>
 								Editar usuario
 							</label>
@@ -615,7 +616,7 @@ const DetailUser = () => {
 														<span style={{zIndex: 1,color: '#2800e8',fontSize:'16px'}}className="badge badge-primary badge-pill">
 															{i+1}
 														</span>
-														<button type="button" className="btn btn-danger" style={{height:'32px'}} onClick={(e)=>{deleteQuestion(el._id)}}>
+														<button type="button" className="btn btn-danger" style={{height:'36px'}} onClick={(e)=>{deleteQuestion(el._id)}}>
 															Borrar pregunta
 														</button>
 													</li>

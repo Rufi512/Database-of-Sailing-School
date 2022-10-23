@@ -43,8 +43,6 @@ const StudentsList = () => {
 			closeOnClick: true,
 		});
 		try {
-			console.log("status: ", searchParams.get("status"));
-			console.log("search: ", searchParams.get("search"));
 			const res = await listStudents({
 				limit: limit,
 				page: pageActual,
@@ -53,7 +51,6 @@ const StudentsList = () => {
 			});
 			setSearchBar(searchParams.get("search") || "");
 			setStatus(searchParams.get("status") || "activos")
-			console.log(res);
 
 			if (res.status >= 400) {
 				return toast.update(toastId, {
@@ -80,7 +77,7 @@ const StudentsList = () => {
 				render: "Lista Cargada",
 				type: "success",
 				isLoading: false,
-				autoClose: 3000,
+				autoClose: 800,
 			});
 		} catch (e) {
 			console.log(e);

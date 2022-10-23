@@ -68,45 +68,56 @@ export const setQuestions = async (req, res) => {
 //Get security questions
 
 export const getQuestions = async (req, res) => {
-    //Search user by ci or email
-    const userFound = await user.findOne({
-        $or: [{ email: req.body.user }, { ci: req.body.user }],
-    });
+    try {
+        //Search user by ci or email
+        const userFound = await user.findOne({
+            $or: [{ email: req.body.user }, { ci: req.body.user }],
+        });
 
-    if (!userFound)
-        return res.status(404).json({ message: "Usuario no encontrado" });
-    console.log(userFound);
-    const quests = await quest.find({ user: userFound.id }, { answer: 0 });
-    console.log(quests);
-    if (quests.length < 1)
-        return res
-            .status(400)
-            .json({ message: "No hay preguntas de seguridad registradas :(" });
+        if (!userFound)
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        console.log(userFound);
+        const quests = await quest.find({ user: userFound.id }, { answer: 0 });
+        console.log(quests);
+        if (quests.length < 1)
+            return res.status(400).json({
+                message: "No hay preguntas de seguridad registradas :(",
+            });
 
-    res.json(quests);
+        res.json(quests);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };
 
 export const getQuestionsOnLogin = async (req, res) => {
-    const userFound = await user.findById(req.params.id || req.userId);
+    try {
+        const userFound = await user.findById(req.params.id || req.userId);
 
-    if (!userFound)
-        return res
-            .status(404)
-            .json({ message: "No se ha encontrado al usuario" });
+        if (!userFound)
+            return res
+                .status(404)
+                .json({ message: "No se ha encontrado al usuario" });
 
-    if (req.params.id & (req.rolUser !== "Admin")) {
-        return res
-            .status(404)
-            .json({ message: "No se ha encontrado al usuario" });
+        if (req.params.id & (req.rolUser !== "Admin")) {
+            return res
+                .status(404)
+                .json({ message: "No se ha encontrado al usuario" });
+        }
+        const quests = await quest.find({ user: userFound.id }, { answer: 0 });
+
+        if (quests.length < 1)
+            return res.status(404).json({
+                message:
+                    "Actualmente no hay preguntas de seguridad registradas :(",
+            });
+
+        res.json(quests);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    const quests = await quest.find({ user: userFound.id }, { answer: 0 });
-
-    if (quests.length < 1)
-        return res.status(404).json({
-            message: "Actualmente no hay preguntas de seguridad registradas :(",
-        });
-
-    res.json(quests);
 };
 
 export const deleteQuestionUser = async (req, res) => {

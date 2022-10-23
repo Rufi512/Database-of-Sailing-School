@@ -117,7 +117,7 @@ const FormStudent = () => {
       setIsSubmit(false);
       if (res.status >= 400) {
         return toast.update(toastId, {
-          render: res.data.message,
+          render: res.data.message || 'Error al enviar la informacion',
           type: "error",
           isLoading: false,
           autoClose: 5000,
@@ -245,6 +245,7 @@ const FormStudent = () => {
                   autoComplete="off"
                   placeholder="Introduce el nombre del estudiante"
                   onInput={(e) => {
+                    if(e.target.value.length > 45) return
                     if (
                       fieldTest("string", e.target.value) ||
                       e.target.value === ""
@@ -268,6 +269,7 @@ const FormStudent = () => {
                   autoComplete="off"
                   placeholder="Introduce el apellido del estudiante"
                   onInput={(e) => {
+                    if(e.target.value.length > 45) return
                     if (
                       fieldTest("string", e.target.value) ||
                       e.target.value === ""
@@ -329,10 +331,12 @@ const FormStudent = () => {
                     id="address-student"
                     placeholder="Introduce la direccion domiciliaria del estudiante"
                     onInput={(e) => {
+                      if(e.target.value.length > 150) return
                       let items = student;
                       items.contact.address_1 = e.target.value;
                       setStudent({ ...student, items });
                     }}
+                    value={student.contact.address_1}
                   />
                 </div>
                 <div className="form-group col-md-6">
@@ -345,10 +349,12 @@ const FormStudent = () => {
                     id="address2-student"
                     placeholder="Introduce direccion de referencia del estudiante"
                     onInput={(e) => {
+                      if(e.target.value.length > 150) return
                       let items = student;
                       items.contact.address_2 = e.target.value;
                       setStudent({ ...student, items });
                     }}
+                    value={student.contact.address_2}
                   />
                 </div>
               </div>
@@ -605,6 +611,9 @@ const FormStudent = () => {
                 </div>
               </div>
             </div>
+              <button type="submit" className="btn btn-primary" style={{display: 'flex', marginLeft: 'auto'}}>
+                    Añadir Estudiante
+                  </button>
             <div className="container-massive-register">
               <h4>Registro de estudiante archivos</h4>
               <div className="row container-actions">
@@ -632,9 +641,7 @@ const FormStudent = () => {
                   >
                     Subir archivos
                   </button>
-                  <button type="submit" className="btn btn-primary">
-                    Añadir Estudiante
-                  </button>
+                
                 </div>
               </div>
             </div>

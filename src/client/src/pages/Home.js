@@ -12,7 +12,7 @@ import { saludateRol } from "../components/SomethingFunctions";
 import "../static/styles/home.css";
 const Home = (props) => {
 	const [data, setData] = useState({});
-	console.log(data)
+
 	const timerRef = useRef(null);
 	const saluted = () => {
 		const d = new Date();
@@ -40,7 +40,6 @@ const Home = (props) => {
 		});
 		try {
 			const res = await stats();
-			console.log(res)
 			if (res.status >= 400) {
 				return toast.update(toastId, {
 					render: "No se pudieron obtener los estados actuales",
@@ -52,10 +51,10 @@ const Home = (props) => {
 			setData(res);
 
 			toast.update(toastId, {
-				render: "Estados cargados",
+				render: "Cargado!",
 				type: "success",
 				isLoading: false,
-				autoClose: 5000,
+				autoClose: 1,
 			});
 		} catch (e) {
 			timerRef.current = setTimeout(() => {
@@ -97,7 +96,7 @@ const Home = (props) => {
 						<img src={studentGradueImg} alt="student" />
 					</div>
 					<div className="stats">
-						<h2>Estudiantes Congelados</h2>
+						<h2>Estudiantes Inactivos</h2>
 						<p>{data.frozen_students || 'N/A'}</p>
 						<img src={studentMistakeImg} alt="student" />
 					</div>

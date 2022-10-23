@@ -10,6 +10,10 @@ const checkSubject = async (data, res, update) => {
         return { status: false, message: "Nombre o año ausente" };
     }
 
+    if(name.length > 40){
+        return { status: false, message: "El nombre de la materia debe tener maximo 40 caracteres!" };
+    }
+
     const prevSubject = await subject.findOne({ name: name.toLowerCase() });
 
     if (prevSubject && !update)
@@ -30,84 +34,110 @@ const checkSubject = async (data, res, update) => {
 };
 
 export const register = async (req, res) => {
-    const data = await checkSubject(req.body, res, false);
-    if (!data.status) return res.status(404).json(data.message);
-    if(!data.fromYears || data.fromYears.length === 0){
-        return res.status(404).json({message: 'Especifique el año para la materia'})
+    try {
+        const data = await checkSubject(req.body, res, false);
+        if (!data.status) return res.status(404).json(data.message);
+        if (!data.fromYears || data.fromYears.length === 0) {
+            return res
+                .status(404)
+                .json({ message: "Especifique el año para la materia" });
+        }
+        const newSubject = new subject({
+            name: data.name,
+            fromYears: data.fromYears,
+        });
+
+        const savedSubject = await newSubject.save();
+
+        return res.json(savedSubject);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    const newSubject = new subject({
-        name: data.name,
-        fromYears: data.fromYears,
-    });
-
-    const savedSubject = await newSubject.save();
-
-    return res.json(savedSubject);
 };
 
 export const list = async (req, res) => {
-    if (req.query) {
-        const { limit, page } = req.query;
-        if (limit && isNaN(limit))
-            return res
-                .status(400)
-                .json({ message: "El limite de elementos no es un numero!" });
-        if (page && isNaN(page))
-            return res
-                .status(400)
-                .json({ message: "El limite de paginas no es un numero!" });
+    try {
+        if (req.query) {
+            const { limit, page } = req.query;
+            if (limit && isNaN(limit))
+                return res
+                    .status(400)
+                    .json({
+                        message: "El limite de elementos no es un numero!",
+                    });
+            if (page && isNaN(page))
+                return res
+                    .status(400)
+                    .json({ message: "El limite de paginas no es un numero!" });
+        }
+
+        let optionsPagination = {
+            lean: false,
+            limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+            page: req.query && Number(req.query.page) ? req.query.page : 1,
+        };
+
+        const subjects = await subject.paginate({}, optionsPagination);
+
+        return res.json(subjects);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
-        page: req.query && Number(req.query.page) ? req.query.page : 1,
-    };
-
-    const subjects = await subject.paginate({}, optionsPagination);
-
-    return res.json(subjects);
 };
 
 export const listAvalaibleSection = async (req, res) => {
-    const sectionFound = await section.findById(req.params.id);
-    if (!sectionFound) {
-        return res.status(404).json({ message: "Seccion no encontrada" });
-    }
-    const subjects = await subject.find({
-        fromYears: { $in: sectionFound.year },
-    });
-    console.log(subjects);
-    let newList = [];
-    for (const elm of subjects) {
-        newList.push({
-            value: elm.id,
-            label: `${elm.name[0].toUpperCase() + elm.name.substring(1)}`,
+    try {
+        const sectionFound = await section.findById(req.params.id);
+        if (!sectionFound) {
+            return res.status(404).json({ message: "Seccion no encontrada" });
+        }
+        const subjects = await subject.find({
+            fromYears: { $in: sectionFound.year },
         });
-    }
+        console.log(subjects);
+        let newList = [];
+        for (const elm of subjects) {
+            newList.push({
+                value: elm.id,
+                label: `${elm.name[0].toUpperCase() + elm.name.substring(1)}`,
+            });
+        }
 
-    return res.json(newList);
+        return res.json(newList);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };
 
 export const update = async (req, res) => {
-    const data = await checkSubject(req.body, res, true);
-    if (!data.status) return res.status(404).json(data.message);
-    if(!data.fromYears || data.fromYears.length === 0){
-        return res.status(404).json({message: 'Especifique el año para la materia'})
-    }
+    try {
+        const data = await checkSubject(req.body, res, true);
+        if (!data.status) return res.status(404).json(data.message);
+        if (!data.fromYears || data.fromYears.length === 0) {
+            return res
+                .status(404)
+                .json({ message: "Especifique el año para la materia" });
+        }
 
-    const newSubject = await subject.updateOne(
-        { _id: req.params.id },
-        {
-            $set: {
-                name: data.name,
-                fromYears: data.fromYears,
+        const newSubject = await subject.updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    name: data.name,
+                    fromYears: data.fromYears,
+                },
             },
-        },
-        { upsert: true }
-    );
+            { upsert: true }
+        );
 
-    return res.json(newSubject);
+        return res.json(newSubject);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };
 
 //Assign subject to students in section in based to school_year actual
@@ -174,7 +204,7 @@ export const assign = async (req, res) => {
 export const updateSubjectsBySection = async (req, res) => {
     try {
         const { subjects, applyYearSubjects } = req.body;
-        console.log(req.body)
+        console.log(req.body);
         const sectionFound = await section.findById(req.params.id);
 
         if (!sectionFound) {
@@ -205,7 +235,7 @@ export const updateSubjectsBySection = async (req, res) => {
         );
 
         const studentsApply = await applySubjectsRegistered(req.params.id);
-        console.log('studentsApply', studentsApply)
+        console.log("studentsApply", studentsApply);
         if (studentsApply) {
             return res.json({
                 message: "Materia registradas a seccion y estudiantes",
@@ -221,8 +251,6 @@ export const updateSubjectsBySection = async (req, res) => {
         res.status(500).json({ message: "Error al procesar información" });
     }
 };
-
-
 
 export const deleteSubject = async (req, res) => {
     try {
