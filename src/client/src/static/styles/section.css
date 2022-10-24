@@ -1,5 +1,5 @@
 .container-table table {
-	margin: 0 2px;
+    margin: 0 2px;
     margin-top: 15px;
 }
 
@@ -39,15 +39,15 @@
     font-weight: 600;
 }
 
-.container-section .container-input-date{
-	display: flex;
+.container-section .container-input-date {
+    display: flex;
     flex-flow: wrap;
     justify-content: space-between;
 }
 
-.container-section .container-input-date input{
-	margin-top: 5px;
-	width: 100%;
+.container-section .container-input-date input {
+    margin-top: 5px;
+    width: 100%;
 }
 
 .container-subjects-list {
@@ -94,7 +94,7 @@
 }
 
 .container-section .container-subjects-list table {
-	margin: 0 2px;
+    margin: 0 2px;
     margin-bottom: 0;
 }
 
@@ -114,7 +114,7 @@
     padding: 10px 15px;
 }
 
-.container-section .data-body .name{
+.container-section .data-body .name {
     text-transform: capitalize;
 }
 
@@ -132,7 +132,7 @@
     flex-flow: column;
 }
 
-.container-section .container-header-data{
+.container-section .container-header-data {
     display: flex;
     flex-flow: wrap;
     justify-content: space-between;
@@ -143,74 +143,101 @@
 }
 
 /*Modal add subjects*/
-.container-section .container-add-list{
-	position: fixed;
-	margin: auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	opacity: 0;
-	z-index: -1000;
-	background: #0000005c;
-	transition: all 0.3s ease;
+.container-section .container-add-list {
+    position: fixed;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    z-index: -1000;
+    background: #0000005c;
+    transition: all 0.3s ease;
 }
 
-.container-section .container-add-list-show{
-	z-index: 1000;
-	opacity: 1;
+.container-section .container-add-list-show {
+    z-index: 1000;
+    opacity: 1;
 }
 
-.container-section .container-add-list .list-avalaibles{
-	width: 95%;
-	padding: 20px;
-	max-height: 400px;
-	overflow: auto;
-	background: #ffffff;
-	border-radius: 5px;
+.container-section .container-add-list .list-avalaibles {
+    width: 95%;
+    padding: 20px;
+    max-height: 400px;
+    overflow: auto;
+    background: #ffffff;
+    border-radius: 5px;
     box-shadow: 0px 2px 8px 5px #4a4a4a7a;
 
 }
 
-.container-section .container-add-list .list-avalaibles h3{
-	text-align: center;
+.container-section .container-add-list .list-avalaibles h3 {
+    text-align: center;
 }
 
-.container-section .container-add-list h4{
-	width: 100%;
-	text-align: center;
+.container-section .container-add-list h4 {
+    width: 100%;
+    text-align: center;
 }
 
-.container-section .students-new .switch{
+.container-section .students-new .switch {
     margin-top: 30px;
     display: flex;
     margin-left: auto;
     width: max-content;
 }
 
-.container-section .table-students .container-search-bar{
-    padding: 10px 20px;
+.container-section .table-students .container-search-bar {
+    padding: 10px 9px;
 }
 
-.container-section .table-students .container-search-bar div{
+.container-section .table-students .container-search-bar div {
     display: flex;
 }
 
-.container-section .table-students .container-search-bar input{
+.container-section .table-students .container-search-bar input {
     margin-right: 5px;
 }
 
-.container-section .container-body .container-actions-body{
+.container-section .container-body .container-actions-body {
     padding: 0 18px;
 }
 
-.container-section .container-buttons-action-table{
+.container-section .container-buttons-action-table {
     width: max-content;
     margin-left: auto;
+}
+
+.container-section .container-btn-add {
+    height: 38px;
+}
+
+.container-section .container-btn-add button {
+    margin: 5px 12px;
+}
+
+
+
+@media(max-width: 1024px) {
+    .container-section .container-subjects-list .table-general .table-body-select .data-body{
+    padding: 5px;
+    padding-top: 0;
+}
+    .container-section .table-body-select .data-body .container-actions input {
+        margin-left: auto;
+        margin-right: 5px;
+    }
+}
+
+@media(min-width: 768px) {
+    .container-section .container-btn-add button {
+        margin: 5px 18px;
+    }
 }
 
 @media(min-width: 1024px) {
@@ -225,8 +252,8 @@
         width: 49%;
     }
 
-    .container-section .container-input-date input{
-    	width: 49%;
+    .container-section .container-input-date input {
+        width: 49%;
     }
 
 }

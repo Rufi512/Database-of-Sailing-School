@@ -125,3 +125,15 @@
   cursor: pointer;
   background: #0c255c;
 }
+
+.container-login .cc-container{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container-login .cc-container p{
+  text-align: center;
+}

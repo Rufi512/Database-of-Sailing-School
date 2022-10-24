@@ -437,7 +437,7 @@ const Section = () => {
         render: "Datos cargados",
         type: "success",
         isLoading: false,
-        autoClose: 5000,
+        autoClose: 800,
       });
     } catch (e) {
       toast.update(toastId, {
@@ -496,7 +496,7 @@ const Section = () => {
           render: "Lista Cargada",
           type: "success",
           isLoading: false,
-          autoClose: 3000,
+          autoClose: 800,
         });
       } catch (e) {
         console.log(e);
@@ -988,7 +988,7 @@ const Section = () => {
           </div>
           {data.students.length > 0 ? (
             <div className="container-table table-students">
-              <div className="container-buttons-action-table" style={{display: 'flex',justifyContent: 'space-between',width:'100%', alignItems: 'center', height:'50px'}}>
+              <div className="container-buttons-action-table" style={{display: 'flex',justifyContent: 'space-between',width:'100%', alignItems: 'center', height:'65px'}}>
               <h4>Estudiantes actualmente registrados</h4>
 
                 {selectedStudentsSection.length > 0 ? (
@@ -1116,9 +1116,10 @@ const Section = () => {
                 }}
               />
 
+              <div className="container-btn-add" style={{height:'38px'}}>
               {newStudents.length > 0 ? (
                 <button
-                  style={{ margin: "5px 20px" }}
+                  style={{ margin: "5px 15px" }}
                   className="btn btn-primary"
                   onClick={(e) => {
                     setAddStudents(true);
@@ -1130,6 +1131,7 @@ const Section = () => {
               ) : (
                 ""
               )}
+              </div>
               <TableList
                 data={studentsList}
                 checks={newStudents}

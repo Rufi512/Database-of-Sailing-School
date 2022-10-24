@@ -324,6 +324,7 @@ const SubjectList = () => {
 									value={subject.name}
 									autoComplete="off"
 									onInput={(e) => {
+										if(e.target.value.length > 40) return
 										setNewSubject({
 											...subject,
 											name: e.target.value,

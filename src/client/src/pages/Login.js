@@ -1,8 +1,9 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import { toast } from "react-toastify";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import boscoImg from "../static/logos/jb.jpg";
+import CCImg from "../static/logos/CC-logo.png";
 import { ReactComponent as PersonIcon } from "../static/icons/person.svg";
 import { ReactComponent as EyeIcon } from "../static/icons/eye.svg";
 import { ReactComponent as EyeClose } from "../static/icons/eye.svg";
@@ -11,11 +12,11 @@ import Cookies from "js-cookie";
 import { loginUser } from "../API";
 import "../static/styles/form-login.css";
 const Login = (props) => {
-  const recaptchaRef = useRef(null)
+  const recaptchaRef = useRef(null);
   const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [showPass, setShowPass] = useState(false);
-  const [isSubmit, setIsSubmit] = useState(false)
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const hiddenPass = () => {
     if (showPass === true) {
@@ -34,24 +35,25 @@ const Login = (props) => {
     }
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(isSubmit) return
-    setIsSubmit(true)
-    const toastId = toast.loading("Verificando datos...",{closeOnClick:true});
+    if (isSubmit) return;
+    setIsSubmit(true);
+    const toastId = toast.loading("Verificando datos...", {
+      closeOnClick: true,
+    });
     try {
       const res = await loginUser(user);
-      recaptchaRef.current.reset()
-      setIsSubmit(false)
-      if(res.status >= 400){
+      recaptchaRef.current.reset();
+      setIsSubmit(false);
+      if (res.status >= 400) {
         return toast.update(toastId, {
-        render: res.data.message,
-        type: "error",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 5000,
-      });
+          render: res.data.message,
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+          autoClose: 5000,
+        });
       }
 
       Cookies.set("token", res.data.token);
@@ -65,8 +67,8 @@ const Login = (props) => {
         autoClose: 3000,
       });
 
-      navigate('/home')
-    } catch(e) {
+      navigate("/home");
+    } catch (e) {
       toast.update(toastId, {
         render: "Fallo al verificar informacion",
         type: "error",
@@ -74,8 +76,8 @@ const Login = (props) => {
         closeOnClick: true,
         autoClose: 3000,
       });
-      setIsSubmit(false)
-      console.log(e)
+      setIsSubmit(false);
+      console.log(e);
     }
   };
 
@@ -131,16 +133,29 @@ const Login = (props) => {
             Olvidaste tu contraseña?
           </Link>
           <div className="captcha_container">
-          <ReCAPTCHA
-            ref={recaptchaRef}
-            sitekey="6Lf0i_seAAAAADa-22kcxr_u8f2AXw3zIP_vf-aa"
-            onChange={onCaptcha}
-          />
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey="6Lf0i_seAAAAADa-22kcxr_u8f2AXw3zIP_vf-aa"
+              onChange={onCaptcha}
+            />
           </div>
           <button type="submit" className="button-submit">
             Ingresar
           </button>
         </form>
+        <div className="cc-container">
+          <img
+            style={{
+              width: "190px",
+              height: "50px",
+              objectFit: "contain",
+              borderRadius: "0px",
+            }}
+            src={CCImg}
+            alt="cc"
+          />
+          <p>El sistema ha sido creado bajo la licencia Creatives Commons</p>
+        </div>
       </div>
     </React.Fragment>
   );
