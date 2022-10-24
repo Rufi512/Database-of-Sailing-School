@@ -19,6 +19,17 @@ const ForgotPassword = () => {
 		if(isSubmit) return
 		setIsSubmit(true);
 		const toastId = toast.loading("Verificando datos...");
+		if(user.option === 0){
+			recaptchaRef.current.reset()
+			toast.update(toastId, {
+						render: 'Debes de seleccionar una opcion para continuar!',
+						type: "error",
+						isLoading: false,
+						closeOnClick: true,
+						autoClose: 5000,
+					});
+			setIsSubmit(false);
+		}
 		let res;
 		try {
 			if (user.option === 1) {
@@ -49,7 +60,6 @@ const ForgotPassword = () => {
 			if (user.option === 2) {
 				res = await forgotPasswordQuestions(user);
 				recaptchaRef.current.reset()
-				console.log(res);
 				if (res.status >= 400) {
 					setIsSubmit(false);
 					return toast.update(toastId, {
@@ -70,7 +80,6 @@ const ForgotPassword = () => {
 					navigate("/reset-password/questions/", { state:{questions:res.data,user:user.user} });
 				}
 			}
-			console.log(user);
 		} catch (e) {
 			setIsSubmit(false);
 		}
@@ -78,7 +87,6 @@ const ForgotPassword = () => {
 
 	const onCaptcha = async (value) => {
     if (value) {
-      console.log("No es el xocas");
       setUser({ ...user, recaptcha: value });
     } else {
       setUser({ ...user, recaptcha: "" });
