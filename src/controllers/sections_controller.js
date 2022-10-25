@@ -11,7 +11,8 @@ const verifyFields = (req, res) => {
         !req.body.name ||
         !req.body.year ||
         !/^[0-9A-Za-záéíóúñ'´ ]+$/.test(req.body.name) ||
-        !Number.isInteger(Number(req.body.year))
+        !Number.isInteger(Number(req.body.year)) ||
+        req.body.name.length > 40
     ) {
         return { message: "Datos invalidos" };
     }

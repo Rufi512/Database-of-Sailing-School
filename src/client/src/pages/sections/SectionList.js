@@ -141,7 +141,6 @@ const SectionList = () => {
 
 		const res = await registerSection(newSection);
 		setIsSubmit(false);
-		setShowCreator(false);
 		setNewSection({
 			name: "",
 			year: 1,
@@ -164,6 +163,8 @@ const SectionList = () => {
 			isLoading: false,
 			autoClose: 5000,
 		});
+
+		setShowCreator(false);
 
 		return request();
 	};
@@ -264,6 +265,7 @@ const SectionList = () => {
 									placeholder="Introduce el nombre de la seccion"
 									value={newSection.name}
 									onInput={(e) => {
+										if(e.target.value.length > 40) return
 										setNewSection({
 											...newSection,
 											name: e.target.value,
