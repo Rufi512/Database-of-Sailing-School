@@ -97,7 +97,9 @@ const Navbar = (props) => {
             <ListIcon style={{ width: "48px", height: "35px" }} />
             Lista de estudiantes
           </Link>
-          <Link to="/sections" className={`link`}>
+          <Link to="/sections" className={`link ${
+                  props.actualPage === "sections" ? "link-active" : ""
+                }`}>
             <SectionIcon style={{ width: "48px", height: "32px" }} />
             Lista de secciones
           </Link>
@@ -107,7 +109,7 @@ const Navbar = (props) => {
               <Link
                 to="/subject/list"
                 className={`link ${
-                  props.actualPage === "subject-list" ? "link-active" : ""
+                  props.actualPage === "subjectList" ? "link-active" : ""
                 }`}
               >
                 <SubjectListIcon />
@@ -127,7 +129,9 @@ const Navbar = (props) => {
             <FormStudentsIcon />
             Registrar estudiantes
           </Link>
-          <Link to="/reps" className={`link`}>
+          <Link to="/reps" className={`link ${
+                  props.actualPage === "reps" ? "link-active" : ""
+                }`}>
             <RepIcon style={{ width: "47px" }} />
             Gestion de representantes
           </Link>
@@ -136,7 +140,9 @@ const Navbar = (props) => {
           <>
             <p className="indicator-text">Administrativo</p>
             <div className="links-container">
-              <Link to="/users" className={`link`}>
+              <Link to="/users" className={`link ${
+                  props.actualPage === "users" ? "link-active" : ""
+                }`}>
                 <UsersIcon />
                 Gestion de usuarios
               </Link>

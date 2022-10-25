@@ -139,7 +139,7 @@ const StudentsList = () => {
 
 	return (
 		<>
-			<Navbar />
+			<Navbar actualPage={"studentsList"}/>
 			<div className="container-body container-list-rep container-list-students">
 				{/*Delete User modal*/}
 				<div

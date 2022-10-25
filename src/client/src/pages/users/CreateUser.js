@@ -115,6 +115,7 @@ const CreateUser = () => {
 										placeholder="Introduzca el Nombre"
 										autoComplete="off"
 										onInput={(e) => {
+											if(e.target.value.length > 45) return
 											if (
 												fieldTest(
 													"string",
@@ -139,6 +140,7 @@ const CreateUser = () => {
 										placeholder="Introduzca el apellido"
 										autoComplete="off"
 										onInput={(e) => {
+											if(e.target.value.length > 45) return
 											if (
 												fieldTest(
 													"string",
@@ -188,8 +190,8 @@ const CreateUser = () => {
 											});
 										}}
 									>
-										<option value={"Teacher"}>
-											Profesor/a
+										<option selected value={"Teacher"}>
+											Maestro/a
 										</option>
 										<option value={"Moderator"}>
 											Moderador/a

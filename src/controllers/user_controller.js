@@ -5,8 +5,8 @@ import section from "../models/section";
 import comment from "../models/comment";
 import roles from "../models/roles";
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import {verifyCreate} from '../middlewares/verifyForms'
 dotenv.config();
 const secret = process.env.SECRET;
 
@@ -48,6 +48,11 @@ export const getUsers = async (req, res) => {
 export const createUser = async (req, res) => {
     try {
         const { ci, firstname, lastname, email, password, rol } = req.body;
+        const checkRegister = await verifyCreate(req.body,true)
+        console.log(checkRegister)
+         if (checkRegister)
+            return res.status(400).json({ message: checkRegister.message });
+
         if (!password)
             return res.status(400).json({
                 message: "El usuario necesita una contraseña para ser creado!",
@@ -94,9 +99,16 @@ export const updateUser = async (req, res) => {
             return res.status(404).json({ message: "ID invalido" });
         }
 
+        const checkRegister = await verifyCreate(req.body,true)
+         if (checkRegister)
+            return res.status(400).json({ message: checkRegister.message });
+
         const foundUser = await user.findById(req.params.id || req.userId);
+        
+        //Request the info from user what make the modification
+        const userRequestFind = await user.findById(req.userId);
 
-
+        const rolFind = await roles.findOne({ name: { $in: req.body.rol } });
 
         if (req.rolUser) {
             if (req.params.id && req.rolUser !== "Admin") {
@@ -104,14 +116,19 @@ export const updateUser = async (req, res) => {
                     .status(404)
                     .json({ message: "No se ha encontrado al usuario" });
             }
+
+            if(rolFind._id !== userRequestFind.rol && req.rolUser !== "Admin"){
+                return res
+                    .status(400)
+                    .json({ message: "No puedes modificar el rol" });
+            }
         }
         // Check if email or ci is in used to other user
         const userFind = await user.findOne({
             $or: [{ email: req.body.email }, { ci: req.body.ci }],
         });
 
-        //Request the info from user what make the modification
-        const userRequestFind = await user.findById(req.userId);
+        
 
         const rolUserRequest = await roles.find({
             _id: { $in: userRequestFind.rol },
@@ -134,7 +151,6 @@ export const updateUser = async (req, res) => {
             });
         }
 
-        const rolFind = await roles.findOne({ name: { $in: req.body.rol } });
 
         if (!rolFind) return res.status(400).json({ message: "Rol no existe" });
         //Verify if the user is admin or is the same

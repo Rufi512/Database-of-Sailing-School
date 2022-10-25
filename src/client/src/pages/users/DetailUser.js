@@ -4,12 +4,13 @@ import { saludateRol } from "../../components/SomethingFunctions";
 import { toast } from "react-toastify";
 import { Link, useParams } from "react-router-dom";
 import { fieldTest } from "../../components/SomethingFunctions";
+import Cookies from "js-cookie";
 import {
 	updateUser,
 	detailUser,
 	getQuestionsOnLogin,
 	registerQuests,
-	deleteQuestionFromUser
+	deleteQuestionFromUser,
 } from "../../API";
 import "../../static/styles/form-user.css";
 const DetailUser = () => {
@@ -39,7 +40,7 @@ const DetailUser = () => {
 	const params = useParams();
 
 	const request = useCallback(async () => {
-		setShowChangePassword(false)
+		setShowChangePassword(false);
 		try {
 			const res = await detailUser(params.id);
 			const questions = await getQuestionsOnLogin(params.id);
@@ -54,11 +55,11 @@ const DetailUser = () => {
 				rol: rol ? rol.name : "teacher",
 			});
 
-			if (questions.status >= 400){
-				setListQuestions([])
+			if (questions.status >= 400) {
+				setListQuestions([]);
 				return toast.error(res.data.message, { autoClose: false });
 			}
-			
+
 			if (questions.data && questions.status < 400)
 				setListQuestions(questions.data);
 		} catch (e) {
@@ -74,7 +75,7 @@ const DetailUser = () => {
 
 	useEffect(() => {
 		request();
-		return () => clearTimeout(timerRef.current)
+		return () => clearTimeout(timerRef.current);
 	}, [request]);
 
 	const handleSubmit = async (e) => {
@@ -136,7 +137,7 @@ const DetailUser = () => {
 		const toastId = toast.loading("Verificando datos...", {
 			closeOnClick: true,
 		});
-		if(registerQuestions[0].answer !== registerQuestions[0].confirm){
+		if (registerQuestions[0].answer !== registerQuestions[0].confirm) {
 			setIsSubmit(false);
 			return toast.update(toastId, {
 				render: "La respuesta de confirmacion de la pregunta no coincide",
@@ -169,7 +170,7 @@ const DetailUser = () => {
 			});
 
 			setRegisterQuestions([{ question: "", answer: "", confirm: "" }]);
-			request()
+			request();
 		} catch (e) {
 			setIsSubmit(false);
 			console.log(e);
@@ -182,14 +183,14 @@ const DetailUser = () => {
 		}
 	};
 
-	const deleteQuestion = async (id) =>{
+	const deleteQuestion = async (id) => {
 		const toastId = toast.loading("Verificando datos...", {
 			closeOnClick: true,
 		});
 		if (isSubmit) return;
 		setIsSubmit(true);
-		try{
-			const res = await deleteQuestionFromUser(id)
+		try {
+			const res = await deleteQuestionFromUser(id);
 			setIsSubmit(false);
 
 			if (res.status >= 400) {
@@ -208,8 +209,8 @@ const DetailUser = () => {
 				autoClose: 5000,
 			});
 			setRegisterQuestions([{ question: "", answer: "", confirm: "" }]);
-			request()
-		}catch(e){
+			request();
+		} catch (e) {
 			setIsSubmit(false);
 			console.log(e);
 			return toast.update(toastId, {
@@ -219,12 +220,11 @@ const DetailUser = () => {
 				autoClose: 5000,
 			});
 		}
-	}
-
+	};
 
 	return (
 		<>
-			<Navbar actualPage={'profile'}/>
+			<Navbar actualPage={"profile"} />{" "}
 			<div
 				className={`questions-creator-user-modal ${
 					showQuestionsModal ? "show-creator-questions" : ""
@@ -250,6 +250,7 @@ const DetailUser = () => {
 								placeholder="Escribe la pregunta de seguridad"
 								autoComplete="off"
 								onInput={(e) => {
+									if (e.target.value.length > 40) return;
 									let items = [...registerQuestions];
 									items[0].question = e.target.value;
 									setRegisterQuestions([...items]);
@@ -275,6 +276,7 @@ const DetailUser = () => {
 								autoComplete="off"
 								placeholder="Escribe la respuesta"
 								onInput={(e) => {
+									if (e.target.value.length > 40) return;
 									let items = [...registerQuestions];
 									items[0].answer = e.target.value;
 									setRegisterQuestions([...items]);
@@ -297,6 +299,7 @@ const DetailUser = () => {
 								autoComplete="off"
 								placeholder="Confirma la respuesta"
 								onInput={(e) => {
+									if (e.target.value.length > 40) return;
 									let items = [...registerQuestions];
 									items[0].confirm = e.target.value;
 									setRegisterQuestions([...items]);
@@ -333,9 +336,8 @@ const DetailUser = () => {
 							</button>
 						</div>
 					</div>
-				</form>
+				</form>{" "}
 			</div>
-
 			<div className="container-body container-create-user">
 				<div className="card card-container">
 					<div className="card-header">
@@ -355,7 +357,7 @@ const DetailUser = () => {
 							<label
 								className="form-check-label"
 								htmlFor="flexSwitchCheckDefault"
-								style={{fontWeight:'600'}}
+								style={{ fontWeight: "600" }}
 							>
 								Editar usuario
 							</label>
@@ -408,6 +410,8 @@ const DetailUser = () => {
 											placeholder="Introduzca el Nombre"
 											autoComplete="off"
 											onInput={(e) => {
+												if (e.target.value.length > 45)
+													return;
 												if (
 													fieldTest(
 														"string",
@@ -439,6 +443,8 @@ const DetailUser = () => {
 											id="lastname"
 											placeholder="Introduzca el apellido"
 											onInput={(e) => {
+												if (e.target.value.length > 45)
+													return;
 												if (
 													fieldTest(
 														"string",
@@ -484,7 +490,14 @@ const DetailUser = () => {
 								</div>
 								<div className="form-group field-container col-md-6 p-1">
 									<label htmlFor="rol">Rol del usuario</label>
-									{showEdit ? (
+									{showEdit === false ||
+									(showEdit === true &&
+										Cookies.get("rol") !== "Admin") ? (
+										<p>
+											{saludateRol(user.rol) ||
+												"Sin información"}
+										</p>
+									) : (
 										<select
 											className="form-control"
 											name="rol"
@@ -498,7 +511,7 @@ const DetailUser = () => {
 											}}
 										>
 											<option value={"Teacher"}>
-												Profesor/a
+												Maestro/a
 											</option>
 											<option value={"Moderator"}>
 												Moderador/a
@@ -507,11 +520,6 @@ const DetailUser = () => {
 												Administrador/a
 											</option>
 										</select>
-									) : (
-										<p>
-											{saludateRol(user.rol) ||
-												"Sin información"}
-										</p>
 									)}
 								</div>
 							</div>
@@ -528,7 +536,10 @@ const DetailUser = () => {
 											setShowChangePassword(
 												e.target.checked
 											);
-											setUser({...user,allowPassword:e.target.checked})
+											setUser({
+												...user,
+												allowPassword: e.target.checked,
+											});
 										}}
 										checked={showChangePassword}
 									/>
@@ -609,23 +620,53 @@ const DetailUser = () => {
 											</p>
 											<ul className="list-group">
 												{listQuestions.map((el, i) => {
-													console.log(i)
-													return(
-														<li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-														<p style={{width:'250px'}}>{el.question}</p>
-														<span style={{zIndex: 1,color: '#2800e8',fontSize:'16px'}}className="badge badge-primary badge-pill">
-															{i+1}
-														</span>
-														<button type="button" className="btn btn-danger" style={{height:'36px'}} onClick={(e)=>{deleteQuestion(el._id)}}>
-															Borrar pregunta
-														</button>
-													</li>
+													console.log(i);
+													return (
+														<li
+															key={i}
+															className="list-group-item d-flex justify-content-between align-items-center"
+														>
+															<p
+																style={{
+																	width: "250px",
+																}}
+															>
+																{el.question}
+															</p>
+															<span
+																style={{
+																	zIndex: 1,
+																	color: "#2800e8",
+																	fontSize:
+																		"16px",
+																}}
+																className="badge badge-primary badge-pill"
+															>
+																{i + 1}
+															</span>
+															<button
+																type="button"
+																className="btn btn-danger"
+																style={{
+																	height: "36px",
+																}}
+																onClick={(
+																	e
+																) => {
+																	deleteQuestion(
+																		el._id
+																	);
+																}}
+															>
+																Borrar pregunta
+															</button>
+														</li>
 													);
 												})}
 											</ul>
 											<button
 												style={{
-													marginTop:'20px',
+													marginTop: "20px",
 													display: "flex",
 													marginLeft: "auto",
 												}}
@@ -648,7 +689,11 @@ const DetailUser = () => {
 								<Link
 									to={"/users"}
 									className="btn btn-secondary"
-									style={{display:'flex',justifyContent:'center',alignItems:'center'}}
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+									}}
 								>
 									Regresar
 								</Link>
@@ -665,8 +710,8 @@ const DetailUser = () => {
 							</div>
 						</form>
 					</div>
-				</div>
-			</div>
+				</div>{" "}
+			</div>{" "}
 		</>
 	);
 };

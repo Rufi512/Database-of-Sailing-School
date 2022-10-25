@@ -120,7 +120,7 @@ const ListRep = () => {
 
 	return (
 		<>
-			<Navbar />
+			<Navbar actualPage={"reps"}/>
 			<div className="container-body container-list-rep">
 		{/*Delete rep modal*/}
 				<div

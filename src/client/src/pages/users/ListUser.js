@@ -121,7 +121,7 @@ const ListUser = () => {
 
 	return (
 		<>
-			<Navbar />
+			<Navbar actualPage={"users"}/>
 			<div className="container-body container-list-rep">
 				{/*Delete User modal*/}
 				<div

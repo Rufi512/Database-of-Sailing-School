@@ -115,6 +115,7 @@ font-weight: 600;
     display: flex;
     justify-content: center;
     margin: 20px auto;
+    overflow: hidden;
 }
 
 /*Styles from level admin*/

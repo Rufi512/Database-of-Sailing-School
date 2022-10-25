@@ -234,7 +234,7 @@ const SubjectList = () => {
 
 	return (
 		<>
-			<Navbar actualPage={"subject-list"} />
+			<Navbar actualPage={"subjectList"} />
 			<div className="container-body container-subject-list">
 				{/*Delete User modal*/}
 				<div
