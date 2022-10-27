@@ -132,7 +132,7 @@ export const verifyXls = async (data, rows, studentsRegister) => {
 export const verifyRep = async (data, id) => {
     const { ci, firstname, lastname, contact } = data;
 
-    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0 || !/^\d+$/.test(value)) {
+    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0 || !/^\d+$/.test(ci)) {
         return { message: "Parámetros en Cédula inválidos,solo números!" };
     }
 
