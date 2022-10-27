@@ -6,7 +6,7 @@ import { fieldTest } from "../../components/SomethingFunctions";
 import Select from "react-select";
 import { toast } from "react-toastify";
 const DetailRep = (props) => {
-	const timerRef = useRef(null)
+	const timerRef = useRef(null);
 	const params = useParams();
 	console.log(params);
 	const [activeForm, setActiveForm] = useState(false);
@@ -45,7 +45,7 @@ const DetailRep = (props) => {
 			itemsCountries = itemsCountries.concat(codesList);
 			setAvalaiblesCountries(itemsCountries);
 			isLoading(false);
-			toast.success("Información cargada!")
+			toast.success("Información cargada!");
 		} catch (e) {
 			toast.error("Error al cargar opciones, reitentando...");
 			timerRef.current = setTimeout(() => {
@@ -53,12 +53,12 @@ const DetailRep = (props) => {
 			}, 3000);
 			console.log(e);
 		}
-	},[params])
+	}, [params]);
 
 	useEffect(() => {
 		request();
-		return () => clearTimeout(timerRef)
-	}, [params,request]);
+		return () => clearTimeout(timerRef);
+	}, [params, request]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -167,7 +167,10 @@ const DetailRep = (props) => {
 										autoComplete="off"
 										onInput={(e) => {
 											if (
-												Number(e.target.value) ||
+												fieldTest(
+													"number",
+													e.target.value
+												) ||
 												e.target.value === ""
 											)
 												setRep({
@@ -193,6 +196,8 @@ const DetailRep = (props) => {
 											placeholder="Introduzca el Nombre"
 											autoComplete="off"
 											onInput={(e) => {
+												if (e.target.length > 45)
+													return;
 												if (
 													fieldTest(
 														"string",
@@ -224,6 +229,8 @@ const DetailRep = (props) => {
 											placeholder="Introduzca el apellido"
 											autoComplete="off"
 											onInput={(e) => {
+												if (e.target.length > 45)
+													return;
 												if (
 													fieldTest(
 														"string",
@@ -253,7 +260,10 @@ const DetailRep = (props) => {
 										Numero telefonico del representante
 									</label>
 									{activeForm ? (
-										<div className="phone-number-field" style={{width:'100%'}}>
+										<div
+											className="phone-number-field"
+											style={{ width: "100%" }}
+										>
 											<div
 												className="container-select-auto"
 												style={{
@@ -312,7 +322,8 @@ const DetailRep = (props) => {
 										</div>
 									) : (
 										<p>
-											{rep.contact.phone_numbers[0].formatted
+											{rep.contact.phone_numbers[0]
+												.formatted
 												? `${rep.contact.phone_numbers[0].formatted}`
 												: "Sin información"}
 										</p>
@@ -358,6 +369,7 @@ const DetailRep = (props) => {
 											placeholder="Introduzca la direccion del representante"
 											autoComplete="off"
 											onInput={(e) => {
+												if(e.target.value > 150) return
 												let items = rep;
 												items.contact.address_1 =
 													e.target.value;
@@ -391,6 +403,7 @@ const DetailRep = (props) => {
 											placeholder="Introduzca el correo electronico"
 											autoComplete="off"
 											onInput={(e) => {
+												if(e.target.value > 150) return
 												let items = rep;
 												items.contact.address_2 =
 													e.target.value;
@@ -418,7 +431,11 @@ const DetailRep = (props) => {
 									to="/reps"
 									type="button"
 									className="btn btn-secondary"
-									style={{display:'flex',justifyContent:'center',alignItems:'center'}}
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+									}}
 								>
 									Regresar
 								</Link>

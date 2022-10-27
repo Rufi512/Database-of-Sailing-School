@@ -1,4 +1,3 @@
-//muestra la pantalla para comentar
 export const fieldTest = (field,value) =>{
   if(field === "string"){
     if(!/^[A-Za-záéíóúñ'´ ]+$/.test(value)){
@@ -8,7 +7,7 @@ export const fieldTest = (field,value) =>{
   }
 
   if(field === "number"){
-    if (!Number(value) || !Number.isInteger(Number(value)) || Number(value) < 0){
+    if (!Number(value) || !Number.isInteger(Number(value)) || Number(value) < 0 || !/^\d+$/.test(value)){
       return false
     }
     return true

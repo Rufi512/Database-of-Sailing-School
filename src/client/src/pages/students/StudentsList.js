@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { listStudents, deleteStudentFromId } from "../../API";
 import { toast } from "react-toastify";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { fieldTest } from "../../components/SomethingFunctions";
 import Navbar from "../../components/Navbar";
 import TableList from "../../components/TableList";
 import NavigationOptionsList from "../../components/NavigationOptionsList";
@@ -33,9 +34,9 @@ const StudentsList = () => {
 		navigate(`/students/list?status=${value}&search=${searchBar || ''}`);
 	};
 
-	const searchBarSubmit = () => {
+	const searchBarSubmit = (isEmpty) => {
 		console.log(searchBar)
-		navigate(`/students/list?status=${status}&search=${searchBar || ''}`);
+		navigate(`/students/list?status=${status}&search=${isEmpty || !searchBar ? '' : searchBar}`);
 	};
 
 	const request = useCallback(async () => {
@@ -245,11 +246,14 @@ const StudentsList = () => {
 									type="text"
 									value={searchBar}
 									onInput={(e) => {
+										const check = fieldTest("string", e.target.value)
+										if(!check && e.target.value.length !== 0) return
 										setSearchBar(e.target.value);
+										if(e.target.value.length === 0) searchBarSubmit(true)
 									}}
 									className="form-control"
 									id="searchBar"
-									placeholder="Fulano y tal"
+									placeholder="Buscar..."
 								/>
 								<button
 									type="button"

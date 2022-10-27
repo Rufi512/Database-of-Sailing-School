@@ -90,6 +90,7 @@ const CreateUser = () => {
 									placeholder="Cedula del usuario"
 									autoComplete="off"
 									onInput={(e) => {
+										if(e.target.value.length > 18) return
 										if (
 											fieldTest(
 												"number",

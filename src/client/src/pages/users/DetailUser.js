@@ -380,6 +380,7 @@ const DetailUser = () => {
 										placeholder="Introduzca la cedula"
 										autoComplete="off"
 										onInput={(e) => {
+											if(e.target.value.length > 18) return
 											if (
 												fieldTest(
 													"number",

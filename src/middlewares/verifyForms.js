@@ -21,11 +21,11 @@ export const validateNumber = (phone) => {
 export const verifyCreate = async (data, isUser) => {
     const { ci, firstname, lastname, contact } = data;
 
-    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
+    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0 || !/^\d+$/.test(ci)) {
         return { message: "Parámetros en Cédula inválidos,solo números!" };
     }
 
-    if (ci.length < 4) {
+    if (ci.length < 4 || ci.length > 18) {
         return { message: "Cedula invalida" };
     }
 
@@ -85,7 +85,7 @@ export const verifyCreate = async (data, isUser) => {
 
 export const verifyXls = async (data, rows, studentsRegister) => {
     const [ci, firstname, lastname] = data;
-    if (!Number(ci)) {
+    if (!Number(ci) || !/^\d+$/.test(ci)) {
         return {
             message: `La cedula del estudiante en la fila ${rows} es invalida`,
         };
@@ -103,13 +103,13 @@ export const verifyXls = async (data, rows, studentsRegister) => {
         };
     }
 
-    if (firstname.length > 30) {
+    if (firstname.length > 45) {
         return {
             message: `El nombre del estudiante en la fila: ${rows} es muy largo`,
         };
     }
 
-    if (lastname.length > 30) {
+    if (lastname.length > 45) {
         return {
             message: `El apellido del estudiante en la fila: ${rows} contiene caracteres invalidos`,
         };
@@ -132,11 +132,11 @@ export const verifyXls = async (data, rows, studentsRegister) => {
 export const verifyRep = async (data, id) => {
     const { ci, firstname, lastname, contact } = data;
 
-    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0) {
+    if (!Number(ci) || !Number.isInteger(Number(ci)) || Number(ci) < 0 || !/^\d+$/.test(value)) {
         return { message: "Parámetros en Cédula inválidos,solo números!" };
     }
 
-    if (ci.length < 4) {
+    if (ci.length < 4 || ci.length > 18) {
         return { message: "Cedula del estudiante invalida" };
     }
 
@@ -144,16 +144,16 @@ export const verifyRep = async (data, id) => {
         return { message: "Parámetros en Nombre inválidos" };
     }
 
-    if (firstname.length > 30) {
-        return { message: "Nombres muy largos maximo 30 caracteres" };
+    if (firstname.length > 45) {
+        return { message: "Nombres muy largos maximo 45 caracteres" };
     }
 
     if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastname)) {
         return { message: "Parámetros en Apellido inválidos" };
     }
 
-    if (lastname.length > 30) {
-        return { message: "Apellidos muy largos maximo 30 caracteres" };
+    if (lastname.length > 45) {
+        return { message: "Apellidos muy largos maximo 45 caracteres" };
     }
 
     if (contact) {

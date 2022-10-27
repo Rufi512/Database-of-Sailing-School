@@ -6,7 +6,7 @@ import boscoImg from "../static/logos/jb.jpg";
 import CCImg from "../static/logos/CC-logo.png";
 import { ReactComponent as PersonIcon } from "../static/icons/person.svg";
 import { ReactComponent as EyeIcon } from "../static/icons/eye.svg";
-import { ReactComponent as EyeClose } from "../static/icons/eye.svg";
+import { ReactComponent as EyeClose } from "../static/icons/eyeClose.svg";
 import { ReactComponent as LockIcon } from "../static/icons/lock.svg";
 import Cookies from "js-cookie";
 import { loginUser } from "../API";
@@ -122,9 +122,10 @@ const Login = (props) => {
                 }}
               >
                 {showPass ? (
-                  <EyeClose fill={"#19429f"} />
-                ) : (
                   <EyeIcon fill={"#19429f"} />
+                ) : (
+                  <EyeClose fill={"#19429f"} />
+
                 )}
               </div>
             </div>

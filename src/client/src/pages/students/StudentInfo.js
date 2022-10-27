@@ -469,9 +469,9 @@ const StudentInfo = () => {
       <Navbar />
       <div
         style={{
-          position: "absolute",
+          position: "fixed",
           zIndex: -10000000,
-          width: "100%",
+          width: "1600px",
         }}
       >
         <AcademicBulletin student={data} chest={chest} />
@@ -621,20 +621,6 @@ const StudentInfo = () => {
                 >
                   Descargar información academica
                 </button>
-                {data.section && activeForm ? (
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={(e) => {
-                      setStudent({ ...student, deleteSection: true });
-                      setDeleteModal(true);
-                    }}
-                  >
-                    Eliminar de la seccion
-                  </button>
-                ) : (
-                  ""
-                )}
               </div>
 
               <div className="form-group" style={{ marginBottom: "10px" }}>

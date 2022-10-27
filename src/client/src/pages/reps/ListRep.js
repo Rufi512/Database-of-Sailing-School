@@ -85,10 +85,10 @@ const ListRep = () => {
 					autoClose: 5000,
 				});
 			}
-			console.log(`Delete user: ${deleteRep.id}`);
+			console.log(`Delete rep: ${deleteRep.id}`);
 			setDeleteModal(false);
 			toast.update(toastId, {
-				render: "Usuario eliminado",
+				render: "Representante eliminado",
 				type: "success",
 				isLoading: false,
 				autoClose: 800,

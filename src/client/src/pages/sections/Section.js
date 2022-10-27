@@ -232,10 +232,10 @@ const Section = () => {
       setAddStudents(false);
       setNewStudents([]);
       toast.update(toastId, {
-        render: res.data.message,
+        render: res.data.message || "Datos actualizados",
         type: "success",
         isLoading: false,
-        autoClose: 5000,
+        autoClose: 2000,
       });
       request();
       requestList();
@@ -278,7 +278,7 @@ const Section = () => {
       setDefaultSubjects(false);
       setDeleteStudents(false);
       toast.update(toastId, {
-        render: res.data.message,
+        render: res.data.message || "Datos actualizados",
         type: "success",
         isLoading: false,
         autoClose: 5000,
@@ -1123,7 +1123,7 @@ const Section = () => {
                   className="btn btn-primary"
                   onClick={(e) => {
                     setAddStudents(true);
-                    setModalConfirm(true);
+                    updateSectionStudents()
                   }}
                 >
                   Agregar nuevos estudiantes

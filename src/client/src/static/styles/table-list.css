@@ -29,7 +29,8 @@
 
 
 .table-general .data-body p{
-    display: block;
+    display: flex;
+    flex-flow: wrap;
     margin: 0;
     overflow: hidden;
     white-space: nowrap;

@@ -44,7 +44,7 @@ const CreateRep = () => {
 		if (isSubmit) return;
 		setIsSubmit(true);
 		const { ci, firstname, lastname } = rep;
-		if (!ci){ 
+		if (!ci) {
 			setIsSubmit(false);
 			return toast.error("El campo cedula no puede quedar vacio!");
 		}
@@ -70,7 +70,7 @@ const CreateRep = () => {
 		try {
 			const res = await registerRep(rep);
 			setIsSubmit(false);
-			console.log(res)
+			console.log(res);
 			if (res.status >= 400) {
 				return toast.update(toastId, {
 					render: res.data.message,
@@ -97,17 +97,16 @@ const CreateRep = () => {
 		}
 		//When all finish without error reset form
 		setRep({
-		ci: "",
-		firstname: "",
-		lastname: "",
-		contact: {
-			address_1: "",
-			address_2: "",
-			phone_numbers: [{ number: "", countryCode: "" }],
-			emails: [""],
-		},
-	})
-
+			ci: "",
+			firstname: "",
+			lastname: "",
+			contact: {
+				address_1: "",
+				address_2: "",
+				phone_numbers: [{ number: "", countryCode: "" }],
+				emails: [""],
+			},
+		});
 	};
 	return (
 		<>
@@ -139,8 +138,12 @@ const CreateRep = () => {
 											placeholder="Introduce la cedula del representante"
 											autoComplete="off"
 											onInput={(e) => {
+												if(e.target.value.length > 18) return
 												if (
-													Number(e.target.value) ||
+													fieldTest(
+														"number",
+														e.target.value
+													) ||
 													e.target.value === ""
 												)
 													setRep({
@@ -166,6 +169,7 @@ const CreateRep = () => {
 											placeholder="Introduce el nombre del representante"
 											autoComplete="off"
 											onInput={(e) => {
+												if(e.target.length > 45) return
 												if (
 													fieldTest(
 														"string",
@@ -194,6 +198,7 @@ const CreateRep = () => {
 											placeholder="Introduce el apellido del representante"
 											autoComplete="off"
 											onInput={(e) => {
+												if(e.target.length > 45) return
 												if (
 													fieldTest(
 														"string",
@@ -285,7 +290,10 @@ const CreateRep = () => {
 										</label>
 
 										<div className="phone-number-field">
-											<div className="container-select-auto" style={{width:'130px'}}>
+											<div
+												className="container-select-auto"
+												style={{ width: "130px" }}
+											>
 												<Select
 													options={avalaibleCountries}
 													isLoading={loading}
@@ -327,7 +335,10 @@ const CreateRep = () => {
 														});
 													}
 												}}
-												value={rep.contact.phone_numbers[0].number}
+												value={
+													rep.contact.phone_numbers[0]
+														.number
+												}
 											/>
 										</div>
 									</div>

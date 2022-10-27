@@ -24,9 +24,8 @@ const AcademicBulletin = (props) => {
       ],
       emails: [""],
     },
-    section: {
-      name: "",
-    },
+    section:"",
+
   });
 
   useEffect(() => {
@@ -81,7 +80,7 @@ const AcademicBulletin = (props) => {
               >
                 Seccion actualmente cursando
               </label>
-              <p>{student.section.name || "Sin información"}</p>
+              <p>{student.section || "Sin información"}</p>
             </div>
 
             <div className="form-group col-md-6">
@@ -108,6 +107,9 @@ const AcademicBulletin = (props) => {
             <h4 className="card-text center" style={{ textAlign: "center" }}>
               Informacion academica de la seccion actual
             </h4>
+             <h3 className="card-text center" style={{ textAlign: "center", fontWeight:'bold', margin:'10px 0' }}>
+              {student.section || "Sin información"}
+            </h3>
             <table className="table">
               <thead className="thead">
                 <tr>

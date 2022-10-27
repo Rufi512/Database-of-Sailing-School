@@ -22,6 +22,7 @@
 }
 
 .student-record-actual{
+    overflow: auto;
     margin-top: 15px;
     margin-bottom: 5px;
 }

@@ -117,7 +117,7 @@ const FormStudent = () => {
       setIsSubmit(false);
       if (res.status >= 400) {
         return toast.update(toastId, {
-          render: res.data.message || 'Error al enviar la informacion',
+          render: res.data.message || "Error al enviar la informacion",
           type: "error",
           isLoading: false,
           autoClose: 5000,
@@ -227,8 +227,16 @@ const FormStudent = () => {
                 placeholder="Introduce la cedula"
                 autoComplete="off"
                 onInput={(e) => {
-                  if (Number(e.target.value) || e.target.value === "")
+                  if(e.target.value.length > 18) return
+                  if (
+                      fieldTest(
+                        "number",
+                        e.target.value
+                      ) ||
+                      e.target.value === ""
+                    ){
                     setStudent({ ...student, ci: e.target.value });
+                }
                 }}
                 value={student.ci}
               />
@@ -245,7 +253,7 @@ const FormStudent = () => {
                   autoComplete="off"
                   placeholder="Introduce el nombre del estudiante"
                   onInput={(e) => {
-                    if(e.target.value.length > 45) return
+                    if (e.target.value.length > 45) return;
                     if (
                       fieldTest("string", e.target.value) ||
                       e.target.value === ""
@@ -269,7 +277,7 @@ const FormStudent = () => {
                   autoComplete="off"
                   placeholder="Introduce el apellido del estudiante"
                   onInput={(e) => {
-                    if(e.target.value.length > 45) return
+                    if (e.target.value.length > 45) return;
                     if (
                       fieldTest("string", e.target.value) ||
                       e.target.value === ""
@@ -331,7 +339,7 @@ const FormStudent = () => {
                     id="address-student"
                     placeholder="Introduce la direccion domiciliaria del estudiante"
                     onInput={(e) => {
-                      if(e.target.value.length > 150) return
+                      if (e.target.value.length > 150) return;
                       let items = student;
                       items.contact.address_1 = e.target.value;
                       setStudent({ ...student, items });
@@ -349,7 +357,7 @@ const FormStudent = () => {
                     id="address2-student"
                     placeholder="Introduce direccion de referencia del estudiante"
                     onInput={(e) => {
-                      if(e.target.value.length > 150) return
+                      if (e.target.value.length > 150) return;
                       let items = student;
                       items.contact.address_2 = e.target.value;
                       setStudent({ ...student, items });
@@ -489,13 +497,19 @@ const FormStudent = () => {
                       placeholder="Introduce el nombre del representante"
                       autoComplete="off"
                       onInput={(e) => {
-                        return setStudent({
-                          ...student,
-                          rep_data: {
-                            ...student.rep_data,
-                            firstname: e.target.value,
-                          },
-                        });
+                        if (e.target.value.length > 45) return;
+                        if (
+                          fieldTest("string", e.target.value) ||
+                          e.target.value === ""
+                        ) {
+                          return setStudent({
+                            ...student,
+                            rep_data: {
+                              ...student.rep_data,
+                              firstname: e.target.value,
+                            },
+                          });
+                        }
                       }}
                       value={student.rep_data.firstname}
                     />
@@ -511,13 +525,19 @@ const FormStudent = () => {
                       placeholder="Introduce el apellido del estudiante"
                       autoComplete="off"
                       onInput={(e) => {
-                        return setStudent({
-                          ...student,
-                          rep_data: {
-                            ...student.rep_data,
-                            lastname: e.target.value,
-                          },
-                        });
+                        if (e.target.value.length > 45) return;
+                        if (
+                          fieldTest("string", e.target.value) ||
+                          e.target.value === ""
+                        ) {
+                          return setStudent({
+                            ...student,
+                            rep_data: {
+                              ...student.rep_data,
+                              lastname: e.target.value,
+                            },
+                          });
+                        }
                       }}
                       value={student.rep_data.lastname}
                     />
@@ -534,6 +554,7 @@ const FormStudent = () => {
                       id="address-rep"
                       placeholder="Introduce la direccion domiciliaria del representante"
                       onInput={(e) => {
+                        if (e.target.value.length > 150) return;
                         let items = student;
                         items.rep_data.contact.address_1 = e.target.value;
                         setStudent({ ...student, items });
@@ -550,6 +571,7 @@ const FormStudent = () => {
                       id="address2-rep"
                       placeholder="Introduce direccion de referencia del representante"
                       onInput={(e) => {
+                        if (e.target.value.length > 150) return;
                         let items = student;
                         items.rep_data.contact.address_2 = e.target.value;
                         setStudent({ ...student, items });
@@ -611,11 +633,15 @@ const FormStudent = () => {
                 </div>
               </div>
             </div>
-              <button type="submit" className="btn btn-primary" style={{display: 'flex', marginLeft: 'auto'}}>
-                    Añadir Estudiante
-                  </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ display: "flex", marginLeft: "auto" }}
+            >
+              Añadir Estudiante
+            </button>
             <div className="container-massive-register">
-              <h4>Registro de estudiante archivos</h4>
+              <h4>Registro de estudiante masivo</h4>
               <div className="row container-actions">
                 <div className="container-input-file">
                   <label htmlFor="formFile" className="form-label">
@@ -641,7 +667,6 @@ const FormStudent = () => {
                   >
                     Subir archivos
                   </button>
-                
                 </div>
               </div>
             </div>

@@ -26,31 +26,24 @@ const TableList = (props) => {
 			});
 		};
 	}, [props]);
-	if(data.length === 0) return(<h2>Sin datos que mostrar :/</h2>)
+	if (data.length === 0)
+		return <h2 style={{ margin: "10px 7px" }}>Sin datos registrados</h2>;
 	return (
 		<>
 			<div className="table-general">
 				<div className="header-field">
 					{labels.map((el, i) => {
 						if (!labels[i - 1] && el.nameField) {
-							return (
-								<p key={i}>
-									{el.nameField}
-								</p>
-							);
+							return <p key={i}>{el.nameField}</p>;
 						}
 
 						if (
 							labels[i - 1] &&
 							!labels[i - 1].linked &&
-							!el.linked && 
+							!el.linked &&
 							el.nameField
 						) {
-							return (
-								<p key={i}>
-									{el.nameField}
-								</p>
-							);
+							return <p key={i}>{el.nameField}</p>;
 						}
 
 						if (el.linked && el.nameField) {
@@ -60,14 +53,20 @@ const TableList = (props) => {
 								</p>
 							);
 						}
-						return(<p style={{display:'none'}} key={i}></p>)
+						return <p style={{ display: "none" }} key={i}></p>;
 					})}
 				</div>
 				<div className="table-body-select">
 					{data.map((el, i) => (
 						<div className="data-body" key={i}>
 							{labels.map((label, idx) => {
-								if(label.field === 'actions') return(<p style={{display:'none'}} key={idx}></p>)
+								if (label.field === "actions")
+									return (
+										<p
+											style={{ display: "none" }}
+											key={idx}
+										></p>
+									);
 								if (!labels[idx - 1]) {
 									return (
 										<p
@@ -91,7 +90,6 @@ const TableList = (props) => {
 								}
 
 								if (idx === 0 && el[label.field])
-
 									return (
 										<p
 											className={`${label.field}`}
@@ -112,7 +110,10 @@ const TableList = (props) => {
 										</p>
 									);
 
-								if (el[label.field] === true && el[label.field] !== undefined) {
+								if (
+									el[label.field] === true &&
+									el[label.field] !== undefined
+								) {
 									return (
 										<p
 											className={`${label.field}`}
@@ -134,7 +135,10 @@ const TableList = (props) => {
 									);
 								}
 
-								if (el[label.field] === false && el[label.field] !== undefined) {
+								if (
+									el[label.field] === false &&
+									el[label.field] !== undefined
+								) {
 									return (
 										<p
 											className={`${label.field}`}
@@ -208,7 +212,12 @@ const TableList = (props) => {
 										</p>
 									);
 								}
-								return(<p style={{display:'none'}}key={idx}></p>)
+								return (
+									<p
+										style={{ display: "none" }}
+										key={idx}
+									></p>
+								);
 								/*if(labels[idx-1] && !labels[idx-1].linked && !label.linked){
 									return <p className={`${label.field}`} key={idx}>{screenSize.current < 1024 ? (<span style={{fontWeight:'600'}}>{label.nameField}:</span>) : ''} {`${el[label.field]}`}</p>;
 								}*/
@@ -216,41 +225,67 @@ const TableList = (props) => {
 							{actions && actions.length > 0 ? (
 								<div className="container-actions">
 									{actions.map((act, i) => {
-										if(act.type === "button"){
-										return (
-											<button
-												className={`btn ${
-													act.name === "delete"
-														? "btn-danger"
-														: "btn-primary"
-												}`}
-												onClick={(e) => {
-													act.func(el.id || el._id);
-												}}
-												key={i}
-											>
-												{act.name === "edit" ? (
-													<EditIcon
-														style={{
-															width: "18px",
-														}}
-													/>
-												) : (
-													<DeleteIcon
-														style={{
-															width: "18px",
-														}}
-													/>
-												)}
-											</button>
-
-
-										);
-									}
-									if(act.type === "checkbox"){
-										return(<input key={i} className="form-check-input" type="checkbox" onChange={(e)=>{act.func(el || el ,e.target.checked)}} checked={props.checks.includes(el || el) || false}/>)
-									}
-									return(<p key={i}>No disponible</p>)
+										if (act.type === "button") {
+											return (
+												<button
+													className={`btn ${
+														act.name === "delete"
+															? "btn-danger"
+															: "btn-primary"
+													}`}
+													onClick={(e) => {
+														act.func(
+															el.id || el._id
+														);
+													}}
+													key={i}
+												>
+													{act.name === "edit" ? (
+														<EditIcon
+															style={{
+																width: "18px",
+															}}
+														/>
+													) : (
+														<DeleteIcon
+															style={{
+																width: "18px",
+															}}
+														/>
+													)}
+												</button>
+											);
+										}
+										if (act.type === "checkbox") {
+											return (
+												<input
+													key={i}
+													className="form-check-input"
+													type="checkbox"
+													onChange={(e) => {
+														act.func(
+															el || el,
+															e.target.checked
+														);
+													}}
+													checked={
+														props.checks.some(
+															(elem) => {
+																return (
+																	JSON.stringify(
+																		el
+																	) ===
+																	JSON.stringify(
+																		elem
+																	)
+																);
+															}
+														) || false
+													}
+												/>
+											);
+										}
+										return <p key={i}>No disponible</p>;
 									})}
 								</div>
 							) : (
