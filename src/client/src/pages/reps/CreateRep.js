@@ -248,6 +248,7 @@ const CreateRep = () => {
 													},
 												});
 											}}
+											value={rep.contact.address_1}
 										/>
 									</div>
 									<div className="form-group col-md-6">
@@ -274,6 +275,7 @@ const CreateRep = () => {
 													},
 												});
 											}}
+											value={rep.contact.address_2}
 										/>
 									</div>
 								</div>

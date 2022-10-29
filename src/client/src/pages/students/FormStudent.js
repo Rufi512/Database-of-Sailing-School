@@ -135,7 +135,7 @@ const FormStudent = () => {
           emails: [""],
         },
         rep_data: {
-          id: "",
+          id: idRep,
           ci: "",
           firstname: "",
           lastname: "",
@@ -457,6 +457,15 @@ const FormStudent = () => {
                   defaultValue={avalaibleReps[0]}
                   onChange={(e) => {
                     setIdRep(e.value);
+                   setStudent({
+                          ...student,
+                          rep_data: {
+                            ...student.rep_data,
+                            id:
+                              e.value,
+                          },
+                        });
+                    console.log(e.value)
                   }}
                 />
               </div>
