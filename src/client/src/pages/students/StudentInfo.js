@@ -761,7 +761,7 @@ const StudentInfo = () => {
                                   max={20}
                                   onChange={(e) => {
                                     let items = [...subjects];
-                                    items[i].scores[0] = Number(e.target.value);
+                                    items[i].scores[0] = Math.max(0, Math.min(20, Number(e.target.value)));
                                     setSubjects(items);
                                   }}
                                   value={subjects[i].scores[0] || 0}
@@ -775,7 +775,7 @@ const StudentInfo = () => {
                                   max={20}
                                   onChange={(e) => {
                                     let items = [...subjects];
-                                    items[i].scores[1] = Number(e.target.value);
+                                    items[i].scores[1] = Math.max(0, Math.min(20, Number(e.target.value)));
                                     setSubjects(items);
                                   }}
                                   value={subjects[i].scores[1] || 0}
@@ -789,7 +789,7 @@ const StudentInfo = () => {
                                   max={20}
                                   onChange={(e) => {
                                     let items = [...subjects];
-                                    items[i].scores[2] = Number(e.target.value);
+                                    items[i].scores[2] = Math.max(0, Math.min(20, Number(e.target.value)));
                                     setSubjects(items);
                                   }}
                                   value={subjects[i].scores[2] || 0}
