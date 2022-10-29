@@ -4,7 +4,7 @@ import representative from "../models/representative";
 import comment from "../models/comment";
 import mongoose from "mongoose";
 import dateFormat from "dateformat";
-import fs from "fs/promises";
+import fs from "fs";
 import { parsePhoneNumber } from "awesome-phonenumber";
 import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
@@ -253,6 +253,7 @@ export const createStudents = async (req, res) => {
         let headerError = { exist: false, description: "" };
         let rowErrors = [];
         let studentsRegister = [];
+        console.log(req.file)
         if (/[^.]+$/.exec(req.file.filename) == "csv") {
             fs.createReadStream(archive)
                 .pipe(csv.parse({ headers: true }))
