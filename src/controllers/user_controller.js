@@ -1,5 +1,6 @@
 import user from "../models/user";
 import student from "../models/student";
+import log from "../models/log";
 import representative from "../models/representative";
 import section from "../models/section";
 import comment from "../models/comment";
@@ -7,6 +8,7 @@ import roles from "../models/roles";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import {verifyCreate} from '../middlewares/verifyForms'
+import { verifySignup } from "../middlewares";
 dotenv.config();
 const secret = process.env.SECRET;
 
@@ -45,6 +47,48 @@ export const getUsers = async (req, res) => {
     res.json(users);
 };
 
+export const getLogs = async (req, res) => {
+    try{
+    if (req.query) {
+        const { limit, page, reqLogs } = req.query;
+        if (limit && isNaN(limit))
+            return res
+                .status(400)
+                .json({ message: "El limite de elementos no es un numero!" });
+        if (page && isNaN(page))
+            return res
+                .status(400)
+                .json({ message: "El limite de paginas no es un numero!" });
+        if (Number(reqLogs))
+            return res
+                .status(400)
+                .json({ message: "La busqueda no es una cadena!" });
+    }
+
+    let optionsPagination = {
+        lean: false,
+        limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
+        page: req.query && Number(req.query.page) ? req.query.page : 1,
+        sort:{ field: 'asc', created_at: -1 }
+    };
+
+    console.log(req.query)
+
+    const logs = await log.paginate({}, optionsPagination);
+
+    console.log(logs);
+    if (logs.length === 1) {
+        return res.status(404).json({ message: "No hay información registrada" });
+    }
+
+    res.json(logs);
+}catch(e){
+    res.status(500).json({message:'Error en el servidor'})
+    console.log(e)
+}
+};
+
+
 export const createUser = async (req, res) => {
     try {
         const { ci, firstname, lastname, email, password, rol } = req.body;
@@ -79,7 +123,7 @@ export const createUser = async (req, res) => {
         }
 
         const savedUser = await newUser.save();
-
+        await verifySignup.registerLog(req,`Registro al usuario: ${savedUser.firstname} ${savedUser.lastname} - cedula: ${savedUser.ci}`)
         res.json({ message: "Usuario Registrado" });
     } catch (err) {
         console.log(err);
@@ -192,6 +236,7 @@ export const updateUser = async (req, res) => {
                 }
             );
         }
+        await verifySignup.registerLog(req,`Modifico usuario: ${foundUser.firstname} ${foundUser.lastname} - cedula: ${foundUser.ci}`)
         res.json({ message: "Usuario modificado" });
     } catch (err) {
         console.log(err);
@@ -276,7 +321,7 @@ export const deleteUser = async (req, res) => {
         } else {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
-
+        await verifySignup.registerLog(req,`Elimino al usuario: ${userFind.firstname} ${userFind.lastname} - cedula: ${userFind.ci}`)
         res.json("Usuario Eliminado");
     } catch (err) {
         console.log(err);
@@ -313,6 +358,8 @@ export const changePassword = async (req, res) => {
                 },
             }
         );
+
+        await verifySignup.registerLog(req,`Cambio contraseña al usuario: ${userFind.firstname} ${userFind.lastname} - cedula: ${userFind.ci}`)
 
         res.json("Cambio de contraseña satisfatorio!");
     } catch (err) {

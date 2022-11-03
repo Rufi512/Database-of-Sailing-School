@@ -38,6 +38,11 @@
     padding-top: 10px;
 }
 
+.table-container-logs .data-body p{
+    white-space: unset;
+    text-overflow: unset;
+}
+
 .table-general .container-actions {
     display: flex;
     margin-top: 10px;

@@ -1,8 +1,7 @@
 //Recovery from security questions
 import user from "../models/user";
 import quest from "../models/quest";
-import path from "path";
-import { validateEmail } from "../middlewares/verifyForms";
+import { verifySignup } from "../middlewares";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import transporter from "../mailer";
@@ -158,6 +157,14 @@ export const checkQuestions = async (req, res) => {
         if (!userFound)
             return res.status(404).json({ message: "Usuario no encontrado" });
 
+        if (req.body.recovery_user) {
+            if (userFound.block_count < 3) {
+                return res
+                    .status(401)
+                    .json({ message: "El usuario no se encuentra bloqueado" });
+            }
+        }
+        
         const quests = await quest.find({ user: userFound.id });
 
         if (quests.length < 1)
@@ -248,6 +255,59 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
+export const sendUnblocked = async (req, res) => {
+    try {
+        const userFound = await user.findOne({
+            $or: [{ email: req.body.user }, { ci: req.body.user }],
+        });
+
+        if (!userFound)
+            return res.status(404).json({
+                message:
+                    "Usuario no registrado en el sistema, verifique los datos",
+            });
+
+        if (userFound.block_count < 3) {
+            return res
+                .status(401)
+                .json({ message: "El usuario no se encuentra bloqueado" });
+        }
+
+        const token = jwt.sign(
+            { id: userFound.id },
+            secret + userFound.password,
+            {
+                expiresIn: "15m",
+            }
+        );
+
+        let data = `<div style="position: relative;display: -webkit-box;display: -ms-flexbox;display: flex;-webkit-box-orient: vertical;-webkit-box-direction: normal;-ms-flex-direction: column;flex-direction: column;min-width: 0;word-wrap: break-word;background-color: #fff;background-clip: border-box;border: 1px solid rgba(0,0,0,.125);border-radius: .25rem;">
+                        <h2 style="border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0">Unidad educativa colegio Juan Bosco</h2>
+                        <div>
+                            <h5 style="font-size: 1.25rem;">Desbloqueo de usuario</h5>
+                            <p><b>Haga clic en el botón para desbloquear su usuario</b></p> <br/> <a class="btn btn-primary" style="margin-bottom: 25px;padding: 10px 20px; color: #fff;background-color: #0069d9;border-color: #0062cc; border-radius:5px;" href="${req.protocol}://${req.hostname}/reset-password/${userFound.id}/${token}">Click aqui!</a> 
+                            <br/>
+                            <p>O copie y pegue el siguiente enlace</p>
+                            <a href="${req.protocol}://${req.hostname}/unblocked-user/${userFound.id}/${token}">${req.protocol}://${req.hostname}/unblocked-user/${userFound.id}/${token}<a/>
+                        </div>
+                    </div>
+    `;
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+            from: '"Fred Foo 👻" <testRestPassword@mail.com>', // sender address
+            to: [userFound.email], // list of receivers
+            subject: "Desbloqueo de usuario", // Subject line
+            text: "Desbloquear usuario", // plain text body
+            html: data, // html body
+        });
+        console.log(info);
+        res.json({ message: "Email enviado!" });
+    } catch (err) {
+        res.status(500).json({ message: "Error fatal en servidor" });
+        console.log(err);
+    }
+};
+
 export const resetPassword = async (req, res) => {
     try {
         const { id, token } = req.params;
@@ -269,11 +329,49 @@ export const resetPassword = async (req, res) => {
             },
             { upsert: true }
         );
-
+        await verifySignup.registerLog(
+            req,
+            `El usuario ${userFind.firstname} ${userFind.lastname} - cedula: ${userFind.ci} recupero contraseña`
+        );
         res.json({ message: "Contraseña restablecida! " });
     } catch (err) {
         res.status(400).json({
             message: "Ticket de cambio de contraseña invalido",
+        });
+        console.log(err);
+    }
+};
+
+export const unblockedUser = async (req, res) => {
+    try {
+        const { id, token } = req.params;
+        const userFind = await user.findById(id);
+        if (!userFind)
+            res.status(404).json({ message: "Usuario no encontrado" });
+
+        const decoded = jwt.verify(token, secret + userFind.password);
+
+        if (id !== userFind.id)
+            return res.status(400).json({ message: "Informacion invalidas" });
+
+        await user.updateOne(
+            { _id: id },
+            {
+                $set: {
+                    block_count: 0,
+                },
+            },
+            { upsert: true }
+        );
+        console.log(userFind);
+        await verifySignup.registerLog(
+            req,
+            `El usuario ${userFind.firstname} ${userFind.lastname} - cedula: ${userFind.ci} desbloqueo su usuario`
+        );
+        res.json({ message: "Usuario desbloqueado! " });
+    } catch (err) {
+        res.status(400).json({
+            message: "Ticket de desbloqueo de usuario invalido",
         });
         console.log(err);
     }

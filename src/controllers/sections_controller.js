@@ -4,6 +4,7 @@ import user from "../models/user";
 import mongoose from "mongoose";
 import { addSubjectsNewStudentsSection } from "../controllers/subjects_controller";
 import { date } from "../libs/dateformat";
+import {verifySignup} from "../middlewares"
 import dateFormat from "dateformat";
 import subject from "../models/subject";
 const verifyFields = (req, res) => {
@@ -168,7 +169,7 @@ export const create = async (req, res) => {
                 });
             }
         }
-
+        await verifySignup.registerLog(req,`Creo la seccion ${savedSection.name}`)
         return res.json({
             section: savedSection,
             message: "Seccíon actualizada",
@@ -345,7 +346,7 @@ export const update = async (req, res) => {
                 invalids: arrayStudentsInvalid,
             });
         }
-
+        await verifySignup.registerLog(req,`Actualizo datos de la seccion ${savedSection.name}`)
         return res.json({ section: savedSection });
     } catch (err) {
         console.log(err);
@@ -415,7 +416,7 @@ export const addStudentsSectionRegistered = async (section_id, students) => {
                 checked_subjects: stateSubjects,
             };
         }
-
+        await verifySignup.registerLog(req,`Añadio estudiantes a la seccion ${savedSection.name}`)
         return { section: savedSection, checked_subjects: stateSubjects };
     } catch (err) {
         console.log(err);
@@ -485,6 +486,7 @@ export const deleteSection = async (req, res) => {
             $unset: { section: 1 },
             $set: { subjects: [] },
         });
+        await verifySignup.registerLog(req,`Elimino la seccion ${sectionFound.name}`)
         res.json({ message: "Seccion Eliminada" });
     } catch (err) {
         console.log(err);
@@ -513,7 +515,7 @@ export const deleteStudentsInSection = async (req, res) => {
             { _id: section_id },
             { $pullAll: { students: format } }
         );
-
+        await verifySignup.registerLog(req,`Elimino estudiantes de la seccion ${savedSection.name}`)
         res.json({ message: "Estudiante/s eliminados de la seccion" });
     } catch (err) {
         console.log(err);

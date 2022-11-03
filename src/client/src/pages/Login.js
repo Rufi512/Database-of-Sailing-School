@@ -130,9 +130,17 @@ const Login = (props) => {
               </div>
             </div>
           </label>
-          <Link to="/forgot-password" className="forgot">
-            Olvidaste tu contraseña?
-          </Link>
+
+          <div className="links-users">
+            <Link to="/unblocked/user/" className="forgot">
+              Desbloqueo de usuario
+            </Link>
+
+            <Link to="/forgot-password" className="forgot">
+              Olvidaste tu contraseña?
+            </Link>
+          </div>
+          
           <div className="captcha_container">
             <ReCAPTCHA
               ref={recaptchaRef}

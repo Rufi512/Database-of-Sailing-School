@@ -77,7 +77,7 @@ const ForgotPassword = () => {
 						closeOnClick: true,
 						autoClose: 1,
 					});
-					navigate("/reset-password/questions/", { state:{questions:res.data,user:user.user} });
+					navigate("/reset-password/questions/", { state:{questions:res.data,user:user.user,recovery:'password'} });
 				}
 			}
 		} catch (e) {

@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import user from "../models/user";
 import dotenv from "dotenv";
 import roles from "../models/roles";
+import { verifySignup } from "../middlewares";
 dotenv.config();
 const secret = process.env.SECRET;
 
@@ -21,6 +22,9 @@ export const verifyToken = async (req, res, next) => {
 
     if (!userFind)
       return res.status(404).json({ message: "Usuario no encontrado" });
+
+    /*const rolFind = await roles.findOne({ _id: { $in: userFind.rol } });
+    req.rolUser = rolFind.name*/
 
     next();
   } catch (err) {
@@ -86,6 +90,14 @@ export const checkPassword = async (req, res, next) => {
       .json({ message: "Problema al comprobar información" });
   }
 };
+
+//Count try to access to session
+export const blockUser = async (req,resetCount) =>{
+  const userFound = await user.findById(req.userId);
+  const block_count = userFound.block_count += 1
+  await user.updateOne({_id:req.userId},{$set:{block_count: resetCount ? 0 : block_count}})
+  if(block_count >= 3 && !resetCount) await verifySignup.registerLog(req,"Usuario bloqueado por varios intento fallidos de iniciar sesion")
+}
 
 export const isTeacher = async (req, res, next) => {
   //Requerimos el id del usuario y buscamos los roles en la base de datos

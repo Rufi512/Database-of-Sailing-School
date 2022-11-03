@@ -11,6 +11,8 @@ import StudentInfo from "./pages/students/StudentInfo";
 import StudentsList from "./pages/students/StudentsList";
 import Logout from "./pages/Logout";
 import NotFound from "./pages/NotFound";
+import UnblockedUser from "./pages/UnblockedUser";
+import ConfirmUnblocked from "./pages/ConfirmUnblocked"
 import VerifyRoles from "./components/VerifyRoles";
 //Moderator level
 import ListRep from "./pages/reps/ListRep";
@@ -23,6 +25,7 @@ import SubjectList from "./pages/subjects/SubjectList";
 import CreateUser from "./pages/users/CreateUser";
 import DetailUser from "./pages/users/DetailUser";
 import ListUser from "./pages/users/ListUser";
+import Logs from "./pages/users/Logs";
 
 import CheckLogin from './components/CheckLogin'
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -55,6 +58,24 @@ const App = () => (
           exact
           path="/reset-password/questions/"
           element={<Questions />}
+        />
+
+        <Route
+          exact
+          path="/unblocked/user/"
+          element={<UnblockedUser/>}
+        />
+
+        <Route
+          exact
+          path="/unblocked/user/questions"
+          element={<Questions />}
+        />
+
+        <Route
+          exact
+          path="/unblocked-user/:id/:token"
+          element={<ConfirmUnblocked/>}
         />
 
         {/*Logout*/}
@@ -93,6 +114,15 @@ const App = () => (
             element={
               <VerifyRoles user={["Admin"]}>
                 <DetailUser />
+              </VerifyRoles>
+            }
+          />
+          <Route
+            exact
+            path="users/logs"
+            element={
+              <VerifyRoles user={["Admin"]}>
+                <Logs />
               </VerifyRoles>
             }
           />

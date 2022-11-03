@@ -28,6 +28,11 @@ const userSchema = new Schema({
   rol:{
     ref: "roles",
     type: Schema.Types.ObjectId
+  },
+  block_count:{
+    type:Number,
+    required:true,
+    default:0
   }
 },{
   versionKey:false

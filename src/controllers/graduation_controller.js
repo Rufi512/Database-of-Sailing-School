@@ -2,6 +2,7 @@ import student from "../models/student";
 import section from "../models/section";
 import chest from "../models/chest";
 import { date } from "../libs/dateformat";
+import {verifySignup} from "../middlewares"
 import dateFormat from "dateformat";
 
 let now = new Date();
@@ -174,6 +175,8 @@ export const graduate = async (req, res) => {
                 studentsRejects,
             });
         }
+
+        await verifySignup.registerLog(req,`Graduacion de seccion ${sectionFound.name}`)
         return res.json({ message: "Seccion graduada" });
     } catch (err) {
         console.log(err);

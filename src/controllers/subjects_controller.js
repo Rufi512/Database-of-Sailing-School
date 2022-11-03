@@ -2,6 +2,7 @@ import subject from "../models/subject";
 import section from "../models/section";
 import student from "../models/student";
 import { applySubjectsRegistered } from "./sections_controller";
+import { verifySignup } from "../middlewares";
 import mongoose from "mongoose";
 
 const checkSubject = async (data, res, update) => {
@@ -48,7 +49,7 @@ export const register = async (req, res) => {
         });
 
         const savedSubject = await newSubject.save();
-
+        await verifySignup.registerLog(req,`Registro la materia: ${savedSubject.name}`)
         return res.json(savedSubject);
     } catch (err) {
         console.log(err);
@@ -132,7 +133,7 @@ export const update = async (req, res) => {
             },
             { upsert: true }
         );
-
+        await verifySignup.registerLog(req,`Actualizo la materia: ${newSubject.name}`)
         return res.json(newSubject);
     } catch (err) {
         console.log(err);
@@ -191,7 +192,7 @@ export const assign = async (req, res) => {
             { $set: { subjects: listIdSubjects } },
             { upsert: true }
         );
-
+        await verifySignup.registerLog(req,`Asigno materias a la seccion: ${sectionAssign.name}`)
         res.json(subjects);
     } catch (err) {
         console.log(err);
@@ -237,6 +238,7 @@ export const updateSubjectsBySection = async (req, res) => {
         const studentsApply = await applySubjectsRegistered(req.params.id);
         console.log("studentsApply", studentsApply);
         if (studentsApply) {
+            await verifySignup.registerLog(req,`Asigno materias a la seccion: ${sectionFound.name}`)
             return res.json({
                 message: "Materia registradas a seccion y estudiantes",
             });
@@ -273,6 +275,7 @@ export const deleteSubject = async (req, res) => {
                 } eliminada`,
             });
         }
+        await verifySignup.registerLog(req,`Elimino la materia: ${subjectFind.name}`)
         return res.status(404).json({
             message: "No se ha podido eliminar la materia especificada",
         });

@@ -73,7 +73,6 @@ export const forgotLinkQuestions = async (questions)=>{
 } 
 
 export const resetPassword = async ({id,token,password})=>{
-  console.log(id,token)
   const res = await axios.post(`/api/auth/reset-password/${id}/${token}`, {password}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
@@ -163,7 +162,6 @@ export const updateSection = async ({id,section}) =>{
 //Graduate
 
 export const graduateStudentsSection = async ({id,isTest,password}) =>{
-  console.log(isTest)
    const res = await axios.post(`${isTest ? '/api/section/gradue/test' : '/api/section/gradue'}`,{id,isTest,password},{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
@@ -455,7 +453,6 @@ export const listUsers = async ({limit,page}) =>{
 }
 
 export const deleteUserFromId = async ({id,password}) =>{
-  console.log(id,password)
   const res = await axios.post(`/api/user/delete/${id}`,{password},{headers:{"x-access-token": Cookies.get("token") }}).catch((err) => {
       if(err.response.status <= 500){
         return err.response
@@ -607,7 +604,6 @@ export const registerUser = async (user) => {
 }
 
 export const registerStudents = async (archive) => {
-  console.log(archive)
   const res = await axios.post("/api/students/register/file", archive, {
       headers: { "x-access-token": Cookies.get("token") },
     }).catch((err) => {
@@ -766,5 +762,53 @@ export const deleteComments = async (id) => {
     window.location.href = "/"
     return
   }
+  return res
+}
+
+export const unblockedEmail = async (user) => {
+  const res = await axios.post("/api/auth/send/unblocked", user).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+}
+
+export const unblockedQuestions = async (questions)=>{
+  const res = await axios.post("/api/auth/questions/check", questions).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+} 
+
+export const ConfirmUnblockedUser = async ({id,token}) =>{
+  const res = await axios.post(`/api/auth/unblocked/user/${id}/${token}`).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data.message = "Falla en el servidor :("
+      return err.response
+    })
+  
+  return res
+}
+
+export const getLogs = async ({limit,page}) => {
+  const res = await axios.get(`/api/user/logs?&limit=${limit}&page=${page}`,{headers: { "x-access-token": Cookies.get("token") }}).catch((err) => {
+      if(err.response.status <= 500){
+        return err.response
+      }
+      err.response.data = "Falla en el servidor :("
+      return err.response
+    })
+  
   return res
 }

@@ -10,7 +10,7 @@ import * as csv from "fast-csv";
 import readXlsxFile from "read-excel-file/node";
 import { date } from "../libs/dateformat";
 import { getComments } from "./comment_controller";
-import { verifyForms } from "../middlewares";
+import { verifyForms, verifySignup } from "../middlewares";
 import { addStudentsSectionRegistered } from "../controllers/sections_controller";
 
 let now = new Date();
@@ -237,6 +237,7 @@ export const createStudent = async (req, res) => {
         if (validSection) {
             await addStudentsSectionRegistered(section_id, [saveStudent.id]);
         }
+        await verifySignup.registerLog(req,`Registro al estudiante ${saveStudent.firstname} ${saveStudent.lastname} - cedula: ${saveStudent.ci}`)
         res.json({ message: "Estudiante registrado" });
     } catch (err) {
         console.log(err);
@@ -551,7 +552,7 @@ export const updateStudent = async (req, res) => {
             },
             { upsert: true }
         );
-
+        await verifySignup.registerLog(req,`Actualizo informacion del estudiante ${studentInfo.firstname} ${studentInfo.lastname} - cedula: ${studentInfo.ci}`)
         res.json({ message: "Estudiante Actualizado!" });
     } catch (err) {
         console.log(err);
@@ -584,7 +585,7 @@ export const deleteStudents = async (req, res) => {
                 );
             }
         }
-
+        await verifySignup.registerLog(req,`Elimino a estudiantes`)
         res.json("Estudiante/s Eliminado/s");
     } catch (err) {
         console.log(err);

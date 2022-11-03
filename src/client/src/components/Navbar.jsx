@@ -11,6 +11,7 @@ import { ReactComponent as ListIcon } from "../static/icons/navbar/table-list-so
 import { ReactComponent as SectionIcon } from "../static/icons/navbar/section.svg";
 import { ReactComponent as SubjectListIcon } from "../static/icons/navbar/subject-list.svg";
 import { ReactComponent as ProfileIcon } from "../static/icons/navbar/profile.svg";
+import { ReactComponent as LogsIcon } from "../static/icons/navbar/logs.svg";
 import "../static/styles/nav.css";
 import Cookies from "js-cookie";
 
@@ -145,6 +146,14 @@ const Navbar = (props) => {
                 }`}>
                 <UsersIcon />
                 Gestion de usuarios
+              </Link>
+            </div>
+            <div className="links-container">
+              <Link to="/users/logs" className={`link ${
+                  props.actualPage === "logs" ? "link-active" : ""
+                }`}>
+                <LogsIcon />
+                Actividad de usuarios
               </Link>
             </div>
           </>

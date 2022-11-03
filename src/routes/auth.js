@@ -23,9 +23,10 @@ router.post('/questions',[validateCaptcha],recoveryCtrl.getQuestions) //list que
 router.post('/register/questions/:id',[authJwt.verifyToken,authJwt.isUserOrAdmin],recoveryCtrl.setQuestions) //set list question from user registered
 router.post('/register/questions/',[authJwt.verifyToken,authJwt.isUserOrAdmin],recoveryCtrl.setQuestions)
 router.post('/questions/check',recoveryCtrl.checkQuestions)
+router.post('/send/unblocked',[validateCaptcha],recoveryCtrl.sendUnblocked)
 router.post('/forgot-password',[validateCaptcha],recoveryCtrl.forgotPassword)
 router.post('/reset-password/:id/:token',recoveryCtrl.resetPassword)
-
+router.post('/unblocked/user/:id/:token',recoveryCtrl.unblockedUser)
 router.delete('/question/delete/:id',[authJwt.verifyToken,authJwt.isUserOrAdmin],recoveryCtrl.deleteQuestionUser)
 
 export default router

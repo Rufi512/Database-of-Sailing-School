@@ -5,6 +5,8 @@ const router = Router()
 
 router.get('/list',[authJwt.verifyToken,authJwt.isAdmin],usersCtrl.getUsers)
 
+router.get('/logs',[authJwt.verifyToken,authJwt.isAdmin],usersCtrl.getLogs)
+
 router.get('/stats',[authJwt.verifyToken,authJwt.isTeacher],usersCtrl.stats)
 
 router.get('/detail/:id',[authJwt.verifyToken],usersCtrl.getUser)

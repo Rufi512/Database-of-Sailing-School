@@ -94,7 +94,6 @@
   align-items: center;
 }
 .container-login .form .forgot {
-  margin-left: auto;
   color: #113fa7;
   border: none;
   text-decoration: none;
@@ -136,4 +135,10 @@
 
 .container-login .cc-container p{
   text-align: center;
+}
+
+.container-login .links-users{
+    display: flex;
+    justify-content: space-between;
+    flex-flow: wrap;
 }
