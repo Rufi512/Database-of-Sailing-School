@@ -71,7 +71,7 @@ export const registerLog = async (req, reason) => {
       user_id:userData.id,
       ip:userIp,
       reason,
-      create_at:timeRequest
+      created_at:timeRequest
     })
     await newLog.save()
   } catch(e) {
