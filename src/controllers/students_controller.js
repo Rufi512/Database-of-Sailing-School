@@ -20,6 +20,7 @@ dateFormat.i18n = date;
 //Lista de estudiantes
 export const list = async (req, res) => {
     try {
+        console.log(req.query);
         if (req.query) {
             const { limit, page, students } = req.query;
             if (limit && isNaN(limit))
@@ -51,7 +52,14 @@ export const list = async (req, res) => {
                     { lastname: new RegExp(req.query.search, "gi") },
                 ],
                 $and: [
-                    { status: req.query.students === "activos" ? true : false },
+                    req.query.students !== "graduados"
+                        ? {
+                              status:
+                                  req.query.students === "activos"
+                                      ? true
+                                      : false,
+                          }
+                        : {},
                     {
                         graduate:
                             req.query.students === "graduados" ? true : false,
@@ -237,7 +245,10 @@ export const createStudent = async (req, res) => {
         if (validSection) {
             await addStudentsSectionRegistered(section_id, [saveStudent.id]);
         }
-        await verifySignup.registerLog(req,`Registro al estudiante ${saveStudent.firstname} ${saveStudent.lastname} - cedula: ${saveStudent.ci}`)
+        await verifySignup.registerLog(
+            req,
+            `Registro al estudiante ${saveStudent.firstname} ${saveStudent.lastname} - cedula: ${saveStudent.ci}`
+        );
         res.json({ message: "Estudiante registrado" });
     } catch (err) {
         console.log(err);
@@ -254,7 +265,7 @@ export const createStudents = async (req, res) => {
         let headerError = { exist: false, description: "" };
         let rowErrors = [];
         let studentsRegister = [];
-        console.log(req.file)
+        console.log(req.file);
         if (/[^.]+$/.exec(req.file.filename) == "csv") {
             fs.createReadStream(archive)
                 .pipe(csv.parse({ headers: true }))
@@ -484,7 +495,7 @@ export const createStudents = async (req, res) => {
 export const updateStudent = async (req, res) => {
     try {
         const studentInfo = req.body;
-        console.log(req.body)
+        console.log(req.body);
         const studentInfoActual = await student.findById(req.params.id);
         const studentFind = await student.findOne({ ci: req.body.ci });
         const sectionFound = await section.findById(studentFind.section);
@@ -552,7 +563,10 @@ export const updateStudent = async (req, res) => {
             },
             { upsert: true }
         );
-        await verifySignup.registerLog(req,`Actualizo información del estudiante ${studentInfo.firstname} ${studentInfo.lastname} - cedula: ${studentInfo.ci}`)
+        await verifySignup.registerLog(
+            req,
+            `Actualizo información del estudiante ${studentInfo.firstname} ${studentInfo.lastname} - cedula: ${studentInfo.ci}`
+        );
         res.json({ message: "Estudiante Actualizado!" });
     } catch (err) {
         console.log(err);
@@ -585,7 +599,7 @@ export const deleteStudents = async (req, res) => {
                 );
             }
         }
-        await verifySignup.registerLog(req,`Elimino a estudiantes`)
+        await verifySignup.registerLog(req, `Elimino a estudiantes`);
         res.json("Estudiante/s Eliminado/s");
     } catch (err) {
         console.log(err);
