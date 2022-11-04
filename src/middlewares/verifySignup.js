@@ -63,6 +63,7 @@ export const registerLog = async (req, reason) => {
     let now = new Date();
     dateFormat.i18n = date;
     const userIp = req.ip;
+    console.log(userIp)
     let userData
     if(req.userId) userData = await user.findById(req.userId)
     const timeRequest = dateFormat(now, "dddd, d De mmmm , yyyy, h:MM:ss TT");
@@ -73,6 +74,8 @@ export const registerLog = async (req, reason) => {
       reason,
       created_at:timeRequest
     })
+
+    console.log(newLog)
     await newLog.save()
   } catch(e) {
     console.log(e)

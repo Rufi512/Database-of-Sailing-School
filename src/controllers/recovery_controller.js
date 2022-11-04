@@ -22,7 +22,7 @@ export const setQuestions = async (req, res) => {
         const quests = await quest.find({ user: userFound.id }, { answer: 0 });
         if (quests.length >= 4)
             return res.status(400).json({
-                message: "Ya tienes el maximo de 4 preguntas de seguridad",
+                message: "Ya tienes el máximo de 4 preguntas de seguridad",
             });
         const questsRegistered = await quest.find(
             { user: userFound.id },
@@ -46,7 +46,7 @@ export const setQuestions = async (req, res) => {
             if (elm.question == "" || elm.answer == "")
                 return res
                     .status(400)
-                    .json({ message: "Los campos no pueden quedar vacios!" });
+                    .json({ message: "Los campos no pueden quedar vacíos!" });
             const createQuestion = new quest({
                 user: userFound.id,
                 question: elm.question,
@@ -318,7 +318,7 @@ export const resetPassword = async (req, res) => {
         const decoded = jwt.verify(token, secret + userFind.password);
 
         if (id !== userFind.id)
-            return res.status(400).json({ message: "Informacion invalidas" });
+            return res.status(400).json({ message: "Información invalidas" });
 
         await user.updateOne(
             { _id: id },
@@ -352,7 +352,7 @@ export const unblockedUser = async (req, res) => {
         const decoded = jwt.verify(token, secret + userFind.password);
 
         if (id !== userFind.id)
-            return res.status(400).json({ message: "Informacion invalidas" });
+            return res.status(400).json({ message: "Información invalidas" });
 
         await user.updateOne(
             { _id: id },

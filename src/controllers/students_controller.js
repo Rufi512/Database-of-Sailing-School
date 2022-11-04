@@ -33,7 +33,7 @@ export const list = async (req, res) => {
             if (Number(students))
                 return res
                     .status(400)
-                    .json({ message: "La busqueda no es una cadena!" });
+                    .json({ message: "La búsqueda no es una cadena!" });
         }
 
         let optionsPagination = {
@@ -166,7 +166,7 @@ export const createStudent = async (req, res) => {
             if (!sectionFound)
                 return res
                     .status(404)
-                    .json({ message: "Seccion no especificada encontrada!" });
+                    .json({ message: "Sección no especificada encontrada!" });
             validSection = true;
         }
         if (contact) {
@@ -299,7 +299,7 @@ export const createStudents = async (req, res) => {
                         !/^[A-Za-záéíóúñ'´ ]+$/.test(row[Object.keys(row)[1]])
                     ) {
                         return rowErrors.push(
-                            `El nombre del estudiante en la fila: ${rowsCount} contiene caracteres invalidos`
+                            `El nombre del estudiante en la fila: ${rowsCount} contiene caracteres inválidos`
                         );
                     }
 
@@ -307,7 +307,7 @@ export const createStudents = async (req, res) => {
                         !/^[A-Za-záéíóúñ'´ ]+$/.test(row[Object.keys(row)[2]])
                     ) {
                         return rowErrors.push(
-                            `El apellido del estudiante en la fila: ${rowsCount} contiene caracteres invalidos`
+                            `El apellido del estudiante en la fila: ${rowsCount} contiene caracteres inválidos`
                         );
                     }
 
@@ -319,7 +319,7 @@ export const createStudents = async (req, res) => {
 
                     if (row[Object.keys(row)[2]].length > 30) {
                         return rowErrors.push(
-                            `El apellido del estudiante en la fila: ${rowsCount} contiene caracteres invalidos`
+                            `El apellido del estudiante en la fila: ${rowsCount} contiene caracteres inválidos`
                         );
                     }
 
@@ -492,7 +492,7 @@ export const updateStudent = async (req, res) => {
         if (studentInfo.graduate && sectionFound) {
             return res.status(400).json({
                 message:
-                    "No puedes graduar el estudiante ya que actualmente esta cursando una seccion",
+                    "No puedes graduar el estudiante ya que actualmente esta cursando una sección",
             });
         }
 
@@ -552,7 +552,7 @@ export const updateStudent = async (req, res) => {
             },
             { upsert: true }
         );
-        await verifySignup.registerLog(req,`Actualizo informacion del estudiante ${studentInfo.firstname} ${studentInfo.lastname} - cedula: ${studentInfo.ci}`)
+        await verifySignup.registerLog(req,`Actualizo información del estudiante ${studentInfo.firstname} ${studentInfo.lastname} - cedula: ${studentInfo.ci}`)
         res.json({ message: "Estudiante Actualizado!" });
     } catch (err) {
         console.log(err);

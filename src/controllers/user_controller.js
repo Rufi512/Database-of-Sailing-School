@@ -26,7 +26,7 @@ export const getUsers = async (req, res) => {
         if (Number(students))
             return res
                 .status(400)
-                .json({ message: "La busqueda no es una cadena!" });
+                .json({ message: "La búsqueda no es una cadena!" });
     }
 
     let optionsPagination = {
@@ -62,7 +62,7 @@ export const getLogs = async (req, res) => {
         if (Number(reqLogs))
             return res
                 .status(400)
-                .json({ message: "La busqueda no es una cadena!" });
+                .json({ message: "La búsqueda no es una cadena!" });
     }
 
     let optionsPagination = {
@@ -72,11 +72,8 @@ export const getLogs = async (req, res) => {
         sort:{ field: 'asc', created_at: -1 }
     };
 
-    console.log(req.query)
-
     const logs = await log.paginate({}, optionsPagination);
 
-    console.log(logs);
     if (logs.length === 1) {
         return res.status(404).json({ message: "No hay información registrada" });
     }
@@ -361,7 +358,7 @@ export const changePassword = async (req, res) => {
 
         await verifySignup.registerLog(req,`Cambio contraseña al usuario: ${userFind.firstname} ${userFind.lastname} - cedula: ${userFind.ci}`)
 
-        res.json("Cambio de contraseña satisfatorio!");
+        res.json("Cambio de contraseña satisfactorio!");
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error fatal en el servidor" });

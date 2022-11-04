@@ -15,11 +15,11 @@ const verifyFields = (req, res) => {
         !Number.isInteger(Number(req.body.year)) ||
         req.body.name.length > 40
     ) {
-        return { message: "Datos invalidos" };
+        return { message: "Datos inválidos" };
     }
 
     if (!req.body.period_initial || !req.body.completion_period) {
-        return { message: "Indique el periodo de inicio y de culminacion" };
+        return { message: "Indique el periodo de inicio y de culminación" };
     }
 
     let dt = new Date();
@@ -35,7 +35,7 @@ const verifyFields = (req, res) => {
     ) {
         return {
             message:
-                "Los años de periodo de inicio y culminacion no pueden ser menor al año actual ",
+                "Los años de periodo de inicio y culminación no pueden ser menor al año actual ",
         };
     }
 
@@ -128,7 +128,7 @@ export const create = async (req, res) => {
         if (sectionCheck.length > 0)
             return res
                 .status(400)
-                .json({ message: "Seccion con el mismo nombre ya existe!" });
+                .json({ message: "Sección con el mismo nombre ya existe!" });
 
         //Create the section
 
@@ -169,10 +169,10 @@ export const create = async (req, res) => {
                 });
             }
         }
-        await verifySignup.registerLog(req,`Creo la seccion ${savedSection.name}`)
+        await verifySignup.registerLog(req,`Registro la sección: ${savedSection.name}`)
         return res.json({
             section: savedSection,
-            message: "Seccíon actualizada",
+            message: "Sección actualizada",
         });
     } catch (err) {
         console.log(err);
@@ -187,7 +187,7 @@ export const sectionInfo = async (req, res) => {
             .populate("students", { subjects: 0, record: 0 })
             .populate("subjects", { fromYears: 0, score: 0 });
         if (!sectionFound)
-            return res.status(404).json({ message: "Seccion no encontrada!" });
+            return res.status(404).json({ message: "Sección no encontrada!" });
         res.json(sectionFound);
     } catch (err) {
         console.log(err);
@@ -260,7 +260,7 @@ export const update = async (req, res) => {
         const sectionFound = await section.findById(req.params.id);
         if (!sectionFound) {
             res.status(404).json({
-                message: "No se ha podido encontrar la seccion",
+                message: "No se ha podido encontrar la sección",
             });
         }
 
@@ -272,7 +272,7 @@ export const update = async (req, res) => {
                 return res
                     .status(400)
                     .json({
-                        message: "Seccion con el mismo nombre ya existe!",
+                        message: "Sección con el mismo nombre ya existe!",
                     });
         }
 
@@ -346,7 +346,7 @@ export const update = async (req, res) => {
                 invalids: arrayStudentsInvalid,
             });
         }
-        await verifySignup.registerLog(req,`Actualizo datos de la seccion ${savedSection.name}`)
+        await verifySignup.registerLog(req,`Actualizo datos de la sección: ${savedSection.name}`)
         return res.json({ section: savedSection });
     } catch (err) {
         console.log(err);
@@ -416,7 +416,7 @@ export const addStudentsSectionRegistered = async (section_id, students) => {
                 checked_subjects: stateSubjects,
             };
         }
-        await verifySignup.registerLog(req,`Añadio estudiantes a la seccion ${savedSection.name}`)
+        await verifySignup.registerLog(req,`Añadió estudiantes a la sección: ${savedSection.name}`)
         return { section: savedSection, checked_subjects: stateSubjects };
     } catch (err) {
         console.log(err);
@@ -479,15 +479,15 @@ export const deleteSection = async (req, res) => {
         const { section_id } = req.params;
         const sectionFound = section.findOne({ _id: section_id });
         if (!sectionFound)
-            return res.status(404).json({ message: "Seccion no encontrada" });
+            return res.status(404).json({ message: "Sección no encontrada" });
         await section.deleteOne({ _id: mongoose.Types.ObjectId(section_id) });
         await student.updateMany({
             _id: sectionFound.students,
             $unset: { section: 1 },
             $set: { subjects: [] },
         });
-        await verifySignup.registerLog(req,`Elimino la seccion ${sectionFound.name}`)
-        res.json({ message: "Seccion Eliminada" });
+        await verifySignup.registerLog(req,`Elimino la sección ${sectionFound.name}`)
+        res.json({ message: "Sección Eliminada" });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error en el servidor" });
@@ -504,7 +504,7 @@ export const deleteStudentsInSection = async (req, res) => {
         const sectionFound = section.findOne({ _id: section_id });
 
         if (!sectionFound)
-            return res.status(404).json({ message: "Seccion no encontrada" });
+            return res.status(404).json({ message: "Sección no encontrada" });
 
         await student.updateMany(
             { _id: { $in: format } },
@@ -515,8 +515,8 @@ export const deleteStudentsInSection = async (req, res) => {
             { _id: section_id },
             { $pullAll: { students: format } }
         );
-        await verifySignup.registerLog(req,`Elimino estudiantes de la seccion ${savedSection.name}`)
-        res.json({ message: "Estudiante/s eliminados de la seccion" });
+        await verifySignup.registerLog(req,`Elimino estudiantes de la sección: ${savedSection.name}`)
+        res.json({ message: "Estudiante/s eliminados de la sección" });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error en el servidor" });

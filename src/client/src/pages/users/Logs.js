@@ -7,9 +7,7 @@ import NavigationOptionsList from "../../components/NavigationOptionsList";
 
 const Logs = () => {
 	const timerRef = useRef(null);
-	const [data, setData] = useState([
-		{ ip: "192.123.32.1", user: "El loco ramirez", reason: "Loco", created_at:'dsfsd' },
-	]);
+	const [data, setData] = useState([]);
 	const [pageActual, setActualPage] = useState(1);
 	const [avalaiblePages, setAvalaiblePages] = useState(0);
 	const [limit, setLimit] = useState(15);

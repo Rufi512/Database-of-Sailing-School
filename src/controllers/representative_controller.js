@@ -78,7 +78,7 @@ export const detail = async (req, res) => {
 	} catch (e) {
 		console.log(e);
 		res.status(500).json({
-			message: "Ocurrio un error fatal al requerir informacion",
+			message: "Ocurrió un error fatal al requerir información",
 		});
 	}
 };
@@ -121,12 +121,12 @@ export const update = async (req, res) => {
 			{ upsert: true }
 		);
 		console.log(updatedRep);
-		 await verifySignup.registerLog(req,`Actualizo informacion del representante ${foundRep.firstname} ${foundRep.lastname} - cedula: ${updatedRep.ci}`)
+		 await verifySignup.registerLog(req,`Actualizo información del representante ${foundRep.firstname} ${foundRep.lastname} - cedula: ${updatedRep.ci}`)
 		res.json({ message: "Información del representante actualizada" });
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({
-			message: "Ocurrio un error fatal al actualizar representante",
+			message: "Ocurrió un error fatal al actualizar representante",
 		});
 	}
 };
@@ -144,7 +144,7 @@ export const deleteRep = async (req, res) => {
 				.status(404)
 				.json({ message: "Representante no encontrado" });
 		}
-		await verifySignup.registerLog(req,`Elimino informacion del representante ${foundRep.firstname} ${foundRep.lastname} - cedula: ${foundRep.ci}`)
+		await verifySignup.registerLog(req,`Elimino información del representante ${foundRep.firstname} ${foundRep.lastname} - cedula: ${foundRep.ci}`)
 		res.json("Representante Eliminado");
 	} catch (err) {
 		console.log(err);
@@ -169,7 +169,7 @@ export const list = async (req, res) => {
 			if (Number(students))
 				return res
 					.status(400)
-					.json({ message: "La busqueda no es una cadena!" });
+					.json({ message: "La búsqueda no es una cadena!" });
 		}
 
 		let optionsPagination = {

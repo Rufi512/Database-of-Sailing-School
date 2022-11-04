@@ -17,7 +17,7 @@ export const graduate = async (req, res) => {
         const id = req.body.id;
         const sectionFound = await section.findById(id);
         if (!sectionFound)
-            return res.status(404).json({ message: "Seccion no encontrada" });
+            return res.status(404).json({ message: "Sección no encontrada" });
         for (const el of sectionFound.students) {
             let scoresSubjects = [];
             const studentFind = await student
@@ -68,7 +68,7 @@ export const graduate = async (req, res) => {
                         firstname: studentFind.firstname,
                         lastname: studentFind.lastname,
                         ci: studentFind.ci,
-                        reason: "El estudiante no cuenta con la nota minima para pasar (10)",
+                        reason: "El estudiante no cuenta con la nota mínima para pasar (10)",
                     });
                 }
 
@@ -176,8 +176,8 @@ export const graduate = async (req, res) => {
             });
         }
 
-        await verifySignup.registerLog(req,`Graduacion de seccion ${sectionFound.name}`)
-        return res.json({ message: "Seccion graduada" });
+        await verifySignup.registerLog(req,`Graduación de sección ${sectionFound.name}`)
+        return res.json({ message: "Sección graduada" });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error fatal en el servidor" });

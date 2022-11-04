@@ -14,12 +14,12 @@ export const info = async (req, res) => {
 		if (!archiveFound)
 			return res
 				.status(404)
-				.json({ message: "Informacion de estudiante no encontrada" });
+				.json({ message: "Información de estudiante no encontrada" });
 		return res.json(archiveFound);
 	} catch (e) {
 		console.log(e);
 		return res
 			.status(500)
-			.json({ message: "Error al requerir la informacion" });
+			.json({ message: "Error al requerir la información" });
 	}
 };

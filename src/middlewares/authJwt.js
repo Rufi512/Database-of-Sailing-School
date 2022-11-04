@@ -23,8 +23,8 @@ export const verifyToken = async (req, res, next) => {
     if (!userFind)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
-    /*const rolFind = await roles.findOne({ _id: { $in: userFind.rol } });
-    req.rolUser = rolFind.name*/
+    const rolFind = await roles.findOne({ _id: { $in: userFind.rol } });
+    req.rolUser = rolFind.name
 
     next();
   } catch (err) {

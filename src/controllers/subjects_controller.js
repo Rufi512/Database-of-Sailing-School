@@ -12,7 +12,7 @@ const checkSubject = async (data, res, update) => {
     }
 
     if(name.length > 40){
-        return { status: false, message: "El nombre de la materia debe tener maximo 40 caracteres!" };
+        return { status: false, message: "El nombre de la materia debe tener máximo 40 caracteres!" };
     }
 
     const prevSubject = await subject.findOne({ name: name.toLowerCase() });
@@ -92,7 +92,7 @@ export const listAvalaibleSection = async (req, res) => {
     try {
         const sectionFound = await section.findById(req.params.id);
         if (!sectionFound) {
-            return res.status(404).json({ message: "Seccion no encontrada" });
+            return res.status(404).json({ message: "Sección no encontrada" });
         }
         const subjects = await subject.find({
             fromYears: { $in: sectionFound.year },
@@ -192,7 +192,7 @@ export const assign = async (req, res) => {
             { $set: { subjects: listIdSubjects } },
             { upsert: true }
         );
-        await verifySignup.registerLog(req,`Asigno materias a la seccion: ${sectionAssign.name}`)
+        await verifySignup.registerLog(req,`Asigno materias a la sección: ${sectionAssign.name}`)
         res.json(subjects);
     } catch (err) {
         console.log(err);
@@ -209,7 +209,7 @@ export const updateSubjectsBySection = async (req, res) => {
         const sectionFound = await section.findById(req.params.id);
 
         if (!sectionFound) {
-            return res.status(404).json({ message: "Seccion no encontrada" });
+            return res.status(404).json({ message: "Sección no encontrada" });
         }
 
         // obtain list subjects avalaible in year
@@ -238,9 +238,9 @@ export const updateSubjectsBySection = async (req, res) => {
         const studentsApply = await applySubjectsRegistered(req.params.id);
         console.log("studentsApply", studentsApply);
         if (studentsApply) {
-            await verifySignup.registerLog(req,`Asigno materias a la seccion: ${sectionFound.name}`)
+            await verifySignup.registerLog(req,`Asigno materias a la sección: ${sectionFound.name}`)
             return res.json({
-                message: "Materia registradas a seccion y estudiantes",
+                message: "Materia registradas a sección y estudiantes",
             });
         } else {
             return res.status(400).json({

@@ -9,7 +9,7 @@ const logSchema = new Schema({
   user_id:{type:Schema.Types.ObjectId,required:true},
   ip:{type:String,required:true},
   reason:{type:String,required:true},
-  created_at: {type:String,default:`${dateFormat(now, "yyyy")}`}
+  created_at: {type:String,default:`${dateFormat(now, "yyyy")}`,required:true}
 },{
   versionKey:false
 })
