@@ -164,7 +164,7 @@ const Navbar = (props) => {
         <div className="links-container">
           <Link to="/logout" className={`link`}>
             <LogoutIcon />
-            Salir de la seccion
+            Salir de la sesion
           </Link>
         </div>
       </nav>
