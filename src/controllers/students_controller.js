@@ -495,7 +495,6 @@ export const createStudents = async (req, res) => {
 export const updateStudent = async (req, res) => {
     try {
         const studentInfo = req.body;
-        console.log(req.body);
         const studentInfoActual = await student.findById(req.params.id);
         const studentFind = await student.findOne({ ci: req.body.ci });
         const sectionFound = await section.findById(studentFind.section);

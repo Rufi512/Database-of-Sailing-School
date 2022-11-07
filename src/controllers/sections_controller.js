@@ -501,7 +501,7 @@ export const deleteStudentsInSection = async (req, res) => {
         const { students } = req.body;
 
         let format = students.map((el) => ObjectId(el));
-        const sectionFound = section.findOne({ _id: section_id });
+        const sectionFound = await section.findOne({ _id: section_id });
 
         if (!sectionFound)
             return res.status(404).json({ message: "Sección no encontrada" });
@@ -515,7 +515,7 @@ export const deleteStudentsInSection = async (req, res) => {
             { _id: section_id },
             { $pullAll: { students: format } }
         );
-        await verifySignup.registerLog(req,`Elimino estudiantes de la sección: ${savedSection.name}`)
+        await verifySignup.registerLog(req,`Elimino estudiantes de la sección: ${sectionFound.name}`)
         res.json({ message: "Estudiante/s eliminados de la sección" });
     } catch (err) {
         console.log(err);

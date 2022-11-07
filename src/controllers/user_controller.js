@@ -69,7 +69,7 @@ export const getLogs = async (req, res) => {
         lean: false,
         limit: req.query && Number(req.query.limit) ? req.query.limit : 10,
         page: req.query && Number(req.query.page) ? req.query.page : 1,
-        sort:{ field: 'asc', created_at: -1 }
+        sort:{ _id: 'desc'}
     };
 
     const logs = await log.paginate({}, optionsPagination);

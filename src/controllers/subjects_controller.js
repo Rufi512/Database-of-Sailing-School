@@ -49,7 +49,7 @@ export const register = async (req, res) => {
         });
 
         const savedSubject = await newSubject.save();
-        await verifySignup.registerLog(req,`Registro la materia: ${savedSubject.name}`)
+        await verifySignup.registerLog(req,`Registro la materia: ${data.name}`)
         return res.json(savedSubject);
     } catch (err) {
         console.log(err);
@@ -133,7 +133,7 @@ export const update = async (req, res) => {
             },
             { upsert: true }
         );
-        await verifySignup.registerLog(req,`Actualizo la materia: ${newSubject.name}`)
+        await verifySignup.registerLog(req,`Actualizo la materia: ${data.name}`)
         return res.json(newSubject);
     } catch (err) {
         console.log(err);

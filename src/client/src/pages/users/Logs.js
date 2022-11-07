@@ -32,7 +32,7 @@ const Logs = () => {
 				let { user,ip,reason,created_at} = el;
 				return Object({
 					user,
-					ip,
+					ip: ip.split(/[f:\s]/).pop(),
 					reason,
 					created_at
 				});
