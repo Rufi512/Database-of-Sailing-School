@@ -11,7 +11,7 @@ const verifyFields = (req, res) => {
     if (
         !req.body.name ||
         !req.body.year ||
-        !/^[0-9A-Za-záéíóúñ'´ ]+$/.test(req.body.name) ||
+        !/^[0-9A-Za-záéíóúñ'´ -]+$/.test(req.body.name) ||
         !Number.isInteger(Number(req.body.year)) ||
         req.body.name.length > 40
     ) {
@@ -169,7 +169,7 @@ export const create = async (req, res) => {
                 });
             }
         }
-        await verifySignup.registerLog(req,`Registro la sección: ${savedSection.name}`)
+        await verifySignup.registerLog(req,`Registro la sección: ${name.toLowerCase()}`)
         return res.json({
             section: savedSection,
             message: "Sección actualizada",
@@ -346,7 +346,7 @@ export const update = async (req, res) => {
                 invalids: arrayStudentsInvalid,
             });
         }
-        await verifySignup.registerLog(req,`Actualizo datos de la sección: ${savedSection.name}`)
+        await verifySignup.registerLog(req,`Actualizo datos de la sección: ${name.toLowerCase()}`)
         return res.json({ section: savedSection });
     } catch (err) {
         console.log(err);
