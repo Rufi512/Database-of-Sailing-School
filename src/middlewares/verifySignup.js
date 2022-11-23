@@ -5,6 +5,7 @@ import reCAPTCHA from "recaptcha2";
 import { date } from "../libs/dateformat";
 import dateFormat from "dateformat";
 import dotenv from "dotenv";
+import ip from 'ip'
 dotenv.config();
 
 export const validateCaptcha = async (req, res, next) => {
@@ -62,7 +63,7 @@ export const registerLog = async (req, reason) => {
   try {
     let now = new Date();
     dateFormat.i18n = date;
-    const userIp = req.ip;
+    const userIp = ip.address();
     console.log(userIp)
     let userData
     if(req.userId) userData = await user.findById(req.userId)
