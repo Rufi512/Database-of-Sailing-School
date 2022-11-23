@@ -346,7 +346,7 @@ export const update = async (req, res) => {
                 invalids: arrayStudentsInvalid,
             });
         }
-        await verifySignup.registerLog(req,`Actualizo datos de la sección: ${name.toLowerCase()}`)
+        await verifySignup.registerLog(req,`Actualizo datos de la sección: ${name}`)
         return res.json({ section: savedSection });
     } catch (err) {
         console.log(err);

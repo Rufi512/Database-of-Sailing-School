@@ -285,7 +285,7 @@ export const sendUnblocked = async (req, res) => {
                         <h2 style="border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0">Unidad educativa colegio Juan Bosco</h2>
                         <div>
                             <h5 style="font-size: 1.25rem;">Desbloqueo de usuario</h5>
-                            <p><b>Haga clic en el botón para desbloquear su usuario</b></p> <br/> <a class="btn btn-primary" style="margin-bottom: 25px;padding: 10px 20px; color: #fff;background-color: #0069d9;border-color: #0062cc; border-radius:5px;" href="${req.protocol}://${req.hostname}/reset-password/${userFound.id}/${token}">Click aqui!</a> 
+                            <p><b>Haga clic en el botón para desbloquear su usuario</b></p> <br/> <a class="btn btn-primary" style="margin-bottom: 25px;padding: 10px 20px; color: #fff;background-color: #0069d9;border-color: #0062cc; border-radius:5px;" href="${req.protocol}://${req.hostname}/unblocked-user/${userFound.id}/${token}">Click aqui!</a> 
                             <br/>
                             <p>O copie y pegue el siguiente enlace</p>
                             <a href="${req.protocol}://${req.hostname}/unblocked-user/${userFound.id}/${token}">${req.protocol}://${req.hostname}/unblocked-user/${userFound.id}/${token}<a/>
