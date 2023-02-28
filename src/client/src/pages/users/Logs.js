@@ -42,10 +42,10 @@ const Logs = () => {
 			setData(list);
 
 			toast.update(toastId, {
-				render: "Lista Cargada",
+				render: "Cargado!",
 				type: "success",
 				isLoading: false,
-				autoClose: 3000,
+				autoClose: 1,
 			});
 		} catch (e) {
 			console.log(e);

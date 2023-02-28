@@ -5,6 +5,7 @@ const NavigationOptionsList = (props) => {
 	const [avalaiblePages, setAvalaiblePages] = useState(props.avalaiblePages);
 	const [limit, setLimit] = useState(15);
 	useEffect(()=>{
+		console.log(props,pageActual,avalaiblePages,limit)
 		setAvalaiblePages(props.avalaiblePages)
 		props.changeActualPage(pageActual)
 		props.changeLimit(limit)
@@ -39,7 +40,7 @@ const NavigationOptionsList = (props) => {
 					className="custom-select"
 					value={pageActual}
 					onChange={(e) => {
-						setActualPage(e.target.value);
+						setActualPage(Number(e.target.value));
 					}}
 				>
 					{[...Array(avalaiblePages)].map((_, i) => {

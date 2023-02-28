@@ -47,10 +47,10 @@ const ListRep = () => {
 			setData(reps);
 
 			toast.update(toastId, {
-				render: "Lista Cargada",
+				render: "Cargado!",
 				type: "success",
 				isLoading: false,
-				autoClose: 800,
+				autoClose: 1,
 			});
 		} catch (e) {
 			console.log(e);
